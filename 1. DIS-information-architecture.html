@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dynamic Insurance System — Information Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,500&family=Epilogue:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F6F4F0;
+  --bg2:#EDEAE4;
+  --bg3:#E2DDD6;
+  --white:#FDFCFA;
+  --ink:#18160F;
+  --ink2:#4A4740;
+  --ink3:#8C897F;
+  --teal:#007A6B;
+  --teal-lt:#E0F2EE;
+  --teal-md:#A8DDD6;
+  --amber:#B86A00;
+  --amber-lt:#FFF0DC;
+  --amber-md:#F5C97A;
+  --navy:#1A2E4A;
+  --navy-lt:#E5ECF5;
+  --red:#C0362A;
+  --red-lt:#FAEAE8;
+  --border:#D8D4CC;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Epilogue',sans-serif;
+  --mono:'Fira Code',monospace;
+  --r:10px;
+  --r-sm:5px;
+  --sidebar:268px;
+  --shadow:0 1px 4px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.05);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--navy);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;display:flex;flex-direction:column;z-index:100;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+.sb-header{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-badge{font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--teal-md);margin-bottom:0.6rem;display:block}
+.sb-title{font-family:var(--serif);font-size:1.05rem;color:#F4F1EC;font-weight:300;line-height:1.35}
+.sb-title em{font-style:italic;color:var(--teal-md)}
+.sb-nav{padding:0.75rem 0;flex:1}
+.sn-group{margin-bottom:0.25rem}
+.sn-label{font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:0.7rem 1.5rem 0.3rem}
+.sn-item{display:flex;align-items:center;gap:0.6rem;padding:0.48rem 1.5rem;text-decoration:none;transition:background 0.15s;cursor:pointer;border-left:2px solid transparent}
+.sn-item:hover{background:rgba(255,255,255,0.04)}
+.sn-item.active{background:rgba(0,122,107,0.15);border-left-color:var(--teal-md)}
+.sn-num{font-family:var(--mono);font-size:9.5px;color:rgba(255,255,255,0.2);min-width:18px}
+.sn-item.active .sn-num{color:var(--teal-md)}
+.sn-text{font-size:12px;font-weight:400;color:rgba(255,255,255,0.45);line-height:1.3}
+.sn-item.active .sn-text{color:rgba(255,255,255,0.88);font-weight:500}
+.sb-footer{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,0.07)}
+.sb-tags{display:flex;gap:0.4rem;flex-wrap:wrap}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;padding:3px 7px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.25)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh}
+.topbar{position:sticky;top:0;background:rgba(246,244,240,0.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0.75rem 2.5rem;display:flex;align-items:center;justify-content:space-between;z-index:50}
+.tb-left{font-family:var(--mono);font-size:10.5px;color:var(--ink3);letter-spacing:0.05em}
+.tb-tags{display:flex;gap:0.5rem}
+.tb-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:0.06em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--teal-md);color:var(--teal);background:var(--teal-lt)}
+.progress{position:fixed;top:0;left:var(--sidebar);right:0;height:2.5px;background:var(--teal);z-index:200;width:0%;transition:width 0.08s}
+
+.content{padding:2.5rem 2.5rem 5rem}
+
+/* ── HERO ── */
+.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1.5px solid var(--border)}
+.hero-eyebrow{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal);margin-bottom:1rem;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';display:inline-block;width:28px;height:1.5px;background:var(--teal)}
+.hero-h1{font-family:var(--serif);font-size:clamp(2.25rem,4vw,3.5rem);font-weight:300;line-height:1.1;letter-spacing:-0.01em;color:var(--ink);margin-bottom:1rem}
+.hero-h1 em{font-style:italic;color:var(--teal)}
+.hero-desc{font-size:1rem;color:var(--ink2);max-width:620px;line-height:1.75;font-weight:300;margin-bottom:2rem}
+.hero-pills{display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:2rem}
+.pill{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;border:1px solid;cursor:default}
+.p-teal{color:var(--teal);border-color:var(--teal-md);background:var(--teal-lt)}
+.p-amber{color:var(--amber);border-color:var(--amber-md);background:var(--amber-lt)}
+.p-navy{color:var(--navy);border-color:#B0C4DC;background:var(--navy-lt)}
+.p-red{color:var(--red);border-color:#E8B4B0;background:var(--red-lt)}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;max-width:680px}
+.hstat{background:var(--white);padding:1.1rem 1.25rem}
+.hstat-n{font-family:var(--serif);font-size:2rem;font-weight:300;color:var(--teal);line-height:1;margin-bottom:0.3rem}
+.hstat-l{font-family:var(--mono);font-size:9.5px;color:var(--ink3);letter-spacing:0.06em;text-transform:uppercase}
+
+/* ── SECTIONS ── */
+.section{scroll-margin-top:70px;margin-bottom:3.5rem}
+.sec-label{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal);margin-bottom:0.5rem;display:flex;align-items:center;gap:9px}
+.sec-label::before{content:'';display:inline-block;width:20px;height:1.5px;background:var(--teal)}
+.sec-num{color:var(--ink3);margin-right:4px}
+.sec-h2{font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:300;line-height:1.15;letter-spacing:-0.01em;color:var(--ink);margin-bottom:0.75rem}
+.sec-h2 em{font-style:italic;color:var(--teal)}
+.sec-lead{font-size:0.95rem;color:var(--ink2);max-width:660px;line-height:1.75;font-weight:300;margin-bottom:1.75rem}
+.sec-div{height:1.5px;background:var(--border);margin:3rem 0}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--shadow)}
+.card-teal{border-left:3px solid var(--teal);border-radius:0 var(--r) var(--r) 0}
+.card-amber{border-left:3px solid var(--amber);border-radius:0 var(--r) var(--r) 0}
+.card-navy{border-left:3px solid var(--navy);border-radius:0 var(--r) var(--r) 0}
+.card-red{border-left:3px solid var(--red);border-radius:0 var(--r) var(--r) 0}
+.card h3{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:0.5rem;letter-spacing:-0.01em}
+.card p,.card-body{font-size:13px;color:var(--ink2);line-height:1.65}
+.card ul{font-size:13px;color:var(--ink2);padding-left:1.2rem;display:flex;flex-direction:column;gap:4px;line-height:1.55}
+.card ul li::marker{color:var(--teal)}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:0.875rem}
+
+/* ── INFO BANNER ── */
+.info-banner{background:var(--teal-lt);border:1px solid var(--teal-md);border-radius:var(--r);padding:1.1rem 1.5rem;display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.5rem}
+.info-banner.amber{background:var(--amber-lt);border-color:var(--amber-md)}
+.info-banner.navy{background:var(--navy-lt);border-color:#B0C4DC}
+.ib-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+.ib-label{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal);margin-bottom:0.25rem}
+.info-banner.amber .ib-label{color:var(--amber)}
+.info-banner.navy .ib-label{color:var(--navy)}
+.ib-text{font-size:13px;color:var(--ink2);line-height:1.6}
+strong{font-weight:600;color:var(--ink)}
+
+/* ── SITEMAP ── */
+.sitemap-root{display:flex;flex-direction:column;gap:1.5rem}
+.sm-section{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.sm-header{padding:1rem 1.5rem;display:flex;align-items:center;gap:0.875rem;border-bottom:1px solid var(--border)}
+.sm-icon{width:36px;height:36px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ic-teal{background:var(--teal-lt);color:var(--teal)}
+.ic-amber{background:var(--amber-lt);color:var(--amber)}
+.ic-navy{background:var(--navy-lt);color:var(--navy)}
+.ic-red{background:var(--red-lt);color:var(--red)}
+.sm-section-title{font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-0.01em}
+.sm-section-sub{font-size:11.5px;color:var(--ink3);margin-top:1px}
+.sm-freq{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:20px}
+.freq-daily{color:var(--teal);background:var(--teal-lt);border:1px solid var(--teal-md)}
+.freq-occ{color:var(--amber);background:var(--amber-lt);border:1px solid var(--amber-md)}
+.freq-rare{color:var(--ink3);background:var(--bg2);border:1px solid var(--border)}
+.sm-body{padding:1.25rem 1.5rem}
+.sm-pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem}
+.sm-page{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:0.875rem 1rem}
+.smp-title{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:0.4rem}
+.smp-items{font-size:11.5px;color:var(--ink3);line-height:1.6;display:flex;flex-direction:column;gap:2px}
+.smp-item{padding-left:0.875rem;position:relative}
+.smp-item::before{content:'›';position:absolute;left:0;color:var(--teal);font-size:11px}
+
+/* ── DATA FLOW ── */
+.df-chain{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:0.5rem;margin-bottom:1.5rem}
+.df-node{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;min-width:150px;text-align:center;flex-shrink:0;box-shadow:var(--shadow)}
+.df-node.src{border-top:3px solid var(--teal)}
+.df-node.mid{border-top:3px solid var(--amber)}
+.df-node.end{border-top:3px solid var(--navy)}
+.df-node-icon{font-size:1.5rem;margin-bottom:0.4rem;display:block}
+.df-node-title{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:0.25rem}
+.df-node-desc{font-size:11px;color:var(--ink3);line-height:1.5}
+.df-arrow{display:flex;flex-direction:column;align-items:center;padding:0 0.5rem;flex-shrink:0}
+.df-arr-line{width:32px;height:1.5px;background:var(--teal)}
+.df-arr-head{width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid var(--teal);margin-top:-2px}
+.df-arr-label{font-family:var(--mono);font-size:9px;color:var(--ink3);margin-top:0.4rem;letter-spacing:0.05em;white-space:nowrap}
+
+/* ── ROLE TABS ── */
+.role-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1.5rem}
+.rtab{flex:1;padding:0.875rem 1rem;text-align:center;cursor:pointer;background:var(--white);border-right:1px solid var(--border);transition:background 0.15s;user-select:none}
+.rtab:last-child{border-right:none}
+.rtab.active{background:var(--teal);color:#fff}
+.rtab-icon{font-size:1.25rem;display:block;margin-bottom:0.3rem}
+.rtab-label{font-size:12px;font-weight:600;color:var(--ink2);display:block}
+.rtab.active .rtab-label{color:#fff}
+.role-panel{display:none}
+.role-panel.active{display:block}
+
+/* ── NAV DIAGRAM ── */
+.nav-diagram{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.nd-topbar{background:var(--navy);padding:0.75rem 1.5rem;display:flex;align-items:center;gap:0.75rem}
+.nd-logo{width:28px;height:28px;border-radius:6px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:14px}
+.nd-brand{font-family:var(--serif);font-size:13px;font-style:italic;color:#F4F1EC;font-weight:300}
+.nd-nav-items{display:flex;gap:0.25rem;margin-left:auto}
+.nd-item{padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:500;color:rgba(255,255,255,0.5);cursor:pointer;transition:background 0.15s}
+.nd-item.active{background:rgba(255,255,255,0.1);color:#fff}
+.nd-utility{display:flex;gap:0.6rem;margin-left:1.5rem;align-items:center}
+.nd-util-icon{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer}
+.nd-body{padding:1.5rem}
+.nd-primary{display:flex;gap:0.75rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.nd-primary-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:0.6rem 1rem;font-size:12.5px;font-weight:600;color:var(--ink)}
+.nd-primary-item.active{background:var(--teal-lt);border-color:var(--teal-md);color:var(--teal)}
+.nd-secondary{display:flex;gap:0.5rem;padding:0.75rem 1rem;background:var(--bg2);border-radius:var(--r-sm);flex-wrap:wrap;margin-bottom:0.75rem}
+.nd-sec-item{font-size:11.5px;color:var(--ink2);padding:3px 10px;border-radius:20px;background:var(--bg3);cursor:pointer}
+.nd-sec-item.active{background:var(--teal);color:#fff}
+
+/* ── PAGE CONTENT IA ── */
+.pcia{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.pcia-header{background:var(--ink);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.pcia-title{font-family:var(--serif);font-size:1rem;font-style:italic;font-weight:300;color:#F4F1EC}
+.pcia-meta{font-family:var(--mono);font-size:9.5px;color:rgba(255,255,255,0.3);letter-spacing:0.06em}
+.pcia-body{padding:1.25rem 1.5rem}
+.pcia-zone{margin-bottom:1.1rem;padding-bottom:1.1rem;border-bottom:1px dashed var(--border)}
+.pcia-zone:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.pcia-zone-label{font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:0.5rem;display:flex;align-items:center;gap:6px}
+.pcia-zone-label::before{content:'';display:inline-block;width:14px;height:1px;background:var(--ink3)}
+.zone-p1{border-left:3px solid var(--teal)}
+.zone-p2{border-left:3px solid var(--amber)}
+.zone-p3{border-left:3px solid var(--navy)}
+.zone-p4{border-left:3px solid var(--bg3)}
+.pcia-items{display:flex;flex-direction:column;gap:0.4rem}
+.pcia-item{font-size:12.5px;color:var(--ink2);padding:0.45rem 0.875rem;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.pcia-item-name{font-weight:500;color:var(--ink)}
+.pcia-item-note{font-size:11px;color:var(--ink3)}
+.priority-badge{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;padding:2px 7px;border-radius:20px}
+.pri-1{background:var(--teal-lt);color:var(--teal);border:1px solid var(--teal-md)}
+.pri-2{background:var(--amber-lt);color:var(--amber);border:1px solid var(--amber-md)}
+.pri-3{background:var(--navy-lt);color:var(--navy);border:1px solid #B0C4DC}
+.pri-4{background:var(--bg2);color:var(--ink3);border:1px solid var(--border)}
+
+/* ── NAMING TABLE ── */
+.name-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.name-table th{background:var(--bg2);padding:0.75rem 1.1rem;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:0.03em;color:var(--ink2);border-bottom:1px solid var(--border)}
+.name-table td{padding:0.75rem 1.1rem;border-bottom:1px solid var(--bg2);color:var(--ink2);vertical-align:top;line-height:1.5}
+.name-table tr:last-child td{border-bottom:none}
+.name-table tr:hover td{background:var(--bg)}
+.name-table td:first-child{font-weight:600;color:var(--ink)}
+.avoid{color:var(--red);text-decoration:line-through;opacity:0.7}
+.use{color:var(--teal);font-weight:600}
+
+/* ── SCALE CARDS ── */
+.scale-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;box-shadow:var(--shadow)}
+.sc-icon{width:36px;height:36px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:0.875rem}
+.sc-title{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:0.4rem}
+.sc-text{font-size:12.5px;color:var(--ink2);line-height:1.6}
+
+/* ── FLOW PATH ── */
+.flow-path{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1rem;box-shadow:var(--shadow)}
+.fp-header{padding:0.875rem 1.25rem;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.75rem}
+.fp-title{font-size:13px;font-weight:600;color:var(--ink)}
+.fp-role{font-family:var(--mono);font-size:9.5px;letter-spacing:0.08em;padding:2px 8px;border-radius:20px}
+.fr-driver{background:var(--teal-lt);color:var(--teal);border:1px solid var(--teal-md)}
+.fr-insurer{background:var(--amber-lt);color:var(--amber);border:1px solid var(--amber-md)}
+.fr-mvd{background:var(--navy-lt);color:var(--navy);border:1px solid #B0C4DC}
+.fp-body{padding:1rem 1.25rem;display:flex;align-items:center;gap:0.25rem;flex-wrap:wrap}
+.fp-step{font-size:12px;font-weight:500;color:var(--ink2);background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:5px 12px;white-space:nowrap}
+.fp-step.entry{background:var(--teal-lt);border-color:var(--teal-md);color:var(--teal)}
+.fp-step.decision{background:var(--amber-lt);border-color:var(--amber-md);color:var(--amber)}
+.fp-step.end{background:var(--navy-lt);border-color:#B0C4DC;color:var(--navy)}
+.fp-arr{color:var(--ink3);font-size:13px;padding:0 2px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:920px){:root{--sidebar:0px}.sidebar{display:none}.main{margin-left:0}.content{padding:1.5rem 1rem 4rem}.g2,.g3,.g4{grid-template-columns:1fr}.hero-stats{grid-template-columns:repeat(2,1fr)}.df-chain{gap:0}.role-tabs{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-header">
+    <span class="sb-badge">IA Specification · v1.0</span>
+    <div class="sb-title">Dynamic <em>Insurance</em> System</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sn-group">
+      <div class="sn-label">Foundation</div>
+      <a class="sn-item active" href="#s1"><span class="sn-num">01</span><span class="sn-text">IA Strategy & Approach</span></a>
+      <a class="sn-item" href="#s2"><span class="sn-num">02</span><span class="sn-text">Global Navigation</span></a>
+    </div>
+    <div class="sn-group">
+      <div class="sn-label">Structure</div>
+      <a class="sn-item" href="#s3"><span class="sn-num">03</span><span class="sn-text">Full Sitemap</span></a>
+      <a class="sn-item" href="#s4"><span class="sn-num">04</span><span class="sn-text">Page-Level Content IA</span></a>
+    </div>
+    <div class="sn-group">
+      <div class="sn-label">Behaviour</div>
+      <a class="sn-item" href="#s5"><span class="sn-num">05</span><span class="sn-text">User Flow Mapping</span></a>
+      <a class="sn-item" href="#s6"><span class="sn-num">06</span><span class="sn-text">Role-Based Architecture</span></a>
+      <a class="sn-item" href="#s7"><span class="sn-num">07</span><span class="sn-text">Data & Feature Relations</span></a>
+    </div>
+    <div class="sn-group">
+      <div class="sn-label">System</div>
+      <a class="sn-item" href="#s8"><span class="sn-num">08</span><span class="sn-text">Scalability & Future-Proofing</span></a>
+      <a class="sn-item" href="#s9"><span class="sn-num">09</span><span class="sn-text">Naming & Labeling System</span></a>
+    </div>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-tags">
+      <span class="sb-tag">Hybrid IA</span><span class="sb-tag">3 Roles</span><span class="sb-tag">Scalable</span><span class="sb-tag">Blockchain</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <span class="tb-left">DIS · Information Architecture Specification</span>
+    <div class="tb-tags"><span class="tb-tag">Senior UX Architect</span></div>
+  </div>
+
+  <div class="content">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eyebrow">Information Architecture · Full Specification</div>
+      <h1 class="hero-h1">Structured for <em>Clarity</em>,<br/>Built for <em>Scale</em></h1>
+      <p class="hero-desc">A production-grade Information Architecture for the Dynamic Insurance System — organizing OBD telemetry, ML scoring, blockchain trust, and insurance operations into a user-centered structure that works for drivers, insurers, and regulators simultaneously.</p>
+      <div class="hero-pills">
+        <span class="pill p-teal">Hybrid Task + Data IA</span>
+        <span class="pill p-amber">3 Role Types</span>
+        <span class="pill p-navy">9 Primary Sections</span>
+        <span class="pill p-red">Blockchain-Aware</span>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-n">9</div><div class="hstat-l">Top-Level Sections</div></div>
+        <div class="hstat"><div class="hstat-n">3</div><div class="hstat-l">Role Variants</div></div>
+        <div class="hstat"><div class="hstat-n">38+</div><div class="hstat-l">Sub-Pages Defined</div></div>
+        <div class="hstat"><div class="hstat-n">∞</div><div class="hstat-l">Scalability Built-In</div></div>
+      </div>
+    </div>
+
+    <!-- ══════ S1: IA STRATEGY ══════ -->
+    <div class="section" id="s1">
+      <div class="sec-label"><span class="sec-num">01 /</span> Foundation</div>
+      <h2 class="sec-h2">IA Strategy & <em>Approach</em></h2>
+      <p class="sec-lead">The DIS IA uses a <strong>Hybrid Task-Based + Data-Driven model</strong>. Task-based for drivers (they come with goals: check score, pay premium, file claim). Data-driven for insurers and MVD (they explore dashboards, filter populations, audit records). The same underlying data layer serves both mental models without exposing complexity to the wrong user.</p>
+
+      <div class="info-banner">
+        <span class="ib-icon">🧠</span>
+        <div><div class="ib-label">Core IA Decision</div><div class="ib-text"><strong>One platform, three role-adjusted views.</strong> Global navigation structure stays consistent. Content density, default views, and available actions differ per role. This reduces development complexity while maintaining UX clarity for each user type.</div></div>
+      </div>
+
+      <div class="g3" style="margin-bottom:1.25rem">
+        <div class="card card-teal">
+          <h3>Cognitive Load Reduction</h3>
+          <ul>
+            <li>Progressive disclosure: ML complexity hidden by default, accessible on demand</li>
+            <li>Primary action (score check) always reachable in ≤2 clicks</li>
+            <li>Blockchain data abstracted as "verified" badges — no raw hashes shown to drivers</li>
+            <li>Insurance math expressed as plain-language summaries, not formulas</li>
+            <li>Jargon-free labels throughout (no "OBD telemetry" — just "Driving Data")</li>
+          </ul>
+        </div>
+        <div class="card card-amber">
+          <h3>Role-Specific Clarity</h3>
+          <ul>
+            <li><strong>Drivers:</strong> Score-first, reward-forward, simplified insurance view</li>
+            <li><strong>Insurers:</strong> Risk-first, population dashboards, claims workflow</li>
+            <li><strong>MVD:</strong> Compliance-first, read-only audit trail, aggregate analytics</li>
+            <li>Each role has a distinct "home base" — the screen that anchors daily use</li>
+            <li>Cross-role collaboration points clearly defined (claim verification, data sharing)</li>
+          </ul>
+        </div>
+        <div class="card card-navy">
+          <h3>Scalability Principles</h3>
+          <ul>
+            <li>Section-based IA — new features slot into existing sections, not new top-levels</li>
+            <li>Notification layer is global, not embedded in one section</li>
+            <li>Settings separated from functional content — never mixed in</li>
+            <li>Admin panels isolated from driver-facing structure</li>
+            <li>AI insights treated as a layer, not a section — can be added anywhere</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <h3>Why Hybrid IA?</h3>
+          <p>Pure task-based IA breaks down when users also want to explore data (e.g., a driver curious about their historical score pattern). Pure data-driven IA overwhelms casual users who just need to pay a premium. The hybrid model gives every user the right entry point while keeping the underlying structure unified and maintainable.</p>
+        </div>
+        <div class="card">
+          <h3>IA Constraints Addressed</h3>
+          <ul>
+            <li>Blockchain data is real-time but immutable — IA reflects this with "view-only" history sections</li>
+            <li>ML scores change daily — dashboard is the live anchor, always current</li>
+            <li>Insurance policies have complex legal structures — simplified into 3-zone layouts</li>
+            <li>Claims involve multiple parties — IA provides shared status views</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-div"></div>
+
+    <!-- ══════ S2: GLOBAL NAVIGATION ══════ -->
+    <div class="section" id="s2">
+      <div class="sec-label"><span class="sec-num">02 /</span> Navigation</div>
+      <h2 class="sec-h2">Global <em>Navigation</em> Structure</h2>
+      <p class="sec-lead">A three-tier navigation system. Primary navigation anchors the five most-used sections. Secondary navigation provides sub-page access within each. Utility navigation handles account, notifications, and settings — always available but never dominant.</p>
+
+      <!-- Annotated nav mockup -->
+      <div class="nav-diagram" style="margin-bottom:1.5rem">
+        <div class="nd-topbar">
+          <div class="nd-logo">🚗</div>
+          <div class="nd-brand">DriveSure</div>
+          <div class="nd-nav-items">
+            <div class="nd-item active">Dashboard</div>
+            <div class="nd-item">My Score</div>
+            <div class="nd-item">Insurance</div>
+            <div class="nd-item">Claims</div>
+            <div class="nd-item">Rewards</div>
+          </div>
+          <div class="nd-utility">
+            <div class="nd-util-icon">🔔</div>
+            <div class="nd-util-icon">⚙️</div>
+            <div class="nd-util-icon">👤</div>
+          </div>
+        </div>
+        <div class="nd-body">
+          <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:0.6rem">Secondary Navigation — Insurance Section Active</div>
+          <div class="nd-primary">
+            <div class="nd-primary-item">Dashboard</div>
+            <div class="nd-primary-item">My Score</div>
+            <div class="nd-primary-item active">Insurance</div>
+            <div class="nd-primary-item">Claims</div>
+            <div class="nd-primary-item">Rewards</div>
+          </div>
+          <div class="nd-secondary">
+            <div class="nd-sec-item active">My Policy</div>
+            <div class="nd-sec-item">Premium Calculator</div>
+            <div class="nd-sec-item">Payment History</div>
+            <div class="nd-sec-item">Documents</div>
+            <div class="nd-sec-item">Renewal</div>
+          </div>
+          <div style="font-size:12px;color:var(--ink3);font-family:var(--mono)">← Primary nav | Sub-section tabs expand below →</div>
+        </div>
+      </div>
+
+      <div class="g2" style="margin-bottom:1.25rem">
+        <div class="card">
+          <h3>Primary Navigation (5 Items — Driver View)</h3>
+          <ul>
+            <li><strong>Dashboard</strong> — Home base, daily-use anchor. Score + quick actions</li>
+            <li><strong>My Score</strong> — Deep dive into driving performance and history</li>
+            <li><strong>Insurance</strong> — Policy, premium, payments, renewal</li>
+            <li><strong>Claims</strong> — Submit, track, and review claims</li>
+            <li><strong>Rewards</strong> — Incentives, tokens, discounts earned</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Utility Navigation (Always Accessible)</h3>
+          <ul>
+            <li><strong>Notifications (🔔)</strong> — Bell icon with badge count. Overlay panel, not full page</li>
+            <li><strong>Settings (⚙️)</strong> — Account, vehicle, notification preferences, security</li>
+            <li><strong>Profile (👤)</strong> — Avatar with dropdown: Profile, Switch Role, Log Out</li>
+            <li>All utility items in top-right corner — never competes with primary nav</li>
+            <li>Accessible from every page without navigation change</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <h3 style="margin-bottom:1rem">Navigation Hierarchy & Access Frequency</h3>
+        <div style="overflow-x:auto">
+          <table class="name-table" style="margin:0">
+            <thead><tr><th>Section</th><th>Access Frequency</th><th>Why This Position</th><th>Secondary Pages</th></tr></thead>
+            <tbody>
+              <tr><td>Dashboard</td><td><span class="freq-daily">Daily</span></td><td>Highest frequency — always first, never buried</td><td>— (single aggregated view)</td></tr>
+              <tr><td>My Score</td><td><span class="freq-daily">Daily / Weekly</span></td><td>Core value prop — second position for easy access</td><td>Score Breakdown · Trip History · Insights</td></tr>
+              <tr><td>Insurance</td><td><span class="freq-occ">Monthly</span></td><td>High importance, moderate frequency — center position</td><td>My Policy · Premium · Payments · Renewal · Docs</td></tr>
+              <tr><td>Claims</td><td><span class="freq-rare">As Needed</span></td><td>Low frequency but high stakes — visible but not dominant</td><td>New Claim · Active Claims · Claim History</td></tr>
+              <tr><td>Rewards</td><td><span class="freq-occ">Weekly</span></td><td>Engagement driver — last primary position, end of journey</td><td>My Rewards · Leaderboard · Referrals</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-div"></div>
+
+    <!-- ══════ S3: SITEMAP ══════ -->
+    <div class="section" id="s3">
+      <div class="sec-label"><span class="sec-num">03 /</span> Structure</div>
+      <h2 class="sec-h2">Full <em>Sitemap</em></h2>
+      <p class="sec-lead">Every section broken down to sub-page level, with content definition and relationships between pages. Organized by user-facing sections first, then admin panels.</p>
+
+      <div class="info-banner amber">
+        <span class="ib-icon">📌</span>
+        <div><div class="ib-label">Sitemap Convention</div><div class="ib-text">Each section card shows: section header (icon, name, access frequency), sub-pages with their content items. Arrows in the data flow section (Section 7) show relationships.</div></div>
+      </div>
+
+      <div class="sitemap-root">
+
+        <!-- Dashboard -->
+        <div class="sm-section">
+          <div class="sm-header">
+            <div class="sm-icon ic-teal">🏠</div>
+            <div><div class="sm-section-title">Dashboard</div><div class="sm-section-sub">Primary landing page · Aggregated daily view</div></div>
+            <span class="sm-freq freq-daily">Daily</span>
+          </div>
+          <div class="sm-body">
+            <div class="sm-pages">
+              <div class="sm-page">
+                <div class="smp-title">Today's Overview</div>
+                <div class="smp-items">
+                  <div class="smp-item">Live driving score (today)</div>
+                  <div class="smp-item">7-day score trend sparkline</div>
+                  <div class="smp-item">Active streak / badge</div>
+                  <div class="smp-item">Premium status summary</div>
+                  <div class="smp-item">Active alerts &amp; notifications</div>
+                  <div class="smp-item">Quick action buttons</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Quick Actions Panel</div>
+                <div class="smp-items">
+                  <div class="smp-item">Upload trip data</div>
+                  <div class="smp-item">View today's trips</div>
+                  <div class="smp-item">Pay premium (if due)</div>
+                  <div class="smp-item">File a claim shortcut</div>
+                  <div class="smp-item">View latest reward</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Score Alert Card</div>
+                <div class="smp-items">
+                  <div class="smp-item">Score vs. last week delta</div>
+                  <div class="smp-item">Upcoming renewal notice</div>
+                  <div class="smp-item">Claim status update</div>
+                  <div class="smp-item">Blockchain sync status</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- My Score / Driving Score -->
+        <div class="sm-section">
+          <div class="sm-header">
+            <div class="sm-icon ic-teal">📊</div>
+            <div><div class="sm-section-title">My Score</div><div class="sm-section-sub">Driving performance, history, and behavioral insights</div></div>
+            <span class="sm-freq freq-daily">Daily / Weekly</span>
+          </div>
+          <div class="sm-body">
+            <div class="sm-pages">
+              <div class="sm-page">
+                <div class="smp-title">Score Overview</div>
+                <div class="smp-items">
+                  <div class="smp-item">Current score (0–100%)</div>
+                  <div class="smp-item">Score tier badge (Excellent/Good/Fair/Poor)</div>
+                  <div class="smp-item">30-day rolling average</div>
+                  <div class="smp-item">Premium impact preview</div>
+                  <div class="smp-item">Blockchain verification badge</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Score Breakdown</div>
+                <div class="smp-items">
+                  <div class="smp-item">Speed compliance score</div>
+                  <div class="smp-item">Braking behavior score</div>
+                  <div class="smp-item">Acceleration pattern score</div>
+                  <div class="smp-item">Engine load efficiency</div>
+                  <div class="smp-item">Overall composite score</div>
+                  <div class="smp-item">Improvement tips per factor</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Trip History</div>
+                <div class="smp-items">
+                  <div class="smp-item">All trips list (date, score, duration)</div>
+                  <div class="smp-item">Filter by date range</div>
+                  <div class="smp-item">Trip detail drill-down</div>
+                  <div class="smp-item">OBD data summary per trip</div>
+                  <div class="smp-item">Export trip data</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Score History &amp; Insights</div>
+                <div class="smp-items">
+                  <div class="smp-item">Monthly score calendar (heat map)</div>
+                  <div class="smp-item">Week-over-week comparison</div>
+                  <div class="smp-item">Best / worst driving days</div>
+                  <div class="smp-item">AI insight cards (1 at a time)</div>
+                  <div class="smp-item">Personalized improvement plan</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Blockchain Record</div>
+                <div class="smp-items">
+                  <div class="smp-item">Verification status per score</div>
+                  <div class="smp-item">Block timestamp (simplified)</div>
+                  <div class="smp-item">MVD access log (read-only)</div>
+                  <div class="smp-item">"What is blockchain?" explainer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insurance -->
+        <div class="sm-section">
+          <div class="sm-header">
+            <div class="sm-icon ic-amber">🛡️</div>
+            <div><div class="sm-section-title">Insurance</div><div class="sm-section-sub">Policy management, premium, payments, and renewals</div></div>
+            <span class="sm-freq freq-occ">Monthly</span>
+          </div>
+          <div class="sm-body">
+            <div class="sm-pages">
+              <div class="sm-page">
+                <div class="smp-title">My Policy</div>
+                <div class="smp-items">
+                  <div class="smp-item">Policy number &amp; status</div>
+                  <div class="smp-item">Vehicle details covered</div>
+                  <div class="smp-item">Coverage summary (plain language)</div>
+                  <div class="smp-item">Certificate of insurance download</div>
+                  <div class="smp-item">Insurer contact details</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Premium</div>
+                <div class="smp-items">
+                  <div class="smp-item">Current premium amount</div>
+                  <div class="smp-item">Score-based discount applied</div>
+                  <div class="smp-item">Premium breakdown (base + tax)</div>
+                  <div class="smp-item">Comparison: if score improves</div>
+                  <div class="smp-item">Premium history chart</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Payments</div>
+                <div class="smp-items">
+                  <div class="smp-item">Pay premium CTA</div>
+                  <div class="smp-item">Payment method management</div>
+                  <div class="smp-item">Payment history &amp; receipts</div>
+                  <div class="smp-item">Auto-pay toggle</div>
+                  <div class="smp-item">Next due date reminder</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Renewal</div>
+                <div class="smp-items">
+                  <div class="smp-item">Renewal date countdown</div>
+                  <div class="smp-item">Projected renewal premium</div>
+                  <div class="smp-item">Compare insurer offers</div>
+                  <div class="smp-item">Renew policy CTA</div>
+                  <div class="smp-item">Score target to lower premium</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Documents</div>
+                <div class="smp-items">
+                  <div class="smp-item">Certificate of insurance</div>
+                  <div class="smp-item">Policy schedule document</div>
+                  <div class="smp-item">Payment receipts archive</div>
+                  <div class="smp-item">Blockchain-verified score report</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Claims -->
+        <div class="sm-section">
+          <div class="sm-header">
+            <div class="sm-icon ic-red">📋</div>
+            <div><div class="sm-section-title">Claims</div><div class="sm-section-sub">Submission, tracking, and settlement history</div></div>
+            <span class="sm-freq freq-rare">As Needed</span>
+          </div>
+          <div class="sm-body">
+            <div class="sm-pages">
+              <div class="sm-page">
+                <div class="smp-title">New Claim</div>
+                <div class="smp-items">
+                  <div class="smp-item">Incident date selector</div>
+                  <div class="smp-item">Incident type (accident, theft, etc.)</div>
+                  <div class="smp-item">Description text field</div>
+                  <div class="smp-item">Photo / document upload</div>
+                  <div class="smp-item">Score-on-date auto-retrieved</div>
+                  <div class="smp-item">Estimated payout preview</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Active Claims</div>
+                <div class="smp-items">
+                  <div class="smp-item">Claim ID &amp; status (timeline)</div>
+                  <div class="smp-item">Adjuster notes (read-only)</div>
+                  <div class="smp-item">Documents submitted</div>
+                  <div class="smp-item">Expected resolution date</div>
+                  <div class="smp-item">Contact claims team</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Claim History</div>
+                <div class="smp-items">
+                  <div class="smp-item">All past claims list</div>
+                  <div class="smp-item">Settlement amount per claim</div>
+                  <div class="smp-item">Score adjustment applied</div>
+                  <div class="smp-item">Blockchain-verified record</div>
+                  <div class="smp-item">Download settlement letter</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rewards -->
+        <div class="sm-section">
+          <div class="sm-header">
+            <div class="sm-icon ic-amber">🏆</div>
+            <div><div class="sm-section-title">Rewards</div><div class="sm-section-sub">Incentives, tokens, and safe-driving recognition</div></div>
+            <span class="sm-freq freq-occ">Weekly</span>
+          </div>
+          <div class="sm-body">
+            <div class="sm-pages">
+              <div class="sm-page">
+                <div class="smp-title">My Rewards</div>
+                <div class="smp-items">
+                  <div class="smp-item">Token balance (earned via scores)</div>
+                  <div class="smp-item">Available discounts &amp; offers</div>
+                  <div class="smp-item">Achievement badges earned</div>
+                  <div class="smp-item">Redeem tokens CTA</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">How to Earn</div>
+                <div class="smp-items">
+                  <div class="smp-item">Score milestones explained</div>
+                  <div class="smp-item">Safe driving streaks</div>
+                  <div class="smp-item">Referral program</div>
+                  <div class="smp-item">Partner offers</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin: Insurance Company -->
+        <div class="sm-section">
+          <div class="sm-header">
+            <div class="sm-icon ic-navy">🏢</div>
+            <div><div class="sm-section-title">Admin — Insurance Company Portal</div><div class="sm-section-sub">Risk management, user portfolios, claims administration</div></div>
+            <span class="sm-freq freq-daily">Daily (Admin)</span>
+          </div>
+          <div class="sm-body">
+            <div class="sm-pages">
+              <div class="sm-page">
+                <div class="smp-title">Risk Dashboard</div>
+                <div class="smp-items">
+                  <div class="smp-item">Portfolio risk score distribution</div>
+                  <div class="smp-item">High-risk driver alerts</div>
+                  <div class="smp-item">Premium revenue summary</div>
+                  <div class="smp-item">Claims pending count</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">User Management</div>
+                <div class="smp-items">
+                  <div class="smp-item">All insured drivers list</div>
+                  <div class="smp-item">Score history per driver</div>
+                  <div class="smp-item">Segment by risk tier</div>
+                  <div class="smp-item">Apply premium adjustments</div>
+                  <div class="smp-item">Policy issuance tools</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Claims Management</div>
+                <div class="smp-items">
+                  <div class="smp-item">All pending claims queue</div>
+                  <div class="smp-item">Claim detail with blockchain score</div>
+                  <div class="smp-item">Approve / reject / query</div>
+                  <div class="smp-item">Settlement calculation tool</div>
+                  <div class="smp-item">Fraud flagging interface</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Analytics &amp; Reports</div>
+                <div class="smp-items">
+                  <div class="smp-item">Score vs. claims correlation</div>
+                  <div class="smp-item">Revenue by risk tier</div>
+                  <div class="smp-item">Fraud detection alerts</div>
+                  <div class="smp-item">Export reports (PDF / CSV)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin: MVD -->
+        <div class="sm-section">
+          <div class="sm-header">
+            <div class="sm-icon ic-navy">🏛️</div>
+            <div><div class="sm-section-title">Admin — MVD Government Portal</div><div class="sm-section-sub">Compliance tracking, road safety data, enforcement support</div></div>
+            <span class="sm-freq freq-occ">Weekly (Regulator)</span>
+          </div>
+          <div class="sm-body">
+            <div class="sm-pages">
+              <div class="sm-page">
+                <div class="smp-title">Road Safety Overview</div>
+                <div class="smp-items">
+                  <div class="smp-item">Population-level score distribution</div>
+                  <div class="smp-item">Region-based risk heat map</div>
+                  <div class="smp-item">Rash driver identification</div>
+                  <div class="smp-item">Year-over-year safety trend</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Driver Score Lookup</div>
+                <div class="smp-items">
+                  <div class="smp-item">Search by vehicle registration</div>
+                  <div class="smp-item">Score history (blockchain-verified)</div>
+                  <div class="smp-item">Incident correlation view</div>
+                  <div class="smp-item">Read-only access only</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Compliance Reports</div>
+                <div class="smp-items">
+                  <div class="smp-item">Insured vs. uninsured status</div>
+                  <div class="smp-item">Score compliance by region</div>
+                  <div class="smp-item">Exportable reports for policy</div>
+                  <div class="smp-item">Audit trail access</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile & Settings -->
+        <div class="sm-section">
+          <div class="sm-header">
+            <div class="sm-icon ic-teal">⚙️</div>
+            <div><div class="sm-section-title">Profile &amp; Settings</div><div class="sm-section-sub">Account management, vehicle, notifications, security</div></div>
+            <span class="sm-freq freq-rare">Occasional</span>
+          </div>
+          <div class="sm-body">
+            <div class="sm-pages">
+              <div class="sm-page">
+                <div class="smp-title">My Profile</div>
+                <div class="smp-items">
+                  <div class="smp-item">Personal details (name, email, phone)</div>
+                  <div class="smp-item">Avatar / photo</div>
+                  <div class="smp-item">Driver ID &amp; license</div>
+                  <div class="smp-item">Account tier / role</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">My Vehicle</div>
+                <div class="smp-items">
+                  <div class="smp-item">Vehicle details (make, model, year)</div>
+                  <div class="smp-item">OBD device connection status</div>
+                  <div class="smp-item">Add / remove vehicle</div>
+                  <div class="smp-item">Mileage &amp; service records</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Notifications</div>
+                <div class="smp-items">
+                  <div class="smp-item">Score alerts toggle</div>
+                  <div class="smp-item">Premium due reminders</div>
+                  <div class="smp-item">Claim status updates</div>
+                  <div class="smp-item">Reward notifications</div>
+                  <div class="smp-item">Communication preferences</div>
+                </div>
+              </div>
+              <div class="sm-page">
+                <div class="smp-title">Security</div>
+                <div class="smp-items">
+                  <div class="smp-item">Change password</div>
+                  <div class="smp-item">Two-factor authentication</div>
+                  <div class="smp-item">Active sessions</div>
+                  <div class="smp-item">Data sharing consent</div>
+                  <div class="smp-item">Delete account</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /sitemap-root -->
+    </div>
+
+    <div class="sec-div"></div>
+
+    <!-- ══════ S4: PAGE-LEVEL CONTENT IA ══════ -->
+    <div class="section" id="s4">
+      <div class="sec-label"><span class="sec-num">04 /</span> Content Structure</div>
+      <h2 class="sec-h2">Page-Level <em>Content IA</em></h2>
+      <p class="sec-lead">For each key page, content is organized into priority zones. Zone 1 is visible on load without scrolling. Zones 2–4 require engagement. This ensures the most important information is never buried.</p>
+
+      <div class="g2" style="margin-bottom:1.25rem">
+
+        <div class="pcia">
+          <div class="pcia-header"><div class="pcia-title">Dashboard</div><div class="pcia-meta">Daily Use · Score-First</div></div>
+          <div class="pcia-body">
+            <div class="pcia-zone zone-p1">
+              <div class="pcia-zone-label">Zone 1 — Above the Fold</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Today's Driving Score</span><span class="priority-badge pri-1">P1</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Score trend (7-day sparkline)</span><span class="priority-badge pri-1">P1</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Active alerts / notifications</span><span class="priority-badge pri-1">P1</span></div>
+              </div>
+            </div>
+            <div class="pcia-zone zone-p2">
+              <div class="pcia-zone-label">Zone 2 — First Scroll</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Quick action buttons (4 max)</span><span class="priority-badge pri-2">P2</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Premium status summary card</span><span class="priority-badge pri-2">P2</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Active claim status (if any)</span><span class="priority-badge pri-2">P2</span></div>
+              </div>
+            </div>
+            <div class="pcia-zone zone-p3">
+              <div class="pcia-zone-label">Zone 3 — Secondary Info</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Recent trips summary</span><span class="priority-badge pri-3">P3</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Reward / token balance</span><span class="priority-badge pri-3">P3</span></div>
+              </div>
+            </div>
+            <div class="pcia-zone zone-p4">
+              <div class="pcia-zone-label">Zone 4 — Bottom / Footer</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Blockchain sync status</span><span class="priority-badge pri-4">P4</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Help &amp; support link</span><span class="priority-badge pri-4">P4</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pcia">
+          <div class="pcia-header"><div class="pcia-title">My Score — Score Breakdown</div><div class="pcia-meta">Weekly Use · Analysis-First</div></div>
+          <div class="pcia-body">
+            <div class="pcia-zone zone-p1">
+              <div class="pcia-zone-label">Zone 1 — Above the Fold</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Overall score (large, centered)</span><span class="priority-badge pri-1">P1</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Score tier badge + label</span><span class="priority-badge pri-1">P1</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Blockchain verified indicator</span><span class="priority-badge pri-1">P1</span></div>
+              </div>
+            </div>
+            <div class="pcia-zone zone-p2">
+              <div class="pcia-zone-label">Zone 2 — Score Factors</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Speed compliance bar</span><span class="priority-badge pri-2">P2</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Braking behavior bar</span><span class="priority-badge pri-2">P2</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Acceleration pattern bar</span><span class="priority-badge pri-2">P2</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Engine load efficiency bar</span><span class="priority-badge pri-2">P2</span></div>
+              </div>
+            </div>
+            <div class="pcia-zone zone-p3">
+              <div class="pcia-zone-label">Zone 3 — History & Insights</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">30-day score calendar</span><span class="priority-badge pri-3">P3</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">AI insight card (single)</span><span class="priority-badge pri-3">P3</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Premium impact projection</span><span class="priority-badge pri-3">P3</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pcia">
+          <div class="pcia-header"><div class="pcia-title">Insurance — My Policy</div><div class="pcia-meta">Monthly Use · Trust-First</div></div>
+          <div class="pcia-body">
+            <div class="pcia-zone zone-p1">
+              <div class="pcia-zone-label">Zone 1 — Status at a Glance</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Policy status (Active/Expiring)</span><span class="priority-badge pri-1">P1</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Current premium amount</span><span class="priority-badge pri-1">P1</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Score-based discount shown</span><span class="priority-badge pri-1">P1</span></div>
+              </div>
+            </div>
+            <div class="pcia-zone zone-p2">
+              <div class="pcia-zone-label">Zone 2 — Policy Details</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Coverage summary (plain language)</span><span class="priority-badge pri-2">P2</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Vehicle covered details</span><span class="priority-badge pri-2">P2</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Insurer details &amp; contact</span><span class="priority-badge pri-2">P2</span></div>
+              </div>
+            </div>
+            <div class="pcia-zone zone-p3">
+              <div class="pcia-zone-label">Zone 3 — Actions</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Download certificate CTA</span><span class="priority-badge pri-3">P3</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Renew / upgrade policy CTA</span><span class="priority-badge pri-3">P3</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Compare insurer offers</span><span class="priority-badge pri-3">P3</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pcia">
+          <div class="pcia-header"><div class="pcia-title">Claims — New Claim</div><div class="pcia-meta">High-Stakes · Step-by-Step</div></div>
+          <div class="pcia-body">
+            <div class="pcia-zone zone-p1">
+              <div class="pcia-zone-label">Zone 1 — Context &amp; Score Pull</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Incident date picker (auto-fills score)</span><span class="priority-badge pri-1">P1</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Score on incident date (auto)</span><span class="priority-badge pri-1">P1</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Estimated payout preview</span><span class="priority-badge pri-1">P1</span></div>
+              </div>
+            </div>
+            <div class="pcia-zone zone-p2">
+              <div class="pcia-zone-label">Zone 2 — Incident Details</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Incident type selector</span><span class="priority-badge pri-2">P2</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Description text field</span><span class="priority-badge pri-2">P2</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Photo / document upload</span><span class="priority-badge pri-2">P2</span></div>
+              </div>
+            </div>
+            <div class="pcia-zone zone-p3">
+              <div class="pcia-zone-label">Zone 3 — Confirmation</div>
+              <div class="pcia-items">
+                <div class="pcia-item"><span class="pcia-item-name">Submit claim CTA</span><span class="priority-badge pri-3">P3</span></div>
+                <div class="pcia-item"><span class="pcia-item-name">Blockchain record notice</span><span class="priority-badge pri-3">P3</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="sec-div"></div>
+
+    <!-- ══════ S5: USER FLOW MAPPING ══════ -->
+    <div class="section" id="s5">
+      <div class="sec-label"><span class="sec-num">05 /</span> Flow Mapping</div>
+      <h2 class="sec-h2">User Flow <em>Paths</em></h2>
+      <p class="sec-lead">How the IA supports four critical user flows. Each flow shows the entry point, navigation path through the IA, key decision points, and exit state.</p>
+
+      <div class="flow-path">
+        <div class="fp-header"><div class="fp-title">First-Time Onboarding</div><span class="fp-role fr-driver">Driver</span></div>
+        <div class="fp-body">
+          <div class="fp-step entry">App Launch</div><div class="fp-arr">→</div>
+          <div class="fp-step">Welcome Screen</div><div class="fp-arr">→</div>
+          <div class="fp-step decision">Goal Selection?</div><div class="fp-arr">→</div>
+          <div class="fp-step">Vehicle Registration</div><div class="fp-arr">→</div>
+          <div class="fp-step">OBD Setup Guide</div><div class="fp-arr">→</div>
+          <div class="fp-step decision">Notification Allow?</div><div class="fp-arr">→</div>
+          <div class="fp-step end">Dashboard (Home)</div>
+        </div>
+      </div>
+
+      <div class="flow-path">
+        <div class="fp-header"><div class="fp-title">Daily Usage — Check Score & Premium</div><span class="fp-role fr-driver">Driver</span></div>
+        <div class="fp-body">
+          <div class="fp-step entry">Dashboard</div><div class="fp-arr">→</div>
+          <div class="fp-step">Score card (P1 zone)</div><div class="fp-arr">→</div>
+          <div class="fp-step decision">Wants detail?</div><div class="fp-arr">→</div>
+          <div class="fp-step">My Score → Breakdown</div><div class="fp-arr">→</div>
+          <div class="fp-step">Premium Impact Preview</div><div class="fp-arr">→</div>
+          <div class="fp-step end">Dashboard (Back)</div>
+        </div>
+      </div>
+
+      <div class="flow-path">
+        <div class="fp-header"><div class="fp-title">Claim Submission</div><span class="fp-role fr-driver">Driver</span></div>
+        <div class="fp-body">
+          <div class="fp-step entry">Dashboard Quick Action</div><div class="fp-arr">→</div>
+          <div class="fp-step">Claims → New Claim</div><div class="fp-arr">→</div>
+          <div class="fp-step">Enter incident date</div><div class="fp-arr">→</div>
+          <div class="fp-step decision">Score auto-pulled</div><div class="fp-arr">→</div>
+          <div class="fp-step">Complete form</div><div class="fp-arr">→</div>
+          <div class="fp-step">Submit</div><div class="fp-arr">→</div>
+          <div class="fp-step end">Active Claims (Status)</div>
+        </div>
+      </div>
+
+      <div class="flow-path">
+        <div class="fp-header"><div class="fp-title">Policy Renewal</div><span class="fp-role fr-driver">Driver</span></div>
+        <div class="fp-body">
+          <div class="fp-step entry">Renewal Alert (Notification)</div><div class="fp-arr">→</div>
+          <div class="fp-step">Insurance → Renewal</div><div class="fp-arr">→</div>
+          <div class="fp-step">Projected premium shown</div><div class="fp-arr">→</div>
+          <div class="fp-step decision">Compare offers?</div><div class="fp-arr">→</div>
+          <div class="fp-step">Select plan</div><div class="fp-arr">→</div>
+          <div class="fp-step">Payments → Pay</div><div class="fp-arr">→</div>
+          <div class="fp-step end">My Policy (Renewed)</div>
+        </div>
+      </div>
+
+      <div class="flow-path">
+        <div class="fp-header"><div class="fp-title">Claims Adjudication</div><span class="fp-role fr-insurer">Insurer</span></div>
+        <div class="fp-body">
+          <div class="fp-step entry">Admin Dashboard</div><div class="fp-arr">→</div>
+          <div class="fp-step">Claims Queue</div><div class="fp-arr">→</div>
+          <div class="fp-step">Open Claim Detail</div><div class="fp-arr">→</div>
+          <div class="fp-step decision">Score verified?</div><div class="fp-arr">→</div>
+          <div class="fp-step">Calculate settlement</div><div class="fp-arr">→</div>
+          <div class="fp-step decision">Approve / Flag Fraud</div><div class="fp-arr">→</div>
+          <div class="fp-step end">Claim Settled / Escalated</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-div"></div>
+
+    <!-- ══════ S6: ROLE-BASED IA ══════ -->
+    <div class="section" id="s6">
+      <div class="sec-label"><span class="sec-num">06 /</span> Role Architecture</div>
+      <h2 class="sec-h2">Role-Based <em>Architecture</em></h2>
+      <p class="sec-lead">The underlying sitemap is shared. What changes per role: default landing page, primary navigation labels, data density, available actions, and which sections are visible or hidden.</p>
+
+      <div class="role-tabs" id="roleTabs">
+        <div class="rtab active" onclick="switchRole(0)">
+          <span class="rtab-icon">🧑</span><span class="rtab-label">Driver</span>
+        </div>
+        <div class="rtab" onclick="switchRole(1)">
+          <span class="rtab-icon">🏢</span><span class="rtab-label">Insurance Co.</span>
+        </div>
+        <div class="rtab" onclick="switchRole(2)">
+          <span class="rtab-icon">🏛️</span><span class="rtab-label">MVD / Gov.</span>
+        </div>
+      </div>
+
+      <!-- Driver Panel -->
+      <div class="role-panel active" id="role0">
+        <div class="g3">
+          <div class="card card-teal">
+            <h3>Home Base</h3>
+            <p>Dashboard — score-first, personal, action-oriented. Everything revolves around "how am I driving?" and "what does it cost me?"</p>
+          </div>
+          <div class="card card-teal">
+            <h3>Primary Navigation</h3>
+            <ul><li>Dashboard · My Score · Insurance · Claims · Rewards</li><li>Simple, task-based labels</li><li>No admin sections visible</li><li>Blockchain abstracted as "Verified" badge</li></ul>
+          </div>
+          <div class="card card-teal">
+            <h3>Data Density</h3>
+            <p>Low-to-medium. Scores as percentages, premiums as amounts, trends as sparklines. Technical data (OBD, ML scores) never shown raw — always translated into plain English.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Insurer Panel -->
+      <div class="role-panel" id="role1">
+        <div class="g3">
+          <div class="card card-amber">
+            <h3>Home Base</h3>
+            <p>Risk Dashboard — portfolio-level view. Distribution of risk scores across all insured drivers. Claims pending. Revenue by tier. High-risk alerts at top.</p>
+          </div>
+          <div class="card card-amber">
+            <h3>Primary Navigation</h3>
+            <ul><li>Risk Dashboard · Customers · Claims · Analytics · Settings</li><li>Business-oriented labels replacing personal labels</li><li>Access to all driver records (read)</li><li>Claims approval workflow visible</li></ul>
+          </div>
+          <div class="card card-amber">
+            <h3>Data Density</h3>
+            <p>High. Score distributions, claim ratios, risk tier percentages, fraud flags. Tables, filters, and export functions prominent. Blockchain records shown with block details for audit.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MVD Panel -->
+      <div class="role-panel" id="role2">
+        <div class="g3">
+          <div class="card card-navy">
+            <h3>Home Base</h3>
+            <p>Road Safety Overview — population analytics, region maps. Purpose is monitoring, enforcement, and policy-making — not transaction management.</p>
+          </div>
+          <div class="card card-navy">
+            <h3>Primary Navigation</h3>
+            <ul><li>Safety Overview · Driver Lookup · Compliance Reports · Settings</li><li>Read-only access — no transaction actions</li><li>Cannot modify any data — only view &amp; export</li><li>Aggregate data only, not individual PII by default</li></ul>
+          </div>
+          <div class="card card-navy">
+            <h3>Data Density</h3>
+            <p>Medium-to-high. Aggregate statistics, geographic heat maps, trend lines over quarters. Individual driver lookup available by vehicle registration for specific enforcement cases only.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:1.25rem" class="card">
+        <h3>What Stays Consistent Across All Roles</h3>
+        <div class="g3" style="margin-top:0.875rem">
+          <div><div style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem">Navigation Pattern</div><p style="font-size:12.5px;color:var(--ink2);line-height:1.6">Top navigation bar with utility icons (notifications, settings, profile). Back navigation always consistent. Notification layer identical.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem">Design Language</div><p style="font-size:12.5px;color:var(--ink2);line-height:1.6">Same color system, typography, and component patterns. Only data density and actions differ. A driver who becomes an admin finds the interface familiar.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem">Score Data Layer</div><p style="font-size:12.5px;color:var(--ink2);line-height:1.6">Blockchain-verified score is the common truth across all roles. All three roles see the same underlying score data — just in different contexts and with different permissions.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-div"></div>
+
+    <!-- ══════ S7: DATA RELATIONSHIPS ══════ -->
+    <div class="section" id="s7">
+      <div class="sec-label"><span class="sec-num">07 /</span> Data Architecture</div>
+      <h2 class="sec-h2">Data & Feature <em>Relationships</em></h2>
+      <p class="sec-lead">The driving score is the central data node. Everything downstream depends on it. Understanding these dependencies is essential for designing a coherent IA where changes in one section logically propagate to others.</p>
+
+      <div class="info-banner navy">
+        <span class="ib-icon">🔗</span>
+        <div><div class="ib-label">Core Data Flow</div><div class="ib-text"><strong>OBD Device → Driving Score (ML) → Blockchain Record → Insurance Premium → Claim Settlement.</strong> Each stage is both a data producer and consumer. The blockchain is the immutable anchor at the center.</div></div>
+      </div>
+
+      <!-- Data flow chain -->
+      <div class="df-chain">
+        <div class="df-node src">
+          <span class="df-node-icon">📡</span>
+          <div class="df-node-title">OBD Device</div>
+          <div class="df-node-desc">Speed, RPM, acceleration, engine load — raw telemetry</div>
+        </div>
+        <div class="df-arrow">
+          <div style="display:flex;align-items:center"><div class="df-arr-line"></div><div class="df-arr-head"></div></div>
+          <div class="df-arr-label">CSV Upload</div>
+        </div>
+        <div class="df-node src">
+          <span class="df-node-icon">🤖</span>
+          <div class="df-node-title">ML Model</div>
+          <div class="df-node-desc">Random Forest classifier → driving score 0–100%</div>
+        </div>
+        <div class="df-arrow">
+          <div style="display:flex;align-items:center"><div class="df-arr-line"></div><div class="df-arr-head"></div></div>
+          <div class="df-arr-label">Score Push</div>
+        </div>
+        <div class="df-node mid">
+          <span class="df-node-icon">⛓️</span>
+          <div class="df-node-title">Blockchain</div>
+          <div class="df-node-desc">Hyperledger Fabric — immutable, verified record</div>
+        </div>
+        <div class="df-arrow">
+          <div style="display:flex;align-items:center"><div class="df-arr-line"></div><div class="df-arr-head"></div></div>
+          <div class="df-arr-label">Score Read</div>
+        </div>
+        <div class="df-node end">
+          <span class="df-node-icon">🛡️</span>
+          <div class="df-node-title">Insurance Engine</div>
+          <div class="df-node-desc">Premium multiplier applied based on rolling average score</div>
+        </div>
+        <div class="df-arrow">
+          <div style="display:flex;align-items:center"><div class="df-arr-line"></div><div class="df-arr-head"></div></div>
+          <div class="df-arr-label">On Claim</div>
+        </div>
+        <div class="df-node end">
+          <span class="df-node-icon">📋</span>
+          <div class="df-node-title">Claims Engine</div>
+          <div class="df-node-desc">Incident-day score retrieved, settlement calculated automatically</div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <h3>Cross-Section Dependencies</h3>
+          <ul>
+            <li><strong>My Score → Insurance:</strong> Score changes trigger premium recalculation shown in Insurance section</li>
+            <li><strong>Insurance → Claims:</strong> Active policy required before claim submission is enabled</li>
+            <li><strong>Score → Claims:</strong> Incident-day score automatically pulled from blockchain when claim date entered</li>
+            <li><strong>Rewards ← Score:</strong> Score milestones trigger token generation, reflected in Rewards section</li>
+            <li><strong>Blockchain → All:</strong> Verification status propagates to My Score, Insurance, and Claims — all show "Verified" state</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>IA Implications of Dependencies</h3>
+          <ul>
+            <li>Premium display in Insurance must always pull live score data — no stale cache</li>
+            <li>Claims form must be blocked if no active policy exists — with a clear path to Insurance section</li>
+            <li>Dashboard must aggregate from 4 data sources: score, blockchain, insurance, claims</li>
+            <li>Notifications are the cross-cutting layer — triggered by events in any section</li>
+            <li>Settings → OBD connection status affects whether My Score can display real data</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-div"></div>
+
+    <!-- ══════ S8: SCALABILITY ══════ -->
+    <div class="section" id="s8">
+      <div class="sec-label"><span class="sec-num">08 /</span> Future-Proofing</div>
+      <h2 class="sec-h2">Scalability & <em>Future-Proofing</em></h2>
+      <p class="sec-lead">The IA is designed as an open framework, not a closed structure. New capabilities slot into existing sections rather than creating new top-level items, preserving navigation simplicity as the product grows.</p>
+
+      <div class="g4" style="margin-bottom:1.25rem">
+        <div class="scale-card">
+          <div class="sc-icon ic-teal">🤖</div>
+          <div class="sc-title">AI Recommendations</div>
+          <div class="sc-text">Delivered as insight cards within My Score and Dashboard Zone 3. AI is a layer on existing sections — not a standalone "AI" section. This prevents cognitive fragmentation.</div>
+        </div>
+        <div class="scale-card">
+          <div class="sc-icon ic-amber">⚡</div>
+          <div class="sc-title">Real-Time Alerts</div>
+          <div class="sc-text">The Notifications utility layer already supports real-time events. Adding push for live score drops or claim updates requires no IA change — just notification type expansion.</div>
+        </div>
+        <div class="scale-card">
+          <div class="sc-icon ic-navy">📱</div>
+          <div class="sc-title">Multi-Device Integration</div>
+          <div class="sc-text">Settings → My Vehicle supports multiple vehicle profiles. Score aggregation logic handles multi-device OBD. IA needs no restructuring — just additional records in existing sections.</div>
+        </div>
+        <div class="scale-card">
+          <div class="sc-icon ic-teal">🌐</div>
+          <div class="sc-title">Multi-Insurer Marketplace</div>
+          <div class="sc-text">Insurance → Renewal already contains "Compare offers." A full marketplace feature extends this sub-page — no new primary nav item needed. Complexity grows within the section.</div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="card card-teal">
+          <h3>What Will Never Need Restructuring</h3>
+          <ul>
+            <li>Primary navigation labels — they're activity-based, not feature-based</li>
+            <li>Dashboard as home base — it's an aggregator, infinitely expandable via zones</li>
+            <li>Utility nav pattern — notifications/settings/profile is a universal web convention</li>
+            <li>Role-based access model — new roles (e.g., fleet manager) slot into existing pattern</li>
+            <li>Blockchain as trust layer — abstracted, not surfaced, so tech changes don't affect IA</li>
+          </ul>
+        </div>
+        <div class="card card-amber">
+          <h3>Planned Future Extensions (Pre-Accommodated)</h3>
+          <ul>
+            <li><strong>Fleet Management:</strong> New role variant — same IA, fleet-level aggregation</li>
+            <li><strong>Telematics History:</strong> Trip History sub-page in My Score already exists</li>
+            <li><strong>Smart Contract Claims:</strong> Claims section already handles status tracking</li>
+            <li><strong>Carbon Score:</strong> New metric card in Score Breakdown, not a new section</li>
+            <li><strong>API Partner Access:</strong> Admin-level portal extension, isolated from user IA</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-div"></div>
+
+    <!-- ══════ S9: NAMING SYSTEM ══════ -->
+    <div class="section" id="s9">
+      <div class="sec-label"><span class="sec-num">09 /</span> Naming System</div>
+      <h2 class="sec-h2">Naming & <em>Labeling System</em></h2>
+      <p class="sec-lead">Every label in the system follows three rules: it describes the user's goal (not the system's function), it uses the simplest possible word, and it remains consistent wherever it appears in navigation, headings, and notifications.</p>
+
+      <div class="info-banner">
+        <span class="ib-icon">✍️</span>
+        <div><div class="ib-label">Naming Principle</div><div class="ib-text"><strong>"My [thing]" pattern for personal data. Active verbs for actions. Never technical system terms as labels.</strong> A driver should never need to understand how blockchain or ML works to navigate the platform.</div></div>
+      </div>
+
+      <table class="name-table" style="margin-bottom:1.25rem">
+        <thead><tr><th>Section / Feature</th><th>Avoid (Technical / Jargon)</th><th>Use (Plain Language)</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Driving Score Page</td><td><span class="avoid">OBD Telemetry Analysis</span></td><td><span class="use">My Score</span></td><td>Personal, goal-oriented, familiar</td></tr>
+          <tr><td>Blockchain Record</td><td><span class="avoid">Hyperledger Fabric Block</span></td><td><span class="use">Verified Record</span></td><td>Trust-conveying without technical explanation</td></tr>
+          <tr><td>ML Score Output</td><td><span class="avoid">Random Forest Prediction</span></td><td><span class="use">Driving Score</span></td><td>Output-focused, not process-focused</td></tr>
+          <tr><td>Insurance Premium</td><td><span class="avoid">Risk-Adjusted Actuarial Rate</span></td><td><span class="use">Your Premium</span></td><td>Ownership language reduces anxiety</td></tr>
+          <tr><td>Claims Processing</td><td><span class="avoid">Claims Adjudication Workflow</span></td><td><span class="use">File a Claim</span></td><td>Action-first, plain-English verb</td></tr>
+          <tr><td>OBD Device Status</td><td><span class="avoid">OBD-II Diagnostic Port Connected</span></td><td><span class="use">Car Connected</span></td><td>Outcome not mechanism</td></tr>
+          <tr><td>Score Factors</td><td><span class="avoid">Telemetry Parameter Breakdown</span></td><td><span class="use">What Affects Your Score</span></td><td>Question-framing increases engagement</td></tr>
+          <tr><td>Token Rewards</td><td><span class="avoid">Blockchain Token Ledger Balance</span></td><td><span class="use">Your Rewards</span></td><td>Familiar loyalty program language</td></tr>
+          <tr><td>MVD Admin Portal</td><td><span class="avoid">Government Regulatory Interface</span></td><td><span class="use">Road Safety Portal</span></td><td>Purpose-first, not org-chart-first</td></tr>
+          <tr><td>Score Trend</td><td><span class="avoid">Time-Series Telemetry Graph</span></td><td><span class="use">Score History</span></td><td>Plain, scannable, no chart jargon</td></tr>
+        </tbody>
+      </table>
+
+      <div class="g3">
+        <div class="card">
+          <h3>Consistency Rules</h3>
+          <ul>
+            <li>Same label in nav, page heading, notification, and URL slug</li>
+            <li>"My Score" in nav = "My Score" as H1 = "your score" in body copy</li>
+            <li>Never switch between "claim" and "case" — pick one and hold it</li>
+            <li>Numbers always with units: "84.07%" not "84.07 score"</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Tone by Section</h3>
+          <ul>
+            <li><strong>Dashboard:</strong> Warm, motivating ("Good driving this week!")</li>
+            <li><strong>Insurance:</strong> Clear, confident, no fine print language</li>
+            <li><strong>Claims:</strong> Direct, calm, empathetic — never bureaucratic</li>
+            <li><strong>Admin Portals:</strong> Professional, precise, data-forward</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Status Labels</h3>
+          <ul>
+            <li><strong>Claim statuses:</strong> Submitted → Under Review → Approved → Settled</li>
+            <li><strong>Score tiers:</strong> Excellent (80%+) · Good (70–80%) · Fair (60–70%) · Needs Work (&lt;60%)</li>
+            <li><strong>Policy statuses:</strong> Active · Expiring Soon · Expired · Pending</li>
+            <li><strong>Blockchain:</strong> Verified · Pending Sync · Not Yet Verified</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CLOSING NOTE -->
+    <div class="section" style="min-height:auto;padding-bottom:2rem">
+      <div style="background:var(--navy);border-radius:var(--r);padding:2rem 2.5rem;max-width:800px">
+        <div style="font-family:var(--mono);font-size:9.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--teal-md);margin-bottom:0.75rem">Summary Principle</div>
+        <div style="font-family:var(--serif);font-size:1.3rem;font-style:italic;font-weight:300;color:#F4F1EC;line-height:1.5;margin-bottom:1rem">"The best IA is the one the user never thinks about. They simply find what they need, complete their task, and leave feeling understood."</div>
+        <div style="font-size:12.5px;color:rgba(255,255,255,0.4);line-height:1.65">This IA hides OBD complexity behind "Car Connected," blockchain behind "Verified," and ML behind "Your Score." Three distinct user types navigate a single coherent system without confusion. That is the goal.</div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div style="border-top:1px solid var(--border);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;background:var(--bg2)">
+    <span style="font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:0.05em">Dynamic Insurance System · Information Architecture v1.0</span>
+    <span style="font-size:12px;color:var(--ink3)">9 Sections · 3 Roles · 38+ Pages</span>
+  </div>
+
+</main>
+
+<script>
+const progress = document.getElementById('progress');
+const navItems = document.querySelectorAll('.sn-item');
+const sections = document.querySelectorAll('.section');
+
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const totalH = document.documentElement.scrollHeight - window.innerHeight;
+  progress.style.width = (scrollTop / totalH * 100) + '%';
+  let current = 's1';
+  sections.forEach(s => {
+    if (s.getBoundingClientRect().top < 100) current = s.id;
+  });
+  navItems.forEach(item => {
+    item.classList.toggle('active', item.getAttribute('href') === '#' + current);
+  });
+});
+
+function switchRole(idx) {
+  document.querySelectorAll('.rtab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.role-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+}
+</script>
+</body>
+</html>

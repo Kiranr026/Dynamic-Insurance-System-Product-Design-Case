@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dynamic Insurance System — Key Screen Layouts</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#1B4FD8;--brand-lt:#EEF2FF;--brand-md:#93B4FF;--brand-dk:#1239A8;
+  --teal:#0F7A6B;--teal-lt:#E6F6F4;--teal-md:#6DC9BE;
+  --success:#166534;--success-lt:#DCFCE7;--success-md:#86EFAC;
+  --warn:#92400E;--warn-lt:#FEF3C7;--warn-md:#FCD34D;
+  --danger:#991B1B;--danger-lt:#FEE2E2;--danger-md:#FCA5A5;
+  --info:#1E40AF;--info-lt:#DBEAFE;--info-md:#93C5FD;
+  --n0:#FFFFFF;--n50:#F9FAFB;--n100:#F3F4F6;--n200:#E5E7EB;--n300:#D1D5DB;
+  --n400:#9CA3AF;--n500:#6B7280;--n600:#4B5563;--n700:#374151;--n800:#1F2937;--n900:#111827;
+  --serif:'Lora',Georgia,serif;
+  --sans:'Plus Jakarta Sans',system-ui,sans-serif;
+  --mono:'Space Mono',monospace;
+  --r4:4px;--r8:8px;--r12:12px;--r16:16px;--r24:24px;--rpill:999px;
+  --sh1:0 1px 2px rgba(0,0,0,0.05);
+  --sh2:0 1px 3px rgba(0,0,0,0.07),0 4px 12px rgba(0,0,0,0.05);
+  --sh3:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.06);
+  --sidebar:272px;
+}
+html{scroll-behavior:smooth}
+body{background:#F1F3F8;color:var(--n900);font-family:var(--sans);font-size:14px;line-height:1.6;display:flex;min-height:100vh}
+
+/* ── DOC SIDEBAR ── */
+.dsb{width:var(--sidebar);min-height:100vh;background:var(--n900);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;display:flex;flex-direction:column;z-index:100;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent}
+.dsb::-webkit-scrollbar{width:3px}.dsb::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1)}
+.dsb-hd{padding:1.5rem 1.25rem 1.1rem;border-bottom:1px solid rgba(255,255,255,0.07)}
+.dsb-logo{display:flex;align-items:center;gap:9px;margin-bottom:0.5rem}
+.dsb-mark{width:30px;height:30px;border-radius:var(--r8);background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:14px}
+.dsb-brand{font-family:var(--serif);font-size:0.9rem;color:#F3F4F6;font-style:italic}
+.dsb-sub{font-family:var(--mono);font-size:8.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.22)}
+.dsb-nav{padding:0.5rem 0;flex:1}
+.dsg{margin-bottom:0.25rem}
+.dsg-l{font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0.7rem 1.25rem 0.25rem}
+.dsn{display:flex;align-items:center;gap:0.5rem;padding:0.38rem 1.25rem;text-decoration:none;transition:background 0.15s;border-left:2px solid transparent;cursor:pointer}
+.dsn:hover{background:rgba(255,255,255,0.04)}
+.dsn.active{background:rgba(27,79,216,0.22);border-left-color:var(--brand-md)}
+.dsn-n{font-family:var(--mono);font-size:8.5px;color:rgba(255,255,255,0.2);min-width:18px}
+.dsn.active .dsn-n{color:var(--brand-md)}
+.dsn-t{font-size:11.5px;color:rgba(255,255,255,0.42);line-height:1.25}
+.dsn.active .dsn-t{color:rgba(255,255,255,0.9);font-weight:500}
+.dsb-ft{padding:0.875rem 1.25rem;border-top:1px solid rgba(255,255,255,0.07);font-family:var(--mono);font-size:8.5px;color:rgba(255,255,255,0.2)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);flex:1}
+.topbar{position:sticky;top:0;background:rgba(241,243,248,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--n200);padding:0.65rem 2.5rem;display:flex;align-items:center;justify-content:space-between;z-index:50}
+.tb-l{font-family:var(--mono);font-size:10px;color:var(--n400);letter-spacing:0.05em}
+.tb-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;padding:3px 10px;border-radius:var(--rpill);border:1px solid var(--brand-md);color:var(--brand);background:var(--brand-lt)}
+.pbar{position:fixed;top:0;left:var(--sidebar);right:0;height:2px;background:var(--brand);z-index:200;width:0%}
+.content{padding:2rem 2.5rem 5rem}
+strong{font-weight:600;color:var(--n800)}
+
+/* ── HERO ── */
+.hero{margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1.5px solid var(--n200)}
+.hero-eye{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--brand);margin-bottom:0.875rem;display:flex;align-items:center;gap:9px}
+.hero-eye::before{content:'';display:inline-block;width:22px;height:1.5px;background:var(--brand)}
+.hero-h1{font-family:var(--serif);font-size:clamp(2rem,3.5vw,3rem);font-weight:600;line-height:1.12;color:var(--n900);margin-bottom:0.75rem}
+.hero-h1 em{font-style:italic;color:var(--brand);font-weight:400}
+.hero-p{font-size:0.94rem;color:var(--n500);max-width:600px;line-height:1.75;margin-bottom:1.75rem}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--n200);border:1px solid var(--n200);border-radius:var(--r8);overflow:hidden;max-width:640px}
+.hs{background:var(--n0);padding:1rem 1.25rem}
+.hs-n{font-family:var(--serif);font-size:1.75rem;font-weight:600;color:var(--brand);line-height:1}
+.hs-l{font-family:var(--mono);font-size:8.5px;color:var(--n400);letter-spacing:0.06em;text-transform:uppercase;margin-top:0.25rem}
+
+/* ── SECTIONS ── */
+.sec{scroll-margin-top:62px;margin-bottom:3rem}
+.sec-eye{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--brand);margin-bottom:0.35rem;display:flex;align-items:center;gap:8px}
+.sec-eye::before{content:'';display:inline-block;width:14px;height:1.5px;background:var(--brand)}
+.sec-n{color:var(--n300);margin-right:2px}
+.sec-h2{font-family:var(--serif);font-size:clamp(1.4rem,2.5vw,2rem);font-weight:600;line-height:1.2;color:var(--n900);margin-bottom:0.5rem}
+.sec-h2 em{font-style:italic;color:var(--brand);font-weight:400}
+.sec-desc{font-size:0.875rem;color:var(--n500);max-width:640px;line-height:1.7;margin-bottom:1.5rem}
+.sdiv{height:1.5px;background:var(--n200);margin:2.5rem 0}
+
+/* ── SCREEN SHELL ── */
+.screen-shell{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r16);overflow:hidden;box-shadow:var(--sh3);margin-bottom:1.25rem}
+.ss-topbar{background:var(--n900);padding:0.7rem 1.25rem;display:flex;align-items:center;gap:0.75rem}
+.ss-dots{display:flex;gap:5px}
+.ss-dot{width:10px;height:10px;border-radius:50%}
+.ss-dot:nth-child(1){background:#FF5F57}
+.ss-dot:nth-child(2){background:#FFBD2E}
+.ss-dot:nth-child(3){background:#28C840}
+.ss-url{flex:1;background:rgba(255,255,255,0.08);border-radius:var(--r4);padding:4px 12px;font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:0.03em}
+.ss-body{display:flex;min-height:480px}
+
+/* ── APP SIDEBAR (inside mockup) ── */
+.app-sb{width:200px;min-height:480px;background:var(--n800);display:flex;flex-direction:column;flex-shrink:0}
+.asb-hd{padding:1rem 1rem 0.75rem;border-bottom:1px solid rgba(255,255,255,0.07)}
+.asb-logo{display:flex;align-items:center;gap:7px}
+.asb-mark{width:22px;height:22px;border-radius:5px;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:10px}
+.asb-name{font-family:var(--serif);font-size:0.78rem;color:#E5E7EB;font-style:italic}
+.asb-nav{padding:0.4rem 0;flex:1}
+.asb-item{display:flex;align-items:center;gap:7px;padding:0.45rem 0.875rem;cursor:pointer;border-left:2px solid transparent}
+.asb-item.active{background:rgba(27,79,216,0.22);border-left-color:var(--brand-md)}
+.asb-item-icon{font-size:12px;min-width:16px;text-align:center}
+.asb-item-label{font-size:10.5px;color:rgba(255,255,255,0.45);font-weight:400}
+.asb-item.active .asb-item-label{color:rgba(255,255,255,0.9);font-weight:500}
+.asb-user{padding:0.7rem 0.875rem;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:7px}
+.asb-avatar{width:24px;height:24px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:700;flex-shrink:0}
+.asb-user-info{min-width:0}
+.asb-user-name{font-size:10px;font-weight:600;color:rgba(255,255,255,0.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asb-user-role{font-family:var(--mono);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:0.06em}
+
+/* ── APP CONTENT AREA ── */
+.app-content{flex:1;overflow:hidden;background:var(--n50)}
+.app-header{background:var(--n0);border-bottom:1px solid var(--n200);padding:0.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+.ah-title{font-size:13px;font-weight:700;color:var(--n800)}
+.ah-breadcrumb{font-family:var(--mono);font-size:8px;color:var(--n400);margin-top:1px;letter-spacing:0.03em}
+.ah-actions{display:flex;gap:0.5rem;align-items:center}
+.ah-btn{font-size:10.5px;font-weight:600;padding:5px 12px;border-radius:var(--r8);border:none;cursor:pointer;font-family:var(--sans)}
+.ah-btn-primary{background:var(--brand);color:#fff}
+.ah-btn-secondary{background:transparent;color:var(--brand);border:1.5px solid var(--brand);background:var(--brand-lt)}
+.ah-btn-ghost{background:var(--n100);color:var(--n600);border:1px solid var(--n200)}
+.ah-icon{width:28px;height:28px;border-radius:var(--r8);background:var(--n100);border:1px solid var(--n200);display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer}
+.app-main{padding:1rem 1.25rem;overflow-y:auto;height:calc(100% - 52px)}
+
+/* ── MICRO COMPONENTS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;margin-bottom:1rem}
+.kpi{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.75rem;box-shadow:var(--sh1)}
+.kpi-label{font-family:var(--mono);font-size:7.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-bottom:0.25rem}
+.kpi-value{font-family:var(--serif);font-size:1.375rem;font-weight:600;line-height:1;color:var(--n900)}
+.kpi-delta{font-size:9px;font-weight:600;margin-top:2px}
+.delta-up{color:var(--teal)}
+.delta-down{color:var(--danger)}
+.delta-neu{color:var(--n400)}
+
+.score-hero{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r12);padding:1rem;box-shadow:var(--sh2);display:flex;align-items:center;gap:1rem;margin-bottom:0.875rem}
+.sh-ring{position:relative;width:80px;height:80px;flex-shrink:0}
+.sh-ring svg{position:absolute;inset:0}
+.sh-ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.sh-score{font-family:var(--serif);font-size:1.15rem;font-weight:600;color:var(--n900);line-height:1}
+.sh-pct{font-family:var(--mono);font-size:7px;color:var(--n400);letter-spacing:0.08em}
+.sh-info{}
+.sh-title{font-size:11px;font-weight:700;color:var(--n800);margin-bottom:2px}
+.sh-sub{font-size:10px;color:var(--n500);margin-bottom:6px}
+.sh-tags{display:flex;gap:4px;flex-wrap:wrap}
+
+.tag{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:2px 7px;border-radius:var(--rpill);border:1px solid}
+.t-g{color:var(--success);border-color:var(--success-md);background:var(--success-lt)}
+.t-w{color:var(--warn);border-color:var(--warn-md);background:var(--warn-lt)}
+.t-d{color:var(--danger);border-color:var(--danger-md);background:var(--danger-lt)}
+.t-b{color:var(--brand);border-color:var(--brand-md);background:var(--brand-lt)}
+.t-n{color:var(--n600);border-color:var(--n300);background:var(--n100)}
+.t-t{color:var(--teal);border-color:var(--teal-md);background:var(--teal-lt)}
+
+.mini-card{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.75rem;box-shadow:var(--sh1)}
+.mc-label{font-family:var(--mono);font-size:7.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-bottom:0.3rem}
+.mc-value{font-size:12.5px;font-weight:700;color:var(--n900);margin-bottom:2px}
+.mc-sub{font-size:9.5px;color:var(--n500)}
+
+.alert-row{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.625rem 0.75rem;display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.4rem;box-shadow:var(--sh1)}
+.ar-icon{font-size:12px;flex-shrink:0;margin-top:1px}
+.ar-body{min-width:0}
+.ar-title{font-size:10.5px;font-weight:600;color:var(--n800);margin-bottom:1px}
+.ar-desc{font-size:9.5px;color:var(--n500);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ar-badge{margin-left:auto;flex-shrink:0}
+
+.prog-bar-row{margin-bottom:0.5rem}
+.pb-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.pb-label{font-size:10px;font-weight:600;color:var(--n700)}
+.pb-val{font-family:var(--mono);font-size:9px;color:var(--n500)}
+.pb-track{height:6px;background:var(--n100);border-radius:var(--rpill);overflow:hidden}
+.pb-fill{height:100%;border-radius:var(--rpill)}
+
+.section-title{font-size:11px;font-weight:700;color:var(--n700);letter-spacing:0.02em;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:space-between}
+.section-title-link{font-size:9.5px;font-weight:500;color:var(--brand);cursor:pointer}
+
+.trip-row{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.625rem 0.75rem;display:flex;align-items:center;gap:0.6rem;margin-bottom:0.35rem;box-shadow:var(--sh1);cursor:pointer;transition:border-color 0.15s}
+.trip-row:hover{border-color:var(--brand-md)}
+.trip-score{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:700;flex-shrink:0}
+.ts-g{background:var(--success-lt);color:var(--success)}
+.ts-w{background:var(--warn-lt);color:var(--warn)}
+.ts-d{background:var(--danger-lt);color:var(--danger)}
+.trip-info{flex:1;min-width:0}
+.ti-date{font-size:10px;font-weight:600;color:var(--n800)}
+.ti-meta{font-size:9px;color:var(--n400)}
+.trip-score-label{font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--n800)}
+
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1rem}
+.qa{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.625rem 0.5rem;text-align:center;cursor:pointer;transition:border-color 0.15s,background 0.15s;box-shadow:var(--sh1)}
+.qa:hover{border-color:var(--brand-md);background:var(--brand-lt)}
+.qa-icon{font-size:16px;display:block;margin-bottom:0.3rem}
+.qa-label{font-size:9px;font-weight:600;color:var(--n600)}
+
+/* ── TABLE ── */
+.dt{width:100%;border-collapse:collapse;font-size:10.5px}
+.dt th{text-align:left;padding:0.4rem 0.6rem;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--n400);border-bottom:1px solid var(--n200);background:var(--n50)}
+.dt td{padding:0.5rem 0.6rem;border-bottom:1px solid var(--n100);color:var(--n700);vertical-align:middle}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--n50)}
+
+/* ── PREMIUM CARD ── */
+.premium-big{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r12);padding:1rem;box-shadow:var(--sh2);margin-bottom:0.875rem}
+.pb-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.75rem}
+.pb-amount-label{font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-bottom:2px}
+.pb-amount{font-family:var(--serif);font-size:1.75rem;font-weight:600;color:var(--n900);line-height:1}
+.pb-saved{font-size:10px;font-weight:600;color:var(--teal);margin-top:2px}
+.pb-line{display:flex;justify-content:space-between;padding:0.35rem 0;border-bottom:1px solid var(--n100);font-size:10px}
+.pb-line:last-child{border-bottom:none;padding-bottom:0;font-weight:700;font-size:11px}
+.pb-k{color:var(--n500)}
+.pb-v{color:var(--n800);font-weight:500}
+.pb-v.green{color:var(--teal);font-weight:700}
+
+/* ── CLAIM TRACKER ── */
+.claim-timeline{padding:0.5rem 0}
+.ct-step{display:flex;gap:0.6rem;padding-bottom:0.875rem;position:relative}
+.ct-step:last-child{padding-bottom:0}
+.ct-left{display:flex;flex-direction:column;align-items:center;width:18px;flex-shrink:0}
+.ct-dot{width:14px;height:14px;border-radius:50%;border:2px solid;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700}
+.ct-dot.done{background:var(--teal);border-color:var(--teal);color:#fff}
+.ct-dot.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.ct-dot.pending{background:var(--n100);border-color:var(--n300);color:var(--n400)}
+.ct-line{width:1.5px;flex:1;background:var(--n200);margin:2px 0}
+.ct-body{min-width:0;padding-top:0}
+.ct-title{font-size:10px;font-weight:600;color:var(--n800)}
+.ct-date{font-family:var(--mono);font-size:8.5px;color:var(--n400);margin-top:1px}
+.ct-note{font-size:9.5px;color:var(--n500);margin-top:2px;line-height:1.4}
+
+/* ── REWARD CARD ── */
+.reward-card{background:linear-gradient(135deg,var(--n900),#1B3A6B);border-radius:var(--r12);padding:1rem;color:#fff;margin-bottom:0.875rem;position:relative;overflow:hidden}
+.rc-decoration{position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.04)}
+.rc-label{font-family:var(--mono);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:0.25rem}
+.rc-tokens{font-family:var(--serif);font-size:2rem;font-weight:600;color:#fff;line-height:1}
+.rc-sub{font-size:9px;color:rgba(255,255,255,0.5);margin-top:2px}
+.rc-progress{margin-top:0.75rem}
+.rc-prog-top{display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:4px}
+.rc-prog-track{height:5px;background:rgba(255,255,255,0.12);border-radius:var(--rpill);overflow:hidden}
+.rc-prog-fill{height:100%;border-radius:var(--rpill);background:linear-gradient(90deg,#60A5FA,#34D399)}
+
+/* ── BLOCKCHAIN BADGE ── */
+.bc-badge{display:inline-flex;align-items:center;gap:5px;background:var(--info-lt);border:1px solid var(--info-md);border-radius:var(--r8);padding:4px 8px}
+.bc-badge.verified{background:var(--teal-lt);border-color:var(--teal-md)}
+.bc-text{font-family:var(--mono);font-size:8.5px;font-weight:700;color:var(--info);letter-spacing:0.04em}
+.bc-badge.verified .bc-text{color:var(--teal)}
+
+/* ── ADMIN TABLES ── */
+.risk-pill{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:0.06em;padding:2px 7px;border-radius:var(--rpill);border:1px solid}
+.rp-e{color:var(--teal);border-color:var(--teal-md);background:var(--teal-lt)}
+.rp-g{color:var(--success);border-color:var(--success-md);background:var(--success-lt)}
+.rp-m{color:var(--warn);border-color:var(--warn-md);background:var(--warn-lt)}
+.rp-h{color:var(--danger);border-color:var(--danger-md);background:var(--danger-lt)}
+
+/* ── FORM ELEMENTS ── */
+.form-row{margin-bottom:0.625rem}
+.fl{font-size:9.5px;font-weight:600;color:var(--n700);margin-bottom:3px;display:block}
+.fi{font-family:var(--sans);font-size:10.5px;color:var(--n800);background:var(--n0);border:1.5px solid var(--n200);border-radius:var(--r8);padding:6px 10px;width:100%;outline:none}
+.fi:focus{border-color:var(--brand)}
+.fi-hint{font-size:9px;color:var(--n400);margin-top:2px}
+
+/* ── NOTIFICATION ── */
+.notif-item{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.625rem 0.75rem;margin-bottom:0.35rem;display:flex;gap:0.6rem;align-items:flex-start;box-shadow:var(--sh1)}
+.ni-priority{width:3px;border-radius:var(--rpill);align-self:stretch;flex-shrink:0}
+.ni-high{background:var(--danger)}
+.ni-med{background:var(--warn)}
+.ni-low{background:var(--n300)}
+.ni-body{flex:1;min-width:0}
+.ni-title{font-size:10.5px;font-weight:600;color:var(--n800);margin-bottom:1px}
+.ni-text{font-size:9.5px;color:var(--n500);line-height:1.4}
+.ni-time{font-family:var(--mono);font-size:8px;color:var(--n400);margin-top:2px}
+.ni-action{font-size:9px;font-weight:600;color:var(--brand);cursor:pointer;white-space:nowrap;flex-shrink:0;margin-top:2px}
+
+/* ── SCREEN ANNOTATION ── */
+.annotation{background:var(--brand-lt);border:1px solid var(--brand-md);border-radius:var(--r8);padding:0.875rem 1.1rem;margin-bottom:1rem}
+.ann-label{font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--brand);margin-bottom:0.375rem}
+.ann-body{font-size:12.5px;color:var(--n700);line-height:1.65}
+
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.875rem;margin-bottom:1.5rem}
+.spec-card{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:1rem;box-shadow:var(--sh1)}
+.spec-card h4{font-size:12px;font-weight:700;color:var(--n800);margin-bottom:0.5rem;padding-bottom:0.4rem;border-bottom:1px solid var(--n100)}
+.spec-card ul{font-size:11.5px;color:var(--n600);padding-left:1.1rem;display:flex;flex-direction:column;gap:3px;line-height:1.5}
+.spec-card ul li::marker{color:var(--brand)}
+
+/* ── EMPTY/LOADING STATES ── */
+.empty-state{background:var(--n0);border:1.5px dashed var(--n200);border-radius:var(--r12);padding:1.5rem;text-align:center}
+.es-icon{font-size:1.75rem;display:block;margin-bottom:0.5rem}
+.es-title{font-size:11.5px;font-weight:700;color:var(--n700);margin-bottom:0.25rem}
+.es-text{font-size:10px;color:var(--n400);line-height:1.5;max-width:180px;margin:0 auto 0.75rem}
+.skeleton{background:linear-gradient(90deg,var(--n200) 25%,var(--n100) 50%,var(--n200) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--r4)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;gap:0.5rem;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap}
+.filter-chip{font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:4px 10px;border-radius:var(--rpill);border:1.5px solid var(--n200);background:var(--n0);color:var(--n500);cursor:pointer}
+.filter-chip.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.filter-input{font-family:var(--sans);font-size:10px;background:var(--n0);border:1.5px solid var(--n200);border-radius:var(--r8);padding:4px 8px;color:var(--n700);outline:none;min-width:120px}
+.filter-input:focus{border-color:var(--brand)}
+.ml-auto{margin-left:auto}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){:root{--sidebar:0px}.dsb{display:none}.main{margin-left:0}.content{padding:1.25rem 1rem 4rem}.g2,.g3{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}.quick-actions{grid-template-columns:repeat(2,1fr)}.spec-grid{grid-template-columns:1fr}.hero-stats{grid-template-columns:repeat(2,1fr)}}
+
+/* Chart bars */
+.bar-mini{display:flex;align-items:flex-end;gap:3px;height:48px}
+.bm-bar{flex:1;border-radius:2px 2px 0 0;min-height:3px}
+</style>
+</head>
+<body>
+<div class="pbar" id="pbar"></div>
+
+<!-- DOC SIDEBAR -->
+<aside class="dsb">
+  <div class="dsb-hd">
+    <div class="dsb-logo"><div class="dsb-mark">🚗</div><div class="dsb-brand">DriveSure</div></div>
+    <div class="dsb-sub">Key Screen Layouts · v1.0</div>
+  </div>
+  <nav class="dsb-nav">
+    <div class="dsg"><div class="dsg-l">Strategy</div>
+      <a class="dsn active" href="#s0"><span class="dsn-n">00</span><span class="dsn-t">Screen Strategy</span></a>
+    </div>
+    <div class="dsg"><div class="dsg-l">Primary Screens</div>
+      <a class="dsn" href="#s1"><span class="dsn-n">01</span><span class="dsn-t">Dashboard</span></a>
+      <a class="dsn" href="#s2"><span class="dsn-n">02</span><span class="dsn-t">Driving Score</span></a>
+      <a class="dsn" href="#s3"><span class="dsn-n">03</span><span class="dsn-t">Trip History</span></a>
+      <a class="dsn" href="#s4"><span class="dsn-n">04</span><span class="dsn-t">Insurance</span></a>
+      <a class="dsn" href="#s5"><span class="dsn-n">05</span><span class="dsn-t">Claims</span></a>
+      <a class="dsn" href="#s6"><span class="dsn-n">06</span><span class="dsn-t">Rewards</span></a>
+      <a class="dsn" href="#s7"><span class="dsn-n">07</span><span class="dsn-t">Profile & Settings</span></a>
+      <a class="dsn" href="#s8"><span class="dsn-n">08</span><span class="dsn-t">Notifications Panel</span></a>
+    </div>
+    <div class="dsg"><div class="dsg-l">Admin</div>
+      <a class="dsn" href="#s9"><span class="dsn-n">09</span><span class="dsn-t">Insurance Admin</span></a>
+      <a class="dsn" href="#s10"><span class="dsn-n">10</span><span class="dsn-t">MVD Dashboard</span></a>
+    </div>
+    <div class="dsg"><div class="dsg-l">System</div>
+      <a class="dsn" href="#s11"><span class="dsn-n">11</span><span class="dsn-t">States & Responsiveness</span></a>
+    </div>
+  </nav>
+  <div class="dsb-ft">DIS UI Screens · v1.0.0 · 2025</div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="tb-l">Dynamic Insurance System · Key Screen Layouts</span>
+    <span class="tb-tag">13 Screens Defined</span>
+  </div>
+
+  <div class="content">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eye">UI Structure · Production-Ready Layouts</div>
+      <h1 class="hero-h1">Key Screens — <em>UI Architecture</em></h1>
+      <p class="hero-p">Structured UI layouts for all primary screens of the Dynamic Insurance System. Each screen is rendered as a live mockup with annotated hierarchy, content priority, component decisions, and interaction states — ready for direct translation into wireframes or high-fidelity designs.</p>
+      <div class="hero-stats">
+        <div class="hs"><div class="hs-n">13</div><div class="hs-l">Screens Defined</div></div>
+        <div class="hs"><div class="hs-n">3</div><div class="hs-l">User Roles</div></div>
+        <div class="hs"><div class="hs-n">4+</div><div class="hs-l">States Each</div></div>
+        <div class="hs"><div class="hs-n">100%</div><div class="hs-l">Responsive</div></div>
+      </div>
+    </div>
+
+    <!-- ══ S0: STRATEGY ══ -->
+    <div class="sec" id="s0">
+      <div class="sec-eye"><span class="sec-n">00 /</span> Foundation</div>
+      <h2 class="sec-h2">Overall <em>Screen Strategy</em></h2>
+      <p class="sec-desc">Every screen is built on a consistent shell — left sidebar navigation, top header with context and actions, main content area. This predictable structure means users always know where navigation is, where page title is, and where the primary action lives.</p>
+
+      <div class="spec-grid">
+        <div class="spec-card">
+          <h4>Universal Layout Shell</h4>
+          <ul>
+            <li><strong>Left sidebar (200px):</strong> Primary navigation — always visible on desktop</li>
+            <li><strong>Top header:</strong> Page title + breadcrumb + contextual action buttons</li>
+            <li><strong>Content area:</strong> Full-width, scrollable, max-width 1280px</li>
+            <li><strong>Content grid:</strong> 12 columns, 16px gutters, responsive breakpoints</li>
+            <li><strong>Utility nav (top-right):</strong> Notifications bell, settings gear, user avatar</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Content Priority Rules</h4>
+          <ul>
+            <li>Every screen answers two questions: "What do I need to know?" and "What should I do next?"</li>
+            <li>Critical metric (score/premium/status) is always above the fold — no scroll needed for primary data</li>
+            <li>Primary CTA always in the header actions zone or as a prominent card CTA</li>
+            <li>Secondary information lives below the fold or in expandable sections</li>
+            <li>Alerts surface at the top of content, never buried in a sidebar</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Data Presentation Decisions</h4>
+          <ul>
+            <li>Numbers in serif/mono at display size for instant legibility</li>
+            <li>Trends shown as sparklines or mini bar charts — not full-page charts</li>
+            <li>Status always communicated via color + text + icon (never color alone)</li>
+            <li>Raw data hidden behind progressive disclosure — always translated first</li>
+            <li>Blockchain data abstracted as "Verified" badge — never raw hashes</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Navigation Hierarchy</h4>
+          <ul>
+            <li><strong>L1 (Sidebar):</strong> Dashboard · My Score · Trips · Insurance · Claims · Rewards · Settings</li>
+            <li><strong>L2 (Tabs/sub-nav):</strong> Within each section — e.g., Insurance has Policy/Premium/Payments/Renewal</li>
+            <li><strong>L3 (Drill-down):</strong> Trip detail, claim detail — breadcrumb back navigation</li>
+            <li>Active state: left border highlight + background tint + bold label</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S1: DASHBOARD ══ -->
+    <div class="sec" id="s1">
+      <div class="sec-eye"><span class="sec-n">01 /</span> Primary Screen</div>
+      <h2 class="sec-h2"><em>Dashboard</em> — Primary Landing Screen</h2>
+      <p class="sec-desc">The most important screen. Every returning user lands here. Score dominates the visual hierarchy — everything else supports it. Layout uses a 3-column asymmetric grid: score+trend (60%) / alerts+actions (40%) above fold. KPI row and trip list below.</p>
+
+      <div class="annotation">
+        <div class="ann-label">Layout Strategy</div>
+        <div class="ann-body"><strong>Zone 1 (above fold):</strong> Score hero + 7-day trend sparkline + current premium + active alert card. <strong>Zone 2:</strong> 4-column KPI row (streak, trips this week, avg score, discount earned). <strong>Zone 3:</strong> Quick actions row. <strong>Zone 4:</strong> Recent trips list. Content priority flows top→bottom by usage frequency.</div>
+      </div>
+
+      <div class="screen-shell">
+        <div class="ss-topbar">
+          <div class="ss-dots"><div class="ss-dot"></div><div class="ss-dot"></div><div class="ss-dot"></div></div>
+          <div class="ss-url">app.drivesure.in/dashboard</div>
+        </div>
+        <div class="ss-body">
+          <!-- App Sidebar -->
+          <div class="app-sb">
+            <div class="asb-hd"><div class="asb-logo"><div class="asb-mark">🚗</div><div class="asb-name">DriveSure</div></div></div>
+            <div class="asb-nav">
+              <div class="asb-item active"><span class="asb-item-icon">🏠</span><span class="asb-item-label">Dashboard</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📊</span><span class="asb-item-label">My Score</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🗺</span><span class="asb-item-label">Trips</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🛡</span><span class="asb-item-label">Insurance</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📋</span><span class="asb-item-label">Claims</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🏆</span><span class="asb-item-label">Rewards</span></div>
+              <div class="asb-item"><span class="asb-item-icon">⚙</span><span class="asb-item-label">Settings</span></div>
+            </div>
+            <div class="asb-user"><div class="asb-avatar">AR</div><div class="asb-user-info"><div class="asb-user-name">Arjun Nair</div><div class="asb-user-role">Driver</div></div></div>
+          </div>
+          <!-- Content -->
+          <div class="app-content">
+            <div class="app-header">
+              <div><div class="ah-title">Good morning, Arjun 👋</div><div class="ah-breadcrumb">FRIDAY, 7 JUNE 2025</div></div>
+              <div class="ah-actions">
+                <div class="ah-icon">🔔</div>
+                <div class="ah-icon">⚙</div>
+                <div class="ah-btn ah-btn-primary" style="font-size:9.5px">+ Upload Trip</div>
+              </div>
+            </div>
+            <div class="app-main" style="max-height:440px">
+              <!-- Score + Premium row -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.625rem;margin-bottom:0.75rem">
+                <div class="score-hero">
+                  <div class="sh-ring">
+                    <svg width="80" height="80" viewBox="0 0 80 80">
+                      <circle cx="40" cy="40" r="32" fill="none" stroke="#E5E7EB" stroke-width="8"/>
+                      <circle cx="40" cy="40" r="32" fill="none" stroke="#0F7A6B" stroke-width="8" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="35" transform="rotate(-90 40 40)"/>
+                    </svg>
+                    <div class="sh-ring-center"><div class="sh-score">84.1</div><div class="sh-pct">% Score</div></div>
+                  </div>
+                  <div class="sh-info">
+                    <div class="sh-title">Your Driving Score</div>
+                    <div class="sh-sub">Updated 2h ago · <span style="color:var(--teal);font-weight:600">↑ 4.3 this week</span></div>
+                    <div class="sh-tags"><span class="tag t-g">Excellent</span><span class="tag t-t">🔥 14-day streak</span></div>
+                  </div>
+                </div>
+                <div class="premium-big" style="margin-bottom:0">
+                  <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-bottom:2px">Monthly Premium</div>
+                  <div style="font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--n900);line-height:1">₹5,311</div>
+                  <div style="font-size:9px;font-weight:600;color:var(--teal);margin-bottom:0.6rem">↓ ₹1,689 saved via score</div>
+                  <div style="display:flex;flex-direction:column;gap:0.25rem">
+                    <div class="pb-line" style="font-size:9.5px"><span class="pb-k">Base</span><span class="pb-v">₹6,000</span></div>
+                    <div class="pb-line" style="font-size:9.5px"><span class="pb-k">Score (84.1%) −25%</span><span class="pb-v green">−₹1,500</span></div>
+                    <div class="pb-line" style="font-size:9.5px;font-weight:700"><span>Total</span><span>₹5,311</span></div>
+                  </div>
+                </div>
+              </div>
+              <!-- KPI row -->
+              <div class="kpi-grid" style="margin-bottom:0.75rem">
+                <div class="kpi"><div class="kpi-label">Streak</div><div class="kpi-value" style="font-size:1.25rem">14d</div><div class="kpi-delta delta-up">🔥 Personal best</div></div>
+                <div class="kpi"><div class="kpi-label">Trips this week</div><div class="kpi-value" style="font-size:1.25rem">7</div><div class="kpi-delta delta-up">↑ 2 vs last week</div></div>
+                <div class="kpi"><div class="kpi-label">7-day avg score</div><div class="kpi-value" style="font-size:1.25rem">82.4</div><div class="kpi-delta delta-up">↑ 3.1 improving</div></div>
+                <div class="kpi"><div class="kpi-label">Discount earned</div><div class="kpi-value" style="font-size:1.25rem;color:var(--teal)">25%</div><div class="kpi-delta delta-neu">Max tier unlocked</div></div>
+              </div>
+              <!-- Alert -->
+              <div class="alert-row" style="border-left:2.5px solid var(--warn);background:var(--warn-lt);border-color:var(--warn-md);margin-bottom:0.75rem">
+                <span class="ar-icon">⚠</span>
+                <div class="ar-body">
+                  <div class="ar-title" style="color:var(--warn)">3 harsh braking events on Tuesday's trip</div>
+                  <div class="ar-desc">This impacted your braking score by −3.2 points. Tap to see the trip and learn how to improve.</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;align-items:flex-end">
+                  <span class="tag t-w">Action needed</span>
+                  <span style="font-size:9px;color:var(--brand);font-weight:600;cursor:pointer">View trip →</span>
+                </div>
+              </div>
+              <!-- Quick actions -->
+              <div class="quick-actions" style="margin-bottom:0.75rem">
+                <div class="qa"><span class="qa-icon">📊</span><span class="qa-label">View Score</span></div>
+                <div class="qa"><span class="qa-icon">🛡</span><span class="qa-label">My Policy</span></div>
+                <div class="qa"><span class="qa-icon">📋</span><span class="qa-label">File Claim</span></div>
+                <div class="qa"><span class="qa-icon">⬆</span><span class="qa-label">Upload Trip</span></div>
+              </div>
+              <!-- Recent trips -->
+              <div class="section-title">Recent Trips<span class="section-title-link">View all →</span></div>
+              <div class="trip-row"><div class="trip-score ts-g">88%</div><div class="trip-info"><div class="ti-date">Today, Fri 7 Jun · 8:14 AM</div><div class="ti-meta">22 km · 38 min · MG Road → Ernakulam</div></div><span class="tag t-g">Excellent</span></div>
+              <div class="trip-row"><div class="trip-score ts-w">67%</div><div class="trip-info"><div class="ti-date">Tue, 4 Jun · 9:02 AM</div><div class="ti-meta">18 km · 32 min · 3 braking events</div></div><span class="tag t-w">Fair</span></div>
+              <div class="trip-row"><div class="trip-score ts-g">91%</div><div class="trip-info"><div class="ti-date">Mon, 3 Jun · 8:47 AM</div><div class="ti-meta">24 km · 41 min · Smooth drive</div></div><span class="tag t-g">Excellent</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spec-grid">
+        <div class="spec-card"><h4>Visual Hierarchy — Priority Order</h4><ul><li><strong>P1 — Score ring + trend:</strong> Dominant, above fold, 50% of above-fold width</li><li><strong>P2 — Premium card:</strong> Equal billing with score — the financial outcome</li><li><strong>P3 — KPI row:</strong> Supporting data, scannable in under 5 seconds</li><li><strong>P4 — Alert:</strong> Amber border, always visible when active</li><li><strong>P5 — Quick actions:</strong> 4-grid, large tap targets</li><li><strong>P6 — Recent trips:</strong> Context, scrollable list</li></ul></div>
+        <div class="spec-card"><h4>Interaction Behaviors</h4><ul><li>Score ring animates on load: sweeps from 0 to value (0.8s)</li><li>KPI numbers count-up animation on first render</li><li>Alert row has dismiss (swipe/X) with 4s undo toast</li><li>Quick action cards: hover background tint + border color shift</li><li>Trip rows: hover border highlight, click → trip detail slide-in</li><li>Premium card: "View breakdown" expands to full insurance screen</li></ul></div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S2: DRIVING SCORE ══ -->
+    <div class="sec" id="s2">
+      <div class="sec-eye"><span class="sec-n">02 /</span> Core Screen</div>
+      <h2 class="sec-h2"><em>Driving Score</em> Screen</h2>
+      <p class="sec-desc">Deep-dive into the score. Four behavior factor bars, a 30-day calendar heatmap, trip-wise performance list, and one AI insight card. Complex data is simplified through normalization to 0–100, color-coded severity, and plain-language improvement tips.</p>
+
+      <div class="screen-shell">
+        <div class="ss-topbar"><div class="ss-dots"><div class="ss-dot"></div><div class="ss-dot"></div><div class="ss-dot"></div></div><div class="ss-url">app.drivesure.in/score</div></div>
+        <div class="ss-body">
+          <div class="app-sb">
+            <div class="asb-hd"><div class="asb-logo"><div class="asb-mark">🚗</div><div class="asb-name">DriveSure</div></div></div>
+            <div class="asb-nav">
+              <div class="asb-item"><span class="asb-item-icon">🏠</span><span class="asb-item-label">Dashboard</span></div>
+              <div class="asb-item active"><span class="asb-item-icon">📊</span><span class="asb-item-label">My Score</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🗺</span><span class="asb-item-label">Trips</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🛡</span><span class="asb-item-label">Insurance</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📋</span><span class="asb-item-label">Claims</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🏆</span><span class="asb-item-label">Rewards</span></div>
+              <div class="asb-item"><span class="asb-item-icon">⚙</span><span class="asb-item-label">Settings</span></div>
+            </div>
+            <div class="asb-user"><div class="asb-avatar">AR</div><div class="asb-user-info"><div class="asb-user-name">Arjun Nair</div><div class="asb-user-role">Driver</div></div></div>
+          </div>
+          <div class="app-content">
+            <div class="app-header">
+              <div><div class="ah-title">My Driving Score</div><div class="ah-breadcrumb">DASHBOARD › MY SCORE</div></div>
+              <div class="ah-actions">
+                <div class="ah-btn ah-btn-ghost" style="font-size:9.5px">📅 Last 30 days</div>
+                <div class="ah-btn ah-btn-secondary" style="font-size:9.5px">Export Report</div>
+              </div>
+            </div>
+            <div class="app-main" style="max-height:440px">
+              <!-- Score overview + tabs -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.625rem;margin-bottom:0.75rem">
+                <!-- Left: big score + ring -->
+                <div class="mini-card" style="padding:1rem">
+                  <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem">
+                    <div style="position:relative;width:72px;height:72px;flex-shrink:0">
+                      <svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="28" fill="none" stroke="#E5E7EB" stroke-width="7"/><circle cx="36" cy="36" r="28" fill="none" stroke="#0F7A6B" stroke-width="7" stroke-linecap="round" stroke-dasharray="176" stroke-dashoffset="31" transform="rotate(-90 36 36)"/></svg>
+                      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--n900);line-height:1">84.1</div><div style="font-family:var(--mono);font-size:6.5px;color:var(--n400)">%</div></div>
+                    </div>
+                    <div>
+                      <div style="font-family:var(--serif);font-size:1.375rem;font-weight:600;color:var(--n900);line-height:1;margin-bottom:3px">84.1%</div>
+                      <div class="bc-badge verified" style="margin-bottom:4px"><span style="font-size:10px">🔒</span><span class="bc-text">Verified</span></div>
+                      <div style="font-size:9px;color:var(--n400)">Rolling 30-day average</div>
+                    </div>
+                  </div>
+                  <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-bottom:0.375rem">Premium Impact</div>
+                  <div style="display:flex;align-items:center;gap:0.5rem">
+                    <div style="flex:1;height:6px;background:var(--n100);border-radius:var(--rpill);overflow:hidden"><div style="height:100%;width:84%;background:var(--teal);border-radius:var(--rpill)"></div></div>
+                    <div style="font-size:9.5px;font-weight:700;color:var(--teal)">−25%</div>
+                  </div>
+                </div>
+                <!-- Right: 7-day bar chart -->
+                <div class="mini-card" style="padding:1rem">
+                  <div class="section-title" style="margin-bottom:0.5rem">7-Day Trend<span class="section-title-link">Monthly →</span></div>
+                  <div class="bar-mini" style="margin-bottom:0.35rem">
+                    <div class="bm-bar" style="height:62%;background:var(--warn)"></div>
+                    <div class="bm-bar" style="height:71%;background:var(--warn)"></div>
+                    <div class="bm-bar" style="height:80%;background:var(--teal)"></div>
+                    <div class="bm-bar" style="height:84%;background:var(--teal)"></div>
+                    <div class="bm-bar" style="height:88%;background:var(--teal)"></div>
+                    <div class="bm-bar" style="height:79%;background:var(--teal);opacity:0.7"></div>
+                    <div class="bm-bar" style="height:92%;background:var(--teal)"></div>
+                  </div>
+                  <div style="display:flex;gap:3px">
+                    <div style="flex:1;text-align:center;font-family:var(--mono);font-size:7.5px;color:var(--n400)">M</div>
+                    <div style="flex:1;text-align:center;font-family:var(--mono);font-size:7.5px;color:var(--n400)">T</div>
+                    <div style="flex:1;text-align:center;font-family:var(--mono);font-size:7.5px;color:var(--n400)">W</div>
+                    <div style="flex:1;text-align:center;font-family:var(--mono);font-size:7.5px;color:var(--n400)">T</div>
+                    <div style="flex:1;text-align:center;font-family:var(--mono);font-size:7.5px;color:var(--n400)">F</div>
+                    <div style="flex:1;text-align:center;font-family:var(--mono);font-size:7.5px;color:var(--n400)">S</div>
+                    <div style="flex:1;text-align:center;font-family:var(--mono);font-size:7.5px;color:var(--n400)">S</div>
+                  </div>
+                  <div style="margin-top:0.5rem;background:var(--teal-lt);border-radius:var(--r8);padding:0.4rem 0.5rem;border-left:2px solid var(--teal)">
+                    <div style="font-size:9.5px;color:var(--teal);font-weight:600">↑ Improving trend this week</div>
+                    <div style="font-size:8.5px;color:var(--n500)">Braking events down 40% vs last week</div>
+                  </div>
+                </div>
+              </div>
+              <!-- Score breakdown bars -->
+              <div class="mini-card" style="margin-bottom:0.625rem">
+                <div class="section-title" style="margin-bottom:0.625rem">Score Breakdown — What Affects Your Score</div>
+                <div class="prog-bar-row"><div class="pb-header"><span class="pb-label">Speed Compliance</span><span class="pb-val">88 / 100</span></div><div class="pb-track"><div class="pb-fill" style="width:88%;background:var(--teal)"></div></div></div>
+                <div class="prog-bar-row"><div class="pb-header"><span class="pb-label">Braking Behavior</span><span class="pb-val">71 / 100 ⚠</span></div><div class="pb-track"><div class="pb-fill" style="width:71%;background:var(--warn)"></div></div><div style="font-size:9px;color:var(--warn);margin-top:2px">3 harsh braking events this week — tap to see details</div></div>
+                <div class="prog-bar-row"><div class="pb-header"><span class="pb-label">Acceleration Pattern</span><span class="pb-val">82 / 100</span></div><div class="pb-track"><div class="pb-fill" style="width:82%;background:var(--teal)"></div></div></div>
+                <div class="prog-bar-row" style="margin-bottom:0"><div class="pb-header"><span class="pb-label">Engine Load Efficiency</span><span class="pb-val">58 / 100</span></div><div class="pb-track"><div class="pb-fill" style="width:58%;background:#E45C24"></div></div><div style="font-size:9px;color:#E45C24;margin-top:2px">High engine load detected — reduce aggressive acceleration</div></div>
+              </div>
+              <!-- Insight card -->
+              <div style="background:var(--brand-lt);border:1px solid var(--brand-md);border-radius:var(--r8);padding:0.75rem;border-left:3px solid var(--brand)">
+                <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--brand);margin-bottom:4px">💡 This Week's Insight</div>
+                <div style="font-size:10.5px;color:var(--n800);font-weight:600;margin-bottom:2px">Improving braking could save you ₹280/month</div>
+                <div style="font-size:9.5px;color:var(--n600);line-height:1.5">Releasing the accelerator 80–100m before traffic signals would eliminate most harsh braking events. Your current braking score (71) is the main drag on your overall score.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S3: TRIPS ══ -->
+    <div class="sec" id="s3">
+      <div class="sec-eye"><span class="sec-n">03 /</span> Core Screen</div>
+      <h2 class="sec-h2">Trips / <em>Driving History</em></h2>
+      <p class="sec-desc">A filterable, sortable list of all trips. Card layout for individual trips with score badge, date, route summary, and key event highlights. Click any trip to expand a detail drawer showing the full score breakdown for that session.</p>
+
+      <div class="screen-shell">
+        <div class="ss-topbar"><div class="ss-dots"><div class="ss-dot"></div><div class="ss-dot"></div><div class="ss-dot"></div></div><div class="ss-url">app.drivesure.in/trips</div></div>
+        <div class="ss-body">
+          <div class="app-sb">
+            <div class="asb-hd"><div class="asb-logo"><div class="asb-mark">🚗</div><div class="asb-name">DriveSure</div></div></div>
+            <div class="asb-nav">
+              <div class="asb-item"><span class="asb-item-icon">🏠</span><span class="asb-item-label">Dashboard</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📊</span><span class="asb-item-label">My Score</span></div>
+              <div class="asb-item active"><span class="asb-item-icon">🗺</span><span class="asb-item-label">Trips</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🛡</span><span class="asb-item-label">Insurance</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📋</span><span class="asb-item-label">Claims</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🏆</span><span class="asb-item-label">Rewards</span></div>
+              <div class="asb-item"><span class="asb-item-icon">⚙</span><span class="asb-item-label">Settings</span></div>
+            </div>
+            <div class="asb-user"><div class="asb-avatar">AR</div><div class="asb-user-info"><div class="asb-user-name">Arjun Nair</div><div class="asb-user-role">Driver</div></div></div>
+          </div>
+          <div class="app-content">
+            <div class="app-header">
+              <div><div class="ah-title">Trip History</div><div class="ah-breadcrumb">DASHBOARD › TRIPS</div></div>
+              <div class="ah-actions">
+                <div class="ah-btn ah-btn-ghost" style="font-size:9.5px">⬇ Export CSV</div>
+                <div class="ah-btn ah-btn-primary" style="font-size:9.5px">+ Upload Trip</div>
+              </div>
+            </div>
+            <div class="app-main" style="max-height:440px">
+              <!-- Filter bar -->
+              <div class="filter-bar">
+                <div class="filter-chip active">All Trips</div>
+                <div class="filter-chip">Excellent</div>
+                <div class="filter-chip">Needs Work</div>
+                <div class="filter-chip">This Week</div>
+                <div class="filter-chip">This Month</div>
+                <input class="filter-input ml-auto" placeholder="🔍 Search trips..." type="text"/>
+              </div>
+              <!-- Summary strip -->
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.4rem;margin-bottom:0.75rem">
+                <div class="mini-card card-sm"><div class="mc-label">Total Trips</div><div class="mc-value">47</div><div class="mc-sub">Last 30 days</div></div>
+                <div class="mini-card card-sm"><div class="mc-label">Avg Score</div><div class="mc-value">82.4%</div><div class="mc-sub">↑ from 79.1%</div></div>
+                <div class="mini-card card-sm"><div class="mc-label">Total Distance</div><div class="mc-value">842 km</div><div class="mc-sub">This month</div></div>
+                <div class="mini-card card-sm"><div class="mc-label">Risky Events</div><div class="mc-value" style="color:var(--warn)">8</div><div class="mc-sub">Down 60% vs last mo</div></div>
+              </div>
+              <!-- Trip list — table layout -->
+              <div class="mini-card" style="padding:0">
+                <table class="dt" style="width:100%">
+                  <thead><tr><th>Date & Time</th><th>Route</th><th>Distance</th><th>Duration</th><th>Score</th><th>Events</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td style="font-weight:600">Fri 7 Jun, 8:14 AM</td><td>MG Road → Ernakulam</td><td>22 km</td><td>38 min</td><td><span class="tag t-g">88%</span></td><td style="color:var(--n400)">None</td><td style="color:var(--brand);font-size:9px;cursor:pointer">View →</td></tr>
+                    <tr><td style="font-weight:600">Tue 4 Jun, 9:02 AM</td><td>Home → Office</td><td>18 km</td><td>32 min</td><td><span class="tag t-w">67%</span></td><td><span style="color:var(--warn);font-size:9px">3 braking ⚠</span></td><td style="color:var(--brand);font-size:9px;cursor:pointer">View →</td></tr>
+                    <tr><td style="font-weight:600">Mon 3 Jun, 8:47 AM</td><td>Home → Office</td><td>24 km</td><td>41 min</td><td><span class="tag t-g">91%</span></td><td style="color:var(--n400)">None</td><td style="color:var(--brand);font-size:9px;cursor:pointer">View →</td></tr>
+                    <tr><td style="font-weight:600">Sun 2 Jun, 4:22 PM</td><td>Mall → Home</td><td>12 km</td><td>22 min</td><td><span class="tag t-d">52%</span></td><td><span style="color:var(--danger);font-size:9px">5 events ⚠⚠</span></td><td style="color:var(--brand);font-size:9px;cursor:pointer">View →</td></tr>
+                    <tr><td style="font-weight:600">Sat 1 Jun, 10:15 AM</td><td>Ernakulam → Thrissur</td><td>76 km</td><td>1h 42min</td><td><span class="tag t-g">86%</span></td><td><span style="color:var(--warn);font-size:9px">1 braking</span></td><td style="color:var(--brand);font-size:9px;cursor:pointer">View →</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S4: INSURANCE ══ -->
+    <div class="sec" id="s4">
+      <div class="sec-eye"><span class="sec-n">04 /</span> Core Screen</div>
+      <h2 class="sec-h2"><em>Insurance</em> Screen</h2>
+      <p class="sec-desc">Policy details, full premium breakdown, and renewal CTA. Transparency is the design priority — every number is explainable. The score-based discount is shown prominently and tied directly to the user's current score.</p>
+
+      <div class="screen-shell">
+        <div class="ss-topbar"><div class="ss-dots"><div class="ss-dot"></div><div class="ss-dot"></div><div class="ss-dot"></div></div><div class="ss-url">app.drivesure.in/insurance</div></div>
+        <div class="ss-body">
+          <div class="app-sb">
+            <div class="asb-hd"><div class="asb-logo"><div class="asb-mark">🚗</div><div class="asb-name">DriveSure</div></div></div>
+            <div class="asb-nav">
+              <div class="asb-item"><span class="asb-item-icon">🏠</span><span class="asb-item-label">Dashboard</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📊</span><span class="asb-item-label">My Score</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🗺</span><span class="asb-item-label">Trips</span></div>
+              <div class="asb-item active"><span class="asb-item-icon">🛡</span><span class="asb-item-label">Insurance</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📋</span><span class="asb-item-label">Claims</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🏆</span><span class="asb-item-label">Rewards</span></div>
+              <div class="asb-item"><span class="asb-item-icon">⚙</span><span class="asb-item-label">Settings</span></div>
+            </div>
+            <div class="asb-user"><div class="asb-avatar">AR</div><div class="asb-user-info"><div class="asb-user-name">Arjun Nair</div><div class="asb-user-role">Driver</div></div></div>
+          </div>
+          <div class="app-content">
+            <div class="app-header">
+              <div><div class="ah-title">Insurance</div><div class="ah-breadcrumb">DASHBOARD › INSURANCE</div></div>
+              <div class="ah-actions">
+                <div class="ah-btn ah-btn-ghost" style="font-size:9.5px">📄 Download Certificate</div>
+                <div class="ah-btn ah-btn-primary" style="font-size:9.5px">Renew Policy</div>
+              </div>
+            </div>
+            <div class="app-main" style="max-height:440px">
+              <!-- Sub tabs -->
+              <div style="display:flex;gap:0.3rem;border-bottom:1.5px solid var(--n200);margin-bottom:0.75rem">
+                <div style="padding:0.35rem 0.75rem;font-size:10.5px;font-weight:600;color:var(--brand);border-bottom:2px solid var(--brand);cursor:pointer">My Policy</div>
+                <div style="padding:0.35rem 0.75rem;font-size:10.5px;color:var(--n500);cursor:pointer">Premium</div>
+                <div style="padding:0.35rem 0.75rem;font-size:10.5px;color:var(--n500);cursor:pointer">Payments</div>
+                <div style="padding:0.35rem 0.75rem;font-size:10.5px;color:var(--n500);cursor:pointer">Renewal</div>
+                <div style="padding:0.35rem 0.75rem;font-size:10.5px;color:var(--n500);cursor:pointer">Documents</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.625rem">
+                <!-- Policy card -->
+                <div>
+                  <div class="mini-card" style="margin-bottom:0.5rem">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.625rem">
+                      <div><div style="font-size:11px;font-weight:700;color:var(--n800)">Bajaj Allianz — Private Car</div><div style="font-family:var(--mono);font-size:8px;color:var(--n400);margin-top:1px">Policy #327-2076-461</div></div>
+                      <span class="tag t-g">Active</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-bottom:0.5rem">
+                      <div style="background:var(--n50);border-radius:var(--r4);padding:0.4rem 0.5rem"><div style="font-family:var(--mono);font-size:7.5px;color:var(--n400);text-transform:uppercase;letter-spacing:0.08em">Vehicle</div><div style="font-size:10px;font-weight:600;color:var(--n800)">Maruti Swift</div></div>
+                      <div style="background:var(--n50);border-radius:var(--r4);padding:0.4rem 0.5rem"><div style="font-family:var(--mono);font-size:7.5px;color:var(--n400);text-transform:uppercase;letter-spacing:0.08em">Reg. No.</div><div style="font-size:10px;font-weight:600;color:var(--n800)">KL39B7021</div></div>
+                      <div style="background:var(--n50);border-radius:var(--r4);padding:0.4rem 0.5rem"><div style="font-family:var(--mono);font-size:7.5px;color:var(--n400);text-transform:uppercase;letter-spacing:0.08em">Valid From</div><div style="font-size:10px;font-weight:600;color:var(--n800)">01 Jun 2025</div></div>
+                      <div style="background:var(--n50);border-radius:var(--r4);padding:0.4rem 0.5rem"><div style="font-family:var(--mono);font-size:7.5px;color:var(--n400);text-transform:uppercase;letter-spacing:0.08em">Expires</div><div style="font-size:10px;font-weight:600;color:var(--n800)">31 May 2026</div></div>
+                    </div>
+                    <div class="bc-badge verified" style="width:100%;justify-content:center"><span>🔒</span><span class="bc-text">Policy verified on blockchain · Immutable record</span></div>
+                  </div>
+                  <!-- Coverage summary -->
+                  <div class="mini-card">
+                    <div style="font-family:var(--mono);font-size:7.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-bottom:0.5rem">Coverage Summary</div>
+                    <div style="display:flex;flex-direction:column;gap:0.3rem">
+                      <div style="display:flex;align-items:center;gap:0.4rem;font-size:10px"><span style="color:var(--teal)">✓</span><span>Third-party liability (unlimited)</span></div>
+                      <div style="display:flex;align-items:center;gap:0.4rem;font-size:10px"><span style="color:var(--teal)">✓</span><span>Own damage (IDV: ₹4.2L)</span></div>
+                      <div style="display:flex;align-items:center;gap:0.4rem;font-size:10px"><span style="color:var(--teal)">✓</span><span>Personal accident — owner/driver</span></div>
+                      <div style="display:flex;align-items:center;gap:0.4rem;font-size:10px"><span style="color:var(--n400)">✗</span><span style="color:var(--n400)">Zero depreciation (not included)</span></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Premium breakdown -->
+                <div>
+                  <div class="premium-big">
+                    <div class="pb-top"><div><div class="pb-amount-label">This Month</div><div class="pb-amount">₹5,311</div><div class="pb-saved">↓ ₹1,689 saved by driving well</div></div><span class="tag t-t">25% Discount</span></div>
+                    <div style="background:var(--n50);border-radius:var(--r8);padding:0.5rem 0.625rem;margin-bottom:0.5rem">
+                      <div style="font-size:9px;color:var(--n500);margin-bottom:0.25rem">Score-based discount scale:</div>
+                      <div style="display:flex;flex-direction:column;gap:2px">
+                        <div style="display:flex;justify-content:space-between;font-size:9px"><span>≥80%</span><span style="font-weight:600;color:var(--teal)">−25% ← You are here</span></div>
+                        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--n400)"><span>70–79%</span><span>−20%</span></div>
+                        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--n400)"><span>65–69%</span><span>Full price</span></div>
+                        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--n400)"><span>&lt;60%</span><span>+15% surcharge</span></div>
+                      </div>
+                    </div>
+                    <div class="pb-line"><span class="pb-k">Base premium</span><span class="pb-v">₹6,000</span></div>
+                    <div class="pb-line"><span class="pb-k">Score discount (84.1%)</span><span class="pb-v green">−₹1,500</span></div>
+                    <div class="pb-line"><span class="pb-k">CGST 9%</span><span class="pb-v">₹405</span></div>
+                    <div class="pb-line"><span class="pb-k">SGST 9%</span><span class="pb-v">₹405</span></div>
+                    <div class="pb-line"><span class="pb-k">Stamp Duty</span><span class="pb-v">₹1</span></div>
+                    <div class="pb-line"><span>Total Due</span><span style="color:var(--n900)">₹5,311</span></div>
+                  </div>
+                  <button class="ah-btn ah-btn-primary" style="width:100%;padding:9px;font-size:11px">Pay ₹5,311 Now</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S5: CLAIMS ══ -->
+    <div class="sec" id="s5">
+      <div class="sec-eye"><span class="sec-n">05 /</span> Core Screen</div>
+      <h2 class="sec-h2"><em>Claims</em> Screen</h2>
+      <p class="sec-desc">Step-by-step claim submission with a progress stepper, a timeline tracker for active claims, and a history table. The driving score for the incident date is auto-retrieved and shown before submission — building transparency at the highest-stakes moment.</p>
+
+      <div class="screen-shell">
+        <div class="ss-topbar"><div class="ss-dots"><div class="ss-dot"></div><div class="ss-dot"></div><div class="ss-dot"></div></div><div class="ss-url">app.drivesure.in/claims/new</div></div>
+        <div class="ss-body">
+          <div class="app-sb">
+            <div class="asb-hd"><div class="asb-logo"><div class="asb-mark">🚗</div><div class="asb-name">DriveSure</div></div></div>
+            <div class="asb-nav">
+              <div class="asb-item"><span class="asb-item-icon">🏠</span><span class="asb-item-label">Dashboard</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📊</span><span class="asb-item-label">My Score</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🗺</span><span class="asb-item-label">Trips</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🛡</span><span class="asb-item-label">Insurance</span></div>
+              <div class="asb-item active"><span class="asb-item-icon">📋</span><span class="asb-item-label">Claims</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🏆</span><span class="asb-item-label">Rewards</span></div>
+              <div class="asb-item"><span class="asb-item-icon">⚙</span><span class="asb-item-label">Settings</span></div>
+            </div>
+            <div class="asb-user"><div class="asb-avatar">AR</div><div class="asb-user-info"><div class="asb-user-name">Arjun Nair</div><div class="asb-user-role">Driver</div></div></div>
+          </div>
+          <div class="app-content">
+            <div class="app-header">
+              <div><div class="ah-title">File New Claim</div><div class="ah-breadcrumb">CLAIMS › NEW CLAIM</div></div>
+              <div class="ah-actions"><div class="ah-btn ah-btn-ghost" style="font-size:9.5px">← Back to Claims</div></div>
+            </div>
+            <div class="app-main" style="max-height:440px">
+              <!-- Step indicator -->
+              <div style="display:flex;align-items:center;gap:0;margin-bottom:1rem;background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.75rem 1rem;box-shadow:var(--sh1)">
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+                  <div style="width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;margin-bottom:4px">✓</div>
+                  <div style="font-size:8.5px;font-weight:600;color:var(--teal)">Incident Details</div>
+                </div>
+                <div style="flex:0 0 40px;height:1.5px;background:var(--teal)"></div>
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+                  <div style="width:22px;height:22px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;margin-bottom:4px">2</div>
+                  <div style="font-size:8.5px;font-weight:600;color:var(--brand)">Score Preview</div>
+                </div>
+                <div style="flex:0 0 40px;height:1.5px;background:var(--n200)"></div>
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+                  <div style="width:22px;height:22px;border-radius:50%;background:var(--n200);color:var(--n500);display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;margin-bottom:4px">3</div>
+                  <div style="font-size:8.5px;color:var(--n400)">Evidence Upload</div>
+                </div>
+                <div style="flex:0 0 40px;height:1.5px;background:var(--n200)"></div>
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+                  <div style="width:22px;height:22px;border-radius:50%;background:var(--n200);color:var(--n500);display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;margin-bottom:4px">4</div>
+                  <div style="font-size:8.5px;color:var(--n400)">Review & Submit</div>
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.625rem">
+                <!-- Step 2: Score preview (current step) -->
+                <div class="mini-card">
+                  <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.5rem">Your Score on the Incident Date</div>
+                  <div style="background:var(--teal-lt);border:1px solid var(--teal-md);border-radius:var(--r8);padding:0.625rem;margin-bottom:0.625rem">
+                    <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:2px">21 May 2023 — Verified Score</div>
+                    <div style="font-family:var(--serif);font-size:1.75rem;font-weight:600;color:var(--n900);line-height:1">72.4%</div>
+                    <div class="bc-badge verified" style="margin-top:6px"><span>🔒</span><span class="bc-text">Verified · Block #14,892</span></div>
+                  </div>
+                  <div style="background:var(--n50);border-radius:var(--r8);padding:0.5rem;border-left:2.5px solid var(--brand)">
+                    <div style="font-size:9.5px;font-weight:600;color:var(--n800);margin-bottom:2px">Settlement Calculation</div>
+                    <div style="font-size:9px;color:var(--n600);line-height:1.5">Score 72.4% is between 50–70%: full claim amount will be paid, no bonus or deduction applied. If your score were above 70%, you'd receive a 20% bonus.</div>
+                  </div>
+                </div>
+                <!-- Active claim tracker -->
+                <div class="mini-card">
+                  <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.5rem">Active Claim — #CLM-2302</div>
+                  <div class="claim-timeline">
+                    <div class="ct-step"><div class="ct-left"><div class="ct-dot done">✓</div><div class="ct-line"></div></div><div class="ct-body"><div class="ct-title">Claim Submitted</div><div class="ct-date">21 May 2023, 11:30 AM</div><div class="ct-note">Claim received and assigned #CLM-2302</div></div></div>
+                    <div class="ct-step"><div class="ct-left"><div class="ct-dot done">✓</div><div class="ct-line"></div></div><div class="ct-body"><div class="ct-title">Score Verified</div><div class="ct-date">21 May 2023, 11:32 AM</div><div class="ct-note">Blockchain score confirmed: 72.4%</div></div></div>
+                    <div class="ct-step"><div class="ct-left"><div class="ct-dot active">●</div><div class="ct-line"></div></div><div class="ct-body"><div class="ct-title">Under Review</div><div class="ct-date">In progress · Est. 2–3 days</div><div class="ct-note">Adjuster reviewing uploaded evidence</div></div></div>
+                    <div class="ct-step"><div class="ct-left"><div class="ct-dot pending"></div><div class="ct-line"></div></div><div class="ct-body"><div class="ct-title">Approval Decision</div><div class="ct-date">Expected by 25 May 2023</div></div></div>
+                    <div class="ct-step"><div class="ct-left"><div class="ct-dot pending"></div></div><div class="ct-body"><div class="ct-title">Payment Released</div><div class="ct-date">After approval</div></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S6: REWARDS ══ -->
+    <div class="sec" id="s6">
+      <div class="sec-eye"><span class="sec-n">06 /</span> Engagement Screen</div>
+      <h2 class="sec-h2"><em>Rewards</em> & Incentives Screen</h2>
+      <p class="sec-desc">A gamified engagement layer. Token balance, progress-to-next-reward bar, achievement badges, and available redemption options. Dark gradient header card creates contrast and celebration feel — distinct from the functional screens.</p>
+
+      <div class="screen-shell">
+        <div class="ss-topbar"><div class="ss-dots"><div class="ss-dot"></div><div class="ss-dot"></div><div class="ss-dot"></div></div><div class="ss-url">app.drivesure.in/rewards</div></div>
+        <div class="ss-body">
+          <div class="app-sb">
+            <div class="asb-hd"><div class="asb-logo"><div class="asb-mark">🚗</div><div class="asb-name">DriveSure</div></div></div>
+            <div class="asb-nav">
+              <div class="asb-item"><span class="asb-item-icon">🏠</span><span class="asb-item-label">Dashboard</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📊</span><span class="asb-item-label">My Score</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🗺</span><span class="asb-item-label">Trips</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🛡</span><span class="asb-item-label">Insurance</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📋</span><span class="asb-item-label">Claims</span></div>
+              <div class="asb-item active"><span class="asb-item-icon">🏆</span><span class="asb-item-label">Rewards</span></div>
+              <div class="asb-item"><span class="asb-item-icon">⚙</span><span class="asb-item-label">Settings</span></div>
+            </div>
+            <div class="asb-user"><div class="asb-avatar">AR</div><div class="asb-user-info"><div class="asb-user-name">Arjun Nair</div><div class="asb-user-role">Driver</div></div></div>
+          </div>
+          <div class="app-content">
+            <div class="app-header"><div><div class="ah-title">Rewards & Incentives</div><div class="ah-breadcrumb">DASHBOARD › REWARDS</div></div><div class="ah-actions"><div class="ah-btn ah-btn-primary" style="font-size:9.5px">Redeem Tokens</div></div></div>
+            <div class="app-main" style="max-height:440px">
+              <div class="reward-card">
+                <div class="rc-decoration"></div>
+                <div class="rc-label">Your Token Balance</div>
+                <div class="rc-tokens">2,840 <span style="font-size:1rem;opacity:0.6">tokens</span></div>
+                <div class="rc-sub">≈ ₹284 in premium credits</div>
+                <div class="rc-progress">
+                  <div class="rc-prog-top"><span>Progress to next reward (₹100 credit)</span><span>2,840 / 3,500</span></div>
+                  <div class="rc-prog-track"><div class="rc-prog-fill" style="width:81%"></div></div>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:0.75rem">
+                <div class="mini-card" style="text-align:center;padding:0.625rem"><div style="font-size:1.25rem;margin-bottom:0.25rem">🥇</div><div style="font-size:10px;font-weight:700;color:var(--n800)">Excellent Driver</div><div style="font-size:9px;color:var(--n400)">Score ≥80%</div></div>
+                <div class="mini-card" style="text-align:center;padding:0.625rem"><div style="font-size:1.25rem;margin-bottom:0.25rem">🔥</div><div style="font-size:10px;font-weight:700;color:var(--n800)">14-Day Streak</div><div style="font-size:9px;color:var(--n400)">Consistent driving</div></div>
+                <div class="mini-card" style="text-align:center;padding:0.625rem;opacity:0.5"><div style="font-size:1.25rem;margin-bottom:0.25rem">⭐</div><div style="font-size:10px;font-weight:700;color:var(--n800)">30-Day Streak</div><div style="font-size:9px;color:var(--n400)">16 days to go</div></div>
+                <div class="mini-card" style="text-align:center;padding:0.625rem;opacity:0.5"><div style="font-size:1.25rem;margin-bottom:0.25rem">💎</div><div style="font-size:10px;font-weight:700;color:var(--n800)">Zero Incidents</div><div style="font-size:9px;color:var(--n400)">Locked</div></div>
+              </div>
+              <div class="section-title" style="margin-bottom:0.5rem">Available Rewards</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+                <div class="mini-card" style="display:flex;align-items:center;gap:0.5rem"><div style="font-size:1.25rem;flex-shrink:0">💳</div><div><div style="font-size:10.5px;font-weight:700;color:var(--n800)">₹100 Premium Credit</div><div style="font-size:9.5px;color:var(--n500)">1,000 tokens</div></div><div class="ah-btn ah-btn-secondary" style="margin-left:auto;font-size:8.5px;padding:4px 8px">Redeem</div></div>
+                <div class="mini-card" style="display:flex;align-items:center;gap:0.5rem"><div style="font-size:1.25rem;flex-shrink:0">⛽</div><div><div style="font-size:10.5px;font-weight:700;color:var(--n800)">₹50 Fuel Discount</div><div style="font-size:9.5px;color:var(--n500)">500 tokens</div></div><div class="ah-btn ah-btn-secondary" style="margin-left:auto;font-size:8.5px;padding:4px 8px">Redeem</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S7: PROFILE ══ -->
+    <div class="sec" id="s7">
+      <div class="sec-eye"><span class="sec-n">07 /</span> Settings Screen</div>
+      <h2 class="sec-h2">Profile & <em>Settings</em></h2>
+      <p class="sec-desc">Clean, form-based layout organized into three panels: Personal Info, Vehicle & OBD, and Preferences. OBD connection status is prominently shown — a connected device is critical to the system functioning. All fields have inline edit mode.</p>
+
+      <div class="screen-shell">
+        <div class="ss-topbar"><div class="ss-dots"><div class="ss-dot"></div><div class="ss-dot"></div><div class="ss-dot"></div></div><div class="ss-url">app.drivesure.in/settings</div></div>
+        <div class="ss-body">
+          <div class="app-sb">
+            <div class="asb-hd"><div class="asb-logo"><div class="asb-mark">🚗</div><div class="asb-name">DriveSure</div></div></div>
+            <div class="asb-nav">
+              <div class="asb-item"><span class="asb-item-icon">🏠</span><span class="asb-item-label">Dashboard</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📊</span><span class="asb-item-label">My Score</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🗺</span><span class="asb-item-label">Trips</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🛡</span><span class="asb-item-label">Insurance</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📋</span><span class="asb-item-label">Claims</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🏆</span><span class="asb-item-label">Rewards</span></div>
+              <div class="asb-item active"><span class="asb-item-icon">⚙</span><span class="asb-item-label">Settings</span></div>
+            </div>
+            <div class="asb-user"><div class="asb-avatar">AR</div><div class="asb-user-info"><div class="asb-user-name">Arjun Nair</div><div class="asb-user-role">Driver</div></div></div>
+          </div>
+          <div class="app-content">
+            <div class="app-header"><div><div class="ah-title">Profile & Settings</div><div class="ah-breadcrumb">DASHBOARD › SETTINGS</div></div><div class="ah-actions"><div class="ah-btn ah-btn-primary" style="font-size:9.5px">Save Changes</div></div></div>
+            <div class="app-main" style="max-height:440px">
+              <!-- Settings sub-nav -->
+              <div style="display:flex;gap:0.3rem;border-bottom:1.5px solid var(--n200);margin-bottom:0.75rem">
+                <div style="padding:0.35rem 0.75rem;font-size:10.5px;font-weight:600;color:var(--brand);border-bottom:2px solid var(--brand);cursor:pointer">Profile</div>
+                <div style="padding:0.35rem 0.75rem;font-size:10.5px;color:var(--n500);cursor:pointer">Vehicle</div>
+                <div style="padding:0.35rem 0.75rem;font-size:10.5px;color:var(--n500);cursor:pointer">Notifications</div>
+                <div style="padding:0.35rem 0.75rem;font-size:10.5px;color:var(--n500);cursor:pointer">Privacy</div>
+                <div style="padding:0.35rem 0.75rem;font-size:10.5px;color:var(--n500);cursor:pointer">Security</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.625rem">
+                <div class="mini-card">
+                  <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.625rem">Personal Information</div>
+                  <div class="form-row"><label class="fl">Full Name</label><input class="fi" value="Arjun Nair"/></div>
+                  <div class="form-row"><label class="fl">Phone Number</label><input class="fi" value="+91 98400 12345"/></div>
+                  <div class="form-row"><label class="fl">Email Address</label><input class="fi" value="arjun.nair@gmail.com"/></div>
+                  <div class="form-row"><label class="fl">Location</label><input class="fi" value="Ernakulam, Kerala"/></div>
+                  <div class="form-row" style="margin-bottom:0"><label class="fl">Driver's License</label><input class="fi" value="KL14 20210012345"/></div>
+                </div>
+                <div>
+                  <!-- OBD status -->
+                  <div class="mini-card" style="margin-bottom:0.5rem;border-color:var(--teal-md);border-left:3px solid var(--teal)">
+                    <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.375rem">OBD Device Status</div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;background:var(--teal-lt);border-radius:var(--r8);padding:0.5rem">
+                      <div style="width:8px;height:8px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite"></div>
+                      <div style="flex:1"><div style="font-size:10px;font-weight:600;color:var(--teal)">ELM327 Wi-Fi · Connected</div><div style="font-size:9px;color:var(--n500)">Last sync: 2 hours ago</div></div>
+                      <span style="font-size:9px;color:var(--brand);cursor:pointer">Reconnect</span>
+                    </div>
+                  </div>
+                  <!-- Notification toggles -->
+                  <div class="mini-card">
+                    <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.5rem">Notification Preferences</div>
+                    <div style="display:flex;flex-direction:column;gap:0.375rem">
+                      <div style="display:flex;align-items:center;justify-content:space-between;font-size:10px">
+                        <span style="color:var(--n700)">Score updates</span>
+                        <div style="width:34px;height:18px;background:var(--teal);border-radius:var(--rpill);position:relative;cursor:pointer"><div style="position:absolute;top:2px;right:2px;width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:var(--sh1)"></div></div>
+                      </div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;font-size:10px">
+                        <span style="color:var(--n700)">Premium due reminders</span>
+                        <div style="width:34px;height:18px;background:var(--teal);border-radius:var(--rpill);position:relative;cursor:pointer"><div style="position:absolute;top:2px;right:2px;width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:var(--sh1)"></div></div>
+                      </div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;font-size:10px">
+                        <span style="color:var(--n700)">Claim updates</span>
+                        <div style="width:34px;height:18px;background:var(--teal);border-radius:var(--rpill);position:relative;cursor:pointer"><div style="position:absolute;top:2px;right:2px;width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:var(--sh1)"></div></div>
+                      </div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;font-size:10px">
+                        <span style="color:var(--n700)">Promotional offers</span>
+                        <div style="width:34px;height:18px;background:var(--n300);border-radius:var(--rpill);position:relative;cursor:pointer"><div style="position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:var(--sh1)"></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S8: NOTIFICATIONS ══ -->
+    <div class="sec" id="s8">
+      <div class="sec-eye"><span class="sec-n">08 /</span> Utility Panel</div>
+      <h2 class="sec-h2"><em>Notifications</em> Panel</h2>
+      <p class="sec-desc">An overlay slide-in panel triggered from the bell icon. Three priority levels distinguished by left-border color and badge. Grouped by date. Each notification has an action button or dismiss option.</p>
+
+      <div class="screen-shell">
+        <div class="ss-topbar"><div class="ss-dots"><div class="ss-dot"></div><div class="ss-dot"></div><div class="ss-dot"></div></div><div class="ss-url">app.drivesure.in — Notifications Panel Overlay</div></div>
+        <div class="ss-body">
+          <div class="app-sb">
+            <div class="asb-hd"><div class="asb-logo"><div class="asb-mark">🚗</div><div class="asb-name">DriveSure</div></div></div>
+            <div class="asb-nav">
+              <div class="asb-item active"><span class="asb-item-icon">🏠</span><span class="asb-item-label">Dashboard</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📊</span><span class="asb-item-label">My Score</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🗺</span><span class="asb-item-label">Trips</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🛡</span><span class="asb-item-label">Insurance</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📋</span><span class="asb-item-label">Claims</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🏆</span><span class="asb-item-label">Rewards</span></div>
+              <div class="asb-item"><span class="asb-item-icon">⚙</span><span class="asb-item-label">Settings</span></div>
+            </div>
+            <div class="asb-user"><div class="asb-avatar">AR</div><div class="asb-user-info"><div class="asb-user-name">Arjun Nair</div><div class="asb-user-role">Driver</div></div></div>
+          </div>
+          <div class="app-content" style="position:relative">
+            <div class="app-header"><div><div class="ah-title">Dashboard</div></div><div class="ah-actions"><div class="ah-icon" style="background:var(--brand);color:#fff;border-color:var(--brand)">🔔</div></div></div>
+            <!-- Notification panel overlay -->
+            <div style="position:absolute;top:52px;right:0;width:280px;height:calc(100% - 52px);background:var(--n0);border-left:1px solid var(--n200);box-shadow:-4px 0 16px rgba(0,0,0,0.08);z-index:10;overflow-y:auto;padding:0.75rem">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.625rem">
+                <div style="font-size:12px;font-weight:700;color:var(--n800)">Notifications <span style="background:var(--danger);color:#fff;border-radius:var(--rpill);padding:1px 6px;font-size:9px;font-weight:700">4</span></div>
+                <div style="font-size:9.5px;color:var(--brand);cursor:pointer;font-weight:500">Mark all read</div>
+              </div>
+              <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin:0.5rem 0 0.375rem">TODAY</div>
+              <div class="notif-item"><div class="ni-priority ni-high"></div><div class="ni-body"><div class="ni-title">Harsh braking detected ⚠</div><div class="ni-text">3 harsh braking events on Tuesday trip — this affected your braking score by −3.2</div><div class="ni-time">2 hours ago</div></div><div class="ni-action">View →</div></div>
+              <div class="notif-item"><div class="ni-priority ni-med"></div><div class="ni-body"><div class="ni-title">Score updated to 84.1%</div><div class="ni-text">Your driving score improved ↑ 4.3 points this week. Premium discount maintained at 25%.</div><div class="ni-time">4 hours ago</div></div><div class="ni-action">View →</div></div>
+              <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin:0.5rem 0 0.375rem">YESTERDAY</div>
+              <div class="notif-item"><div class="ni-priority ni-med"></div><div class="ni-body"><div class="ni-title">Claim #CLM-2302 update</div><div class="ni-text">Your claim is under adjuster review. Expected resolution in 2–3 business days.</div><div class="ni-time">Yesterday, 3:15 PM</div></div><div class="ni-action">Track →</div></div>
+              <div class="notif-item" style="opacity:0.65"><div class="ni-priority ni-low"></div><div class="ni-body"><div class="ni-title">Premium due in 7 days</div><div class="ni-text">Your next premium payment of ₹5,311 is due on 14 Jun 2025</div><div class="ni-time">Yesterday, 9:00 AM</div></div><div class="ni-action">Pay →</div></div>
+            </div>
+            <div class="app-main" style="max-height:390px;opacity:0.3">
+              <div class="kpi-grid"><div class="kpi"><div class="kpi-label">Score</div><div class="kpi-value">84.1%</div></div><div class="kpi"><div class="kpi-label">Premium</div><div class="kpi-value">₹5,311</div></div><div class="kpi"><div class="kpi-label">Streak</div><div class="kpi-value">14d</div></div><div class="kpi"><div class="kpi-label">Discount</div><div class="kpi-value">25%</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S9: INSURANCE ADMIN ══ -->
+    <div class="sec" id="s9">
+      <div class="sec-eye"><span class="sec-n">09 /</span> Admin Screen</div>
+      <h2 class="sec-h2">Insurance Company <em>Admin Dashboard</em></h2>
+      <p class="sec-desc">Data-heavy admin view for insurance risk officers. Portfolio KPIs at top, risk distribution bar chart, followed by a paginated driver table with risk tier badges. Claims queue always visible in a right panel.</p>
+
+      <div class="screen-shell">
+        <div class="ss-topbar"><div class="ss-dots"><div class="ss-dot"></div><div class="ss-dot"></div><div class="ss-dot"></div></div><div class="ss-url">admin.drivesure.in/insurer — Bajaj Allianz Risk Dashboard</div></div>
+        <div class="ss-body">
+          <div class="app-sb" style="background:#0C1825">
+            <div class="asb-hd"><div class="asb-logo"><div class="asb-mark" style="background:#1B6B5A">🏢</div><div class="asb-name">Insurer Admin</div></div></div>
+            <div class="asb-nav">
+              <div class="asb-item active"><span class="asb-item-icon">📊</span><span class="asb-item-label">Risk Dashboard</span></div>
+              <div class="asb-item"><span class="asb-item-icon">👥</span><span class="asb-item-label">Customers</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📋</span><span class="asb-item-label">Claims</span></div>
+              <div class="asb-item"><span class="asb-item-icon">💰</span><span class="asb-item-label">Premium Mgmt</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📈</span><span class="asb-item-label">Analytics</span></div>
+              <div class="asb-item"><span class="asb-item-icon">⚙</span><span class="asb-item-label">Settings</span></div>
+            </div>
+            <div class="asb-user"><div class="asb-avatar" style="background:#1B6B5A">BA</div><div class="asb-user-info"><div class="asb-user-name">Bajaj Allianz</div><div class="asb-user-role">Risk Officer</div></div></div>
+          </div>
+          <div class="app-content">
+            <div class="app-header"><div><div class="ah-title">Risk Dashboard</div><div class="ah-breadcrumb">INSURER ADMIN › RISK OVERVIEW</div></div><div class="ah-actions"><div class="ah-btn ah-btn-ghost" style="font-size:9.5px">📅 Jun 2025</div><div class="ah-btn ah-btn-secondary" style="font-size:9.5px">Export Report</div></div></div>
+            <div class="app-main" style="max-height:440px">
+              <div class="kpi-grid" style="margin-bottom:0.75rem">
+                <div class="kpi"><div class="kpi-label">Active Policies</div><div class="kpi-value">1,284</div><div class="kpi-delta delta-up">↑ 47 this month</div></div>
+                <div class="kpi"><div class="kpi-label">Portfolio Avg Score</div><div class="kpi-value">76.3%</div><div class="kpi-delta delta-up">↑ 2.1 vs last month</div></div>
+                <div class="kpi"><div class="kpi-label">Pending Claims</div><div class="kpi-value" style="color:var(--warn)">23</div><div class="kpi-delta delta-neu">↔ 2 new today</div></div>
+                <div class="kpi"><div class="kpi-label">Fraud Flags</div><div class="kpi-value" style="color:var(--danger)">3</div><div class="kpi-delta delta-down">Needs review</div></div>
+              </div>
+              <!-- Driver table -->
+              <div class="mini-card" style="padding:0;margin-bottom:0.625rem">
+                <div style="padding:0.625rem 0.875rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--n100)">
+                  <div style="font-size:11px;font-weight:700;color:var(--n800)">Driver Risk Profiles</div>
+                  <div style="display:flex;gap:0.4rem">
+                    <div class="filter-chip" style="font-size:8px;padding:3px 8px">All</div>
+                    <div class="filter-chip" style="font-size:8px;padding:3px 8px">High Risk</div>
+                    <input class="filter-input" style="font-size:9.5px;padding:3px 8px" placeholder="Search driver..."/>
+                  </div>
+                </div>
+                <table class="dt">
+                  <thead><tr><th>Driver</th><th>Policy No.</th><th>Score</th><th>Risk Tier</th><th>Premium</th><th>Claims</th><th>Action</th></tr></thead>
+                  <tbody>
+                    <tr><td>Arjun Nair</td><td>#327-2076-461</td><td>84.1%</td><td><span class="rp-e">Excellent</span></td><td>₹5,311</td><td>1 settled</td><td style="color:var(--brand);font-size:9px;cursor:pointer">View</td></tr>
+                    <tr><td>Meera Pillai</td><td>#327-2089-112</td><td>78.2%</td><td><span class="rp-g">Good</span></td><td>₹5,840</td><td>0</td><td style="color:var(--brand);font-size:9px;cursor:pointer">View</td></tr>
+                    <tr><td>Suresh Kumar</td><td>#327-2091-007</td><td>62.5%</td><td><span class="rp-m">Moderate</span></td><td>₹6,000</td><td>2 pending</td><td style="color:var(--brand);font-size:9px;cursor:pointer">View</td></tr>
+                    <tr><td>Priya Sharma</td><td>#327-2045-330</td><td>41.0%</td><td><span class="rp-h">High Risk</span></td><td>₹6,900</td><td>1 fraud flag 🚩</td><td style="color:var(--danger);font-size:9px;cursor:pointer">Review</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S10: MVD ══ -->
+    <div class="sec" id="s10">
+      <div class="sec-eye"><span class="sec-n">10 /</span> Admin Screen</div>
+      <h2 class="sec-h2">MVD Government <em>Portal</em></h2>
+      <p class="sec-desc">Read-only regulatory view. Road safety KPIs, a driver score lookup, and compliance reports. All data is aggregate by default — individual records accessible only via vehicle registration search for enforcement purposes.</p>
+
+      <div class="screen-shell">
+        <div class="ss-topbar"><div class="ss-dots"><div class="ss-dot"></div><div class="ss-dot"></div><div class="ss-dot"></div></div><div class="ss-url">mvd.drivesure.in — Motor Vehicle Department Portal · Kerala</div></div>
+        <div class="ss-body">
+          <div class="app-sb" style="background:#0D1A2A">
+            <div class="asb-hd"><div class="asb-logo"><div class="asb-mark" style="background:#1B3A6B">🏛</div><div class="asb-name">MVD Portal</div></div></div>
+            <div class="asb-nav">
+              <div class="asb-item active"><span class="asb-item-icon">🛡</span><span class="asb-item-label">Road Safety</span></div>
+              <div class="asb-item"><span class="asb-item-icon">🔍</span><span class="asb-item-label">Driver Lookup</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📄</span><span class="asb-item-label">Compliance</span></div>
+              <div class="asb-item"><span class="asb-item-icon">📈</span><span class="asb-item-label">Analytics</span></div>
+              <div class="asb-item"><span class="asb-item-icon">⚙</span><span class="asb-item-label">Settings</span></div>
+            </div>
+            <div class="asb-user"><div class="asb-avatar" style="background:#1B3A6B">MV</div><div class="asb-user-info"><div class="asb-user-name">MVD Officer</div><div class="asb-user-role">Read-Only Access</div></div></div>
+          </div>
+          <div class="app-content">
+            <div class="app-header"><div><div class="ah-title">Road Safety Overview</div><div class="ah-breadcrumb">MVD PORTAL › ROAD SAFETY</div></div><div class="ah-actions"><div class="ah-btn ah-btn-ghost" style="font-size:9.5px">⬇ Download Report</div></div></div>
+            <div class="app-main" style="max-height:440px">
+              <div class="kpi-grid" style="margin-bottom:0.75rem">
+                <div class="kpi"><div class="kpi-label">Registered Drivers</div><div class="kpi-value">12,840</div><div class="kpi-delta delta-up">↑ 340 this month</div></div>
+                <div class="kpi"><div class="kpi-label">District Avg Score</div><div class="kpi-value">74.8%</div><div class="kpi-delta delta-up">↑ 3.2 vs Q1</div></div>
+                <div class="kpi"><div class="kpi-label">High-Risk Drivers</div><div class="kpi-value" style="color:var(--danger)">284</div><div class="kpi-delta delta-down">Score &lt;50%</div></div>
+                <div class="kpi"><div class="kpi-label">Rash Driving Alerts</div><div class="kpi-value" style="color:var(--warn)">47</div><div class="kpi-delta delta-down">↑ this week</div></div>
+              </div>
+              <!-- Driver lookup -->
+              <div class="mini-card" style="margin-bottom:0.625rem">
+                <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.5rem">Driver Score Lookup — By Vehicle Registration</div>
+                <div style="display:flex;gap:0.5rem;margin-bottom:0.625rem">
+                  <input class="fi" style="flex:1" placeholder="Enter vehicle registration number (e.g. KL39B7021)"/>
+                  <button class="ah-btn ah-btn-primary" style="padding:6px 14px;font-size:10px">Search</button>
+                </div>
+                <!-- Result -->
+                <div style="background:var(--n50);border:1px solid var(--n200);border-radius:var(--r8);padding:0.625rem">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem">
+                    <div><div style="font-size:11px;font-weight:700;color:var(--n800)">KL39B7021 — Maruti Swift (Diesel)</div><div style="font-size:9px;color:var(--n400);margin-top:1px">Owner: Arjun Nair · Ernakulam, Kerala</div></div>
+                    <span class="rp-g">Good Driver</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.375rem">
+                    <div style="background:var(--n0);border:1px solid var(--n200);border-radius:var(--r4);padding:0.375rem"><div style="font-family:var(--mono);font-size:7.5px;color:var(--n400);text-transform:uppercase">Avg Score</div><div style="font-size:11px;font-weight:700;color:var(--n800)">84.1%</div></div>
+                    <div style="background:var(--n0);border:1px solid var(--n200);border-radius:var(--r4);padding:0.375rem"><div style="font-family:var(--mono);font-size:7.5px;color:var(--n400);text-transform:uppercase">Violations</div><div style="font-size:11px;font-weight:700;color:var(--teal)">0</div></div>
+                    <div style="background:var(--n0);border:1px solid var(--n200);border-radius:var(--r4);padding:0.375rem"><div style="font-family:var(--mono);font-size:7.5px;color:var(--n400);text-transform:uppercase">Last Trip</div><div style="font-size:11px;font-weight:700;color:var(--n800)">7 Jun 2025</div></div>
+                  </div>
+                  <div class="bc-badge verified" style="margin-top:0.5rem;width:100%;justify-content:center"><span>🔒</span><span class="bc-text">All records verified · Immutable · Read-Only Access</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S11: STATES ══ -->
+    <div class="sec" id="s11">
+      <div class="sec-eye"><span class="sec-n">11 /</span> System States</div>
+      <h2 class="sec-h2">States, Responsive & <em>Design Rules</em></h2>
+
+      <div class="spec-grid" style="margin-bottom:1.5rem">
+        <div class="spec-card"><h4>Hover & Active States</h4><ul><li><strong>Cards:</strong> Border transitions from N-200 → brand-md on hover (0.15s)</li><li><strong>Buttons:</strong> Primary darkens 8%; secondary fills brand-lt background</li><li><strong>Table rows:</strong> Background shifts to N-50 on hover</li><li><strong>Nav items:</strong> Background tint on hover; active: left border + deeper tint</li><li><strong>Trip cards:</strong> Slight elevation increase (box-shadow) on hover</li></ul></div>
+        <div class="spec-card"><h4>Loading States</h4><ul><li>Dashboard: Skeleton screens for score ring, KPI row, trip list — no spinners</li><li>Skeleton respects layout — placeholder shapes match final content structure</li><li>Score calculation in progress: animated ring pulse + "Calculating…" text with educational copy below</li><li>Table loading: 5-row skeleton table, column widths match actual table</li><li>Blockchain sync: "Pending verification" badge with animated dot</li></ul></div>
+        <div class="spec-card"><h4>Empty States</h4><ul><li>No trips: Illustration + "Connect your OBD and start driving" + CTA</li><li>No claims: "No claims filed — safe driving keeps this list empty" + positive tone</li><li>Analytics empty: Dashed chart placeholder + "Complete trips to see your data"</li><li>All done: Celebratory empty state — "You crushed it today! 🎉" — no action pressure</li><li>All empty states have a single primary CTA — never two choices</li></ul></div>
+        <div class="spec-card"><h4>Error States</h4><ul><li><strong>Form validation:</strong> Inline, below field, red text + icon — never modal</li><li><strong>Network error:</strong> Non-blocking amber banner — cached data shown below</li><li><strong>OBD disconnected:</strong> Non-blocking teal banner with reconnect deep-link</li><li><strong>Claim rejection:</strong> Full explanation + specific reason + re-submission CTA</li><li><strong>No permission:</strong> Locked section visual with Settings link — never a crash state</li></ul></div>
+        <div class="spec-card"><h4>Responsive Breakpoints</h4><ul><li><strong>Desktop ≥1280px:</strong> Full sidebar + full content, all columns visible</li><li><strong>Laptop 1024–1279px:</strong> Sidebar collapses to 64px icon-only mode</li><li><strong>Tablet 768–1023px:</strong> Sidebar hides behind hamburger; 2-column grids become 1-column</li><li><strong>Mobile &lt;768px:</strong> Bottom navigation bar replaces sidebar; KPI grid 2×2; all tables become card stacks</li><li>Score ring and premium always above fold at all breakpoints</li></ul></div>
+        <div class="spec-card"><h4>Consistency Rules</h4><ul><li>Every page header follows: title (left) + breadcrumb (below title) + actions (right)</li><li>Primary CTA is always rightmost in the header actions zone</li><li>Section headings always 11px 700 with a "View all →" link right-aligned</li><li>Status badges always: color + dot + text — never color alone</li><li>Numbers in data positions always use Lora (serif) — never sans-serif</li><li>Blockchain badges always appear at the bottom of the relevant card, never dominant</li></ul></div>
+      </div>
+
+      <!-- Empty state examples -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.875rem;margin-bottom:1.25rem">
+        <div class="empty-state">
+          <span class="es-icon">🚗</span>
+          <div class="es-title">No trips recorded yet</div>
+          <p class="es-text">Connect your OBD device and take your first drive to see your score appear here.</p>
+          <button class="ah-btn ah-btn-primary" style="font-size:10px;padding:6px 16px">Connect Device</button>
+        </div>
+        <div style="padding:1.25rem;background:var(--n0);border:1px solid var(--n200);border-radius:var(--r12)">
+          <div style="font-size:11px;font-weight:700;color:var(--n700);margin-bottom:0.75rem">Loading State — Dashboard</div>
+          <div class="skeleton" style="height:14px;width:60%;margin-bottom:8px"></div>
+          <div class="skeleton" style="height:72px;border-radius:var(--r8);margin-bottom:8px"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+            <div class="skeleton" style="height:48px;border-radius:var(--r8)"></div>
+            <div class="skeleton" style="height:48px;border-radius:var(--r8)"></div>
+          </div>
+          <div class="skeleton" style="height:10px;width:80%"></div>
+        </div>
+        <div style="padding:1.25rem;background:var(--danger-lt);border:1px solid var(--danger-md);border-radius:var(--r12)">
+          <div style="font-size:11px;font-weight:700;color:var(--danger);margin-bottom:0.75rem">Error State — OBD Disconnected</div>
+          <div style="background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.75rem">
+            <div style="font-size:10.5px;font-weight:600;color:var(--n800);margin-bottom:4px">⚠ Car not connected</div>
+            <div style="font-size:9.5px;color:var(--n600);line-height:1.5;margin-bottom:8px">Your OBD device isn't responding. Score is showing last known data from 2 days ago.</div>
+            <button class="ah-btn ah-btn-secondary" style="width:100%;font-size:10px;padding:6px">Reconnect Device →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Closing note -->
+      <div style="background:var(--n900);border-radius:var(--r12);padding:1.75rem 2rem;max-width:760px">
+        <div style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:0.625rem">Screen Design Summary</div>
+        <div style="font-family:var(--serif);font-size:1.1rem;font-style:italic;color:#E5E7EB;line-height:1.55;margin-bottom:1rem">"Every screen asks two questions: What does the user need to know right now? What should they do next? When both questions are answered above the fold, the screen has done its job."</div>
+        <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+          <div><div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:2px">Screens</div><div style="font-family:var(--mono);font-size:11px;color:#93B4FF">13 Defined</div></div>
+          <div><div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:2px">States</div><div style="font-family:var(--mono);font-size:11px;color:#93B4FF">Default · Hover · Active · Loading · Empty · Error</div></div>
+          <div><div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:2px">Roles</div><div style="font-family:var(--mono);font-size:11px;color:#93B4FF">Driver · Insurance Co. · MVD</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div style="border-top:1.5px solid var(--n200);padding:1.25rem 2.5rem;display:flex;justify-content:space-between;align-items:center;background:var(--n100)">
+    <span style="font-family:var(--mono);font-size:10px;color:var(--n400);letter-spacing:0.04em">Dynamic Insurance System · Key Screen Layouts v1.0 · 2025</span>
+    <span style="font-size:11.5px;color:var(--n400)">13 Screens · 3 Roles · All States Defined</span>
+  </div>
+</main>
+
+<script>
+const pbar=document.getElementById('pbar');
+const navItems=document.querySelectorAll('.dsn');
+const sections=document.querySelectorAll('.sec');
+window.addEventListener('scroll',()=>{
+  const st=document.documentElement.scrollTop;
+  const th=document.documentElement.scrollHeight-window.innerHeight;
+  pbar.style.width=(st/th*100)+'%';
+  let cur='s0';
+  sections.forEach(s=>{if(s.getBoundingClientRect().top<90)cur=s.id});
+  navItems.forEach(n=>n.classList.toggle('active',n.getAttribute('href')==='#'+cur));
+});
+</script>
+</body>
+</html>

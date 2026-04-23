@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dynamic Insurance System — UX Strategy & User Flows</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Cabinet+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F9F7F3;
+  --bg2:#F0EDE7;
+  --bg3:#E6E2DA;
+  --white:#FEFCFA;
+  --ink:#17150E;
+  --ink2:#46433A;
+  --ink3:#8A8780;
+  --green:#1A6B4A;
+  --green-lt:#E4F2EB;
+  --green-md:#9FCFB8;
+  --orange:#C95E1A;
+  --orange-lt:#FDF0E8;
+  --orange-md:#F5B98A;
+  --violet:#4A2E8C;
+  --violet-lt:#EDEAF8;
+  --violet-md:#B8AEE0;
+  --red:#B82828;
+  --red-lt:#FAEAEA;
+  --blue:#1A4E8C;
+  --blue-lt:#E4EEFA;
+  --border:#DDD9D2;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Cabinet Grotesk',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:10px;
+  --r-sm:5px;
+  --sidebar:272px;
+  --sh:0 1px 3px rgba(0,0,0,0.05),0 4px 12px rgba(0,0,0,0.04);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--ink);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;display:flex;flex-direction:column;z-index:100;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1)}
+.sb-header{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.07)}
+.sb-eye{font-family:var(--mono);font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--green-md);margin-bottom:0.6rem;display:block}
+.sb-title{font-family:var(--serif);font-size:1.05rem;color:#F5F2ED;font-weight:400;line-height:1.35}
+.sb-title em{font-style:italic;color:var(--green-md)}
+.sb-nav{padding:0.5rem 0;flex:1}
+.sg-label{font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:0.8rem 1.5rem 0.3rem}
+.sn{display:flex;align-items:center;gap:0.6rem;padding:0.45rem 1.5rem;text-decoration:none;transition:background 0.15s;border-left:2px solid transparent;cursor:pointer}
+.sn:hover{background:rgba(255,255,255,0.04)}
+.sn.active{background:rgba(26,107,74,0.18);border-left-color:var(--green-md)}
+.sn-n{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.18);min-width:18px}
+.sn.active .sn-n{color:var(--green-md)}
+.sn-t{font-size:11.5px;font-weight:400;color:rgba(255,255,255,0.42);line-height:1.3}
+.sn.active .sn-t{color:rgba(255,255,255,0.9);font-weight:500}
+.sb-foot{padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,0.07);display:flex;gap:0.4rem;flex-wrap:wrap}
+.sb-chip{font-family:var(--mono);font-size:8.5px;letter-spacing:0.08em;text-transform:uppercase;padding:3px 7px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.22)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);flex:1}
+.topbar{position:sticky;top:0;background:rgba(249,247,243,0.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0.7rem 2.5rem;display:flex;align-items:center;justify-content:space-between;z-index:50}
+.tb-l{font-family:var(--mono);font-size:10px;color:var(--ink3);letter-spacing:0.05em}
+.tb-r{display:flex;gap:0.4rem}
+.tb-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid var(--green-md);color:var(--green);background:var(--green-lt)}
+.pbar{position:fixed;top:0;left:var(--sidebar);right:0;height:2px;background:var(--green);z-index:200;width:0%;transition:width 0.08s}
+.content{padding:2.5rem 2.5rem 5rem}
+
+/* ── HERO ── */
+.hero{margin-bottom:3rem;padding-bottom:2.5rem;border-bottom:1.5px solid var(--border)}
+.hero-eye{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--green);margin-bottom:1rem;display:flex;align-items:center;gap:10px}
+.hero-eye::before{content:'';display:inline-block;width:28px;height:1.5px;background:var(--green)}
+.hero-h1{font-family:var(--serif);font-size:clamp(2.2rem,4vw,3.6rem);font-weight:400;line-height:1.1;letter-spacing:-0.01em;color:var(--ink);margin-bottom:1rem}
+.hero-h1 em{font-style:italic;color:var(--green)}
+.hero-p{font-size:0.98rem;color:var(--ink2);max-width:640px;line-height:1.75;font-weight:300;margin-bottom:2rem}
+.hero-pills{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:2rem}
+.pill{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;border:1px solid;cursor:default}
+.pg{color:var(--green);border-color:var(--green-md);background:var(--green-lt)}
+.po{color:var(--orange);border-color:var(--orange-md);background:var(--orange-lt)}
+.pv{color:var(--violet);border-color:var(--violet-md);background:var(--violet-lt)}
+.pb{color:var(--blue);border-color:#A0C0F0;background:var(--blue-lt)}
+.hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;max-width:700px}
+.hg{background:var(--white);padding:1.1rem 1.25rem}
+.hg-n{font-family:var(--serif);font-size:2rem;font-weight:400;color:var(--green);line-height:1;margin-bottom:0.3rem}
+.hg-l{font-family:var(--mono);font-size:9px;color:var(--ink3);letter-spacing:0.06em;text-transform:uppercase}
+
+/* ── SECTION ── */
+.sec{scroll-margin-top:65px;margin-bottom:3.5rem}
+.sec-eye{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--green);margin-bottom:0.5rem;display:flex;align-items:center;gap:9px}
+.sec-eye::before{content:'';display:inline-block;width:18px;height:1.5px;background:var(--green)}
+.sec-n{color:var(--ink3);margin-right:3px}
+.sec-h2{font-family:var(--serif);font-size:clamp(1.65rem,3vw,2.5rem);font-weight:400;line-height:1.15;letter-spacing:-0.01em;color:var(--ink);margin-bottom:0.75rem}
+.sec-h2 em{font-style:italic;color:var(--green)}
+.sec-lead{font-size:0.95rem;color:var(--ink2);max-width:660px;line-height:1.75;font-weight:300;margin-bottom:1.75rem}
+.sdiv{height:1.5px;background:var(--border);margin:3rem 0}
+
+/* ── BASE CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;box-shadow:var(--sh)}
+.cg{border-left:3px solid var(--green);border-radius:0 var(--r) var(--r) 0}
+.co{border-left:3px solid var(--orange);border-radius:0 var(--r) var(--r) 0}
+.cv{border-left:3px solid var(--violet);border-radius:0 var(--r) var(--r) 0}
+.cb{border-left:3px solid var(--blue);border-radius:0 var(--r) var(--r) 0}
+.cr{border-left:3px solid var(--red);border-radius:0 var(--r) var(--r) 0}
+.card h3{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:0.5rem;letter-spacing:-0.01em}
+.card p,.card-p{font-size:13px;color:var(--ink2);line-height:1.65}
+.card ul,.card-ul{font-size:13px;color:var(--ink2);padding-left:1.2rem;display:flex;flex-direction:column;gap:4px;line-height:1.55}
+.card ul li::marker{color:var(--green)}
+strong{font-weight:600;color:var(--ink)}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:0.875rem}
+
+/* ── PRINCIPLE CARDS ── */
+.principle{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.pr-top{padding:1.25rem 1.5rem 1rem;border-bottom:1px solid var(--border)}
+.pr-num{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:0.12em;color:var(--green);margin-bottom:0.5rem}
+.pr-title{font-family:var(--serif);font-size:1.15rem;font-weight:400;color:var(--ink);line-height:1.2}
+.pr-body{padding:1rem 1.5rem}
+.pr-body p{font-size:12.5px;color:var(--ink2);line-height:1.65;margin-bottom:0.6rem}
+.pr-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;border:1px solid var(--green-md);color:var(--green);background:var(--green-lt)}
+
+/* ── BANNERS ── */
+.banner{background:var(--green-lt);border:1px solid var(--green-md);border-radius:var(--r);padding:1.1rem 1.5rem;display:flex;gap:1rem;align-items:flex-start;margin-bottom:1.5rem}
+.banner.orange{background:var(--orange-lt);border-color:var(--orange-md)}
+.banner.violet{background:var(--violet-lt);border-color:var(--violet-md)}
+.banner.blue{background:var(--blue-lt);border-color:#A0C0F0}
+.banner.red{background:var(--red-lt);border-color:#F0B0B0}
+.bn-icon{font-size:17px;flex-shrink:0;margin-top:1px}
+.bn-label{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--green);margin-bottom:0.2rem}
+.banner.orange .bn-label{color:var(--orange)}
+.banner.violet .bn-label{color:var(--violet)}
+.banner.blue .bn-label{color:var(--blue)}
+.banner.red .bn-label{color:var(--red)}
+.bn-text{font-size:13px;color:var(--ink2);line-height:1.6}
+
+/* ── FLOW CHAINS ── */
+.flow-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1.5rem;box-shadow:var(--sh)}
+.fw-header{padding:1rem 1.5rem;background:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.fw-title{font-family:var(--serif);font-size:1rem;font-style:italic;font-weight:400;color:#F5F2ED}
+.fw-tags{display:flex;gap:0.4rem}
+.fw-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px}
+.ft-green{background:rgba(26,107,74,0.3);color:var(--green-md);border:1px solid rgba(159,207,184,0.3)}
+.ft-orange{background:rgba(201,94,26,0.25);color:var(--orange-md);border:1px solid rgba(245,185,138,0.3)}
+.ft-violet{background:rgba(74,46,140,0.25);color:var(--violet-md);border:1px solid rgba(184,174,224,0.3)}
+.ft-red{background:rgba(184,40,40,0.25);color:#F0B0B0;border:1px solid rgba(240,176,176,0.3)}
+.fw-body{padding:0}
+.flow-step{display:grid;grid-template-columns:52px 1fr;gap:0;border-bottom:1px solid var(--bg2);transition:background 0.15s}
+.flow-step:last-child{border-bottom:none}
+.flow-step:hover{background:var(--bg)}
+.fs-left{padding:1.1rem 0 1.1rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:0}
+.fs-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9.5px;font-weight:500;flex-shrink:0}
+.dot-user{background:var(--green-lt);color:var(--green);border:1.5px solid var(--green-md)}
+.dot-sys{background:var(--blue-lt);color:var(--blue);border:1.5px solid #A0C0F0}
+.dot-dec{background:var(--orange-lt);color:var(--orange);border:1.5px solid var(--orange-md);border-radius:4px;transform:rotate(45deg)}
+.dot-dec span{transform:rotate(-45deg);display:block;font-size:10px}
+.dot-err{background:var(--red-lt);color:var(--red);border:1.5px solid #F0B0B0}
+.dot-end{background:var(--green);color:#fff;border:1.5px solid var(--green)}
+.fs-line{width:1.5px;flex:1;background:var(--bg3);min-height:10px;margin:3px 0}
+.fs-right{padding:1.1rem 1.5rem 1.1rem 0.875rem}
+.fs-type{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:0.25rem}
+.type-u{color:var(--green)}
+.type-s{color:var(--blue)}
+.type-d{color:var(--orange)}
+.type-e{color:var(--red)}
+.type-end{color:var(--ink3)}
+.fs-title{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:0.3rem;line-height:1.35}
+.fs-detail{font-size:12.5px;color:var(--ink2);line-height:1.6}
+.fs-detail ul{padding-left:1rem;margin-top:0.35rem;display:flex;flex-direction:column;gap:3px}
+.fs-detail ul li{font-size:12px}
+
+/* ── BRANCH BLOCKS ── */
+.branch{margin:0.75rem 0 0.25rem 3.25rem;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.bc{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:0.75rem 1rem}
+.bc-y{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:0.3rem}
+.bc-n{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--orange);margin-bottom:0.3rem}
+.bc-t{font-size:12px;color:var(--ink2);line-height:1.5}
+
+/* ── CHALLENGE CARDS ── */
+.challenge{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.ch-top{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.75rem}
+.ch-icon{width:34px;height:34px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ci-o{background:var(--orange-lt);color:var(--orange)}
+.ci-v{background:var(--violet-lt);color:var(--violet)}
+.ci-b{background:var(--blue-lt);color:var(--blue)}
+.ci-r{background:var(--red-lt);color:var(--red)}
+.ch-title{font-size:13px;font-weight:600;color:var(--ink);line-height:1.3}
+.ch-body{padding:1rem 1.25rem;display:flex;flex-direction:column;gap:0.6rem}
+.ch-prob{font-size:12px;color:var(--ink3);line-height:1.6}
+.ch-sol{font-size:12.5px;color:var(--ink2);line-height:1.6}
+.ch-sol-label{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:3px}
+
+/* ── INTERACTION CARDS ── */
+.micro{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.25rem;box-shadow:var(--sh)}
+.micro-head{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem}
+.micro-icon{width:30px;height:30px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.mi-g{background:var(--green-lt)}
+.mi-o{background:var(--orange-lt)}
+.mi-v{background:var(--violet-lt)}
+.mi-b{background:var(--blue-lt)}
+.micro-title{font-size:13px;font-weight:600;color:var(--ink)}
+.micro-body{font-size:12.5px;color:var(--ink2);line-height:1.6}
+
+/* ── BEHAVIORAL LOOP ── */
+.loop-ring{display:flex;align-items:center;justify-content:center;gap:0;padding:2rem;background:var(--ink);border-radius:var(--r);overflow-x:auto}
+.loop-node{display:flex;flex-direction:column;align-items:center;gap:0.5rem;flex-shrink:0}
+.ln-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.12)}
+.ln-circle.active{background:rgba(26,107,74,0.35);border-color:var(--green-md)}
+.ln-label{font-family:var(--mono);font-size:9.5px;font-weight:500;color:rgba(255,255,255,0.5);text-align:center;letter-spacing:0.05em;max-width:70px;line-height:1.4;text-transform:uppercase}
+.loop-arr{display:flex;flex-direction:column;align-items:center;padding:0 0.75rem;flex-shrink:0;margin-top:-1rem}
+.la-line{width:28px;height:1.5px;background:rgba(159,207,184,0.4)}
+.la-head{width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid rgba(159,207,184,0.4);margin-top:-2px}
+
+/* ── TRUST SECTION ── */
+.trust-item{display:flex;gap:1rem;padding:1.1rem 1.25rem;background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh)}
+.ti-icon{width:38px;height:38px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;margin-top:1px}
+.ti-body{}
+.ti-title{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:0.3rem}
+.ti-text{font-size:12.5px;color:var(--ink2);line-height:1.6}
+.ti-example{margin-top:0.6rem;background:var(--bg2);border-radius:var(--r-sm);padding:0.6rem 0.875rem;font-size:12px;color:var(--ink2);border-left:2.5px solid var(--green);line-height:1.55;font-style:italic}
+
+/* ── ERROR STATES ── */
+.err-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.ec-head{padding:0.875rem 1.25rem;background:var(--red-lt);border-bottom:1px solid #F0B0B0;display:flex;align-items:center;gap:0.6rem}
+.ec-icon{font-size:15px}
+.ec-title{font-size:13px;font-weight:600;color:var(--red)}
+.ec-body{padding:1rem 1.25rem;display:flex;flex-direction:column;gap:0.75rem}
+.ec-cause{font-size:12px;color:var(--ink3);line-height:1.6}
+.ec-response{font-size:12.5px;color:var(--ink2);line-height:1.6}
+.ec-recovery{font-size:12px;color:var(--green);background:var(--green-lt);border-radius:var(--r-sm);padding:0.5rem 0.75rem;border-left:2px solid var(--green)}
+
+/* ── SCORE TIMELINE ── */
+.score-viz{background:var(--ink);border-radius:var(--r);padding:1.5rem 2rem;display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem}
+.sv-label{font-family:var(--mono);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.sv-bars{display:flex;align-items:flex-end;gap:0.5rem;height:80px}
+.sv-bar{flex:1;border-radius:3px 3px 0 0;min-height:6px;transition:height 0.4s}
+.sv-days{display:flex;gap:0.5rem}
+.sv-day{flex:1;font-family:var(--mono);font-size:8.5px;color:rgba(255,255,255,0.25);text-align:center}
+.sv-score{font-family:var(--serif);font-size:2.5rem;font-style:italic;font-weight:400;color:var(--green-md)}
+.sv-delta{display:flex;align-items:center;gap:0.5rem;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.4)}
+.sv-up{color:var(--green-md)}
+
+/* ── GOAL TABLE ── */
+.goal-table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);font-size:13px}
+.goal-table th{background:var(--bg2);padding:0.75rem 1.1rem;text-align:left;font-size:11.5px;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--border);letter-spacing:0.02em}
+.goal-table td{padding:0.75rem 1.1rem;border-bottom:1px solid var(--bg2);color:var(--ink2);vertical-align:top;line-height:1.55}
+.goal-table tr:last-child td{border-bottom:none}
+.goal-table tr:hover td{background:var(--bg)}
+.goal-table td:first-child{font-weight:600;color:var(--ink)}
+.gt-g{color:var(--green);font-family:var(--mono);font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:var(--green-lt);border:1px solid var(--green-md);display:inline-block}
+.gt-o{color:var(--orange);font-family:var(--mono);font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:var(--orange-lt);border:1px solid var(--orange-md);display:inline-block}
+.gt-v{color:var(--violet);font-family:var(--mono);font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:var(--violet-lt);border:1px solid var(--violet-md);display:inline-block}
+
+/* ── FEEDBACK SYSTEM ── */
+.fb-row{display:flex;align-items:stretch;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1rem}
+.fb-cell{flex:1;background:var(--white);padding:1.1rem 1.25rem}
+.fb-cell-label{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:0.4rem}
+.fbl-g{color:var(--green)}
+.fbl-o{color:var(--orange)}
+.fbl-v{color:var(--violet)}
+.fb-cell-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:0.3rem}
+.fb-cell-text{font-size:12px;color:var(--ink2);line-height:1.6}
+
+/* ── RESPONSIVE ── */
+@media(max-width:920px){:root{--sidebar:0px}.sidebar{display:none}.main{margin-left:0}.content{padding:1.5rem 1rem 4rem}.g2,.g3,.g4{grid-template-columns:1fr}.branch{grid-template-columns:1fr;margin-left:2rem}.hero-grid{grid-template-columns:repeat(2,1fr)}.loop-ring{flex-wrap:wrap;gap:0.5rem}.fb-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="pbar" id="pbar"></div>
+
+<aside class="sidebar">
+  <div class="sb-header">
+    <span class="sb-eye">UX Strategy · v1.0</span>
+    <div class="sb-title">Dynamic <em>Insurance</em> System<br/>UX Framework</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sg-label">Strategy</div>
+    <a class="sn active" href="#s1"><span class="sn-n">01</span><span class="sn-t">UX Strategy Foundation</span></a>
+    <a class="sn" href="#s1b"><span class="sn-n">01b</span><span class="sn-t">UX Goals & Challenges</span></a>
+    <a class="sn" href="#s1c"><span class="sn-n">01c</span><span class="sn-t">Experience Strategy</span></a>
+    <div class="sg-label">Core Flows</div>
+    <a class="sn" href="#s2a"><span class="sn-n">02A</span><span class="sn-t">Onboarding Flow</span></a>
+    <a class="sn" href="#s2b"><span class="sn-n">02B</span><span class="sn-t">Daily Usage Loop</span></a>
+    <a class="sn" href="#s2c"><span class="sn-n">02C</span><span class="sn-t">Insurance Purchase</span></a>
+    <a class="sn" href="#s2d"><span class="sn-n">02D</span><span class="sn-t">Claim Submission</span></a>
+    <a class="sn" href="#s2e"><span class="sn-n">02E</span><span class="sn-t">Error & Edge Cases</span></a>
+    <div class="sg-label">Interaction</div>
+    <a class="sn" href="#s3"><span class="sn-n">03</span><span class="sn-t">Interaction Design Layer</span></a>
+    <a class="sn" href="#s4"><span class="sn-n">04</span><span class="sn-t">Behavioral UX</span></a>
+    <a class="sn" href="#s5"><span class="sn-n">05</span><span class="sn-t">Trust & Transparency</span></a>
+  </nav>
+  <div class="sb-foot">
+    <span class="sb-chip">5 Flows</span><span class="sb-chip">6 Principles</span><span class="sb-chip">Behavioral UX</span><span class="sb-chip">Trust Design</span>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="tb-l">DIS · UX Strategy & Core User Flows</span>
+    <div class="tb-r"><span class="tb-tag">Senior UX Designer</span></div>
+  </div>
+
+  <div class="content">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eye">UX Strategy & User Flow Specification</div>
+      <h1 class="hero-h1">Human-Centred Design<br/>for a <em>Trust-Sensitive</em> System</h1>
+      <p class="hero-p">A production-level UX framework for the Dynamic Insurance System — balancing ML complexity and blockchain transparency with human clarity, behavioral motivation, and fairness. Every design decision serves one purpose: make safer driving feel rewarding and insurance feel fair.</p>
+      <div class="hero-pills">
+        <span class="pill pg">6 Design Principles</span>
+        <span class="pill po">5 Core Flows</span>
+        <span class="pill pv">Behavioral UX Layer</span>
+        <span class="pill pb">Trust Architecture</span>
+      </div>
+      <div class="hero-grid">
+        <div class="hg"><div class="hg-n">6</div><div class="hg-l">UX Principles</div></div>
+        <div class="hg"><div class="hg-n">5</div><div class="hg-l">Core Journeys</div></div>
+        <div class="hg"><div class="hg-n">3</div><div class="hg-l">User Types</div></div>
+        <div class="hg"><div class="hg-n">∞</div><div class="hg-l">Behavior Change</div></div>
+      </div>
+    </div>
+
+    <!-- ═══ S1: UX STRATEGY ═══ -->
+    <div class="sec" id="s1">
+      <div class="sec-eye"><span class="sec-n">01 /</span> Foundation</div>
+      <h2 class="sec-h2">UX Strategy — <em>Design Principles</em></h2>
+      <p class="sec-lead">Six core principles govern every design decision in DIS. They are not aesthetic guidelines — they are constraints that ensure a data-heavy, trust-sensitive system remains human-centered at every touchpoint.</p>
+
+      <div class="g3" style="margin-bottom:1.25rem">
+        <div class="principle">
+          <div class="pr-top">
+            <div class="pr-num">Principle 01</div>
+            <div class="pr-title">Clarity Over Completeness</div>
+          </div>
+          <div class="pr-body">
+            <p>Complex driving data, ML scores, and blockchain records are never shown raw. Every data point is translated into a plain-language outcome. The user sees "Your braking was 23% smoother this week" — not the G-force values behind it.</p>
+            <p><strong>Application:</strong> Driving score breakdown uses horizontal bars with simple labels. Premium calculations shown as "You pay ₹X less because you drive well." Technical details available on demand via progressive disclosure, never upfront.</p>
+            <span class="pr-tag">Applied to: Score page, Premium breakdown, Claim settlement</span>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="pr-top">
+            <div class="pr-num">Principle 02</div>
+            <div class="pr-title">Radical Transparency</div>
+          </div>
+          <div class="pr-body">
+            <p>Every automated decision — score change, premium adjustment, claim calculation — must be fully explainable. Users should never feel that the system "decided" something without them understanding why.</p>
+            <p><strong>Application:</strong> Score changes accompanied by a one-sentence reason ("Harsh braking detected on 3 trips"). Premium adjustments show the exact formula in plain language. Blockchain record accessible but abstracted as a "Verified" trust badge.</p>
+            <span class="pr-tag">Applied to: All score updates, all premium changes</span>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="pr-top">
+            <div class="pr-num">Principle 03</div>
+            <div class="pr-title">Earned Trust</div>
+          </div>
+          <div class="pr-body">
+            <p>Trust is not declared — it is built through consistent, honest system behavior. The platform earns trust by being transparent about data use, never surprising users with unexplained changes, and providing verifiable records.</p>
+            <p><strong>Application:</strong> "Why did my score drop?" always has an answer. Data consent is granular, not all-or-nothing. Blockchain verification shown as proof of immutability, not as a marketing claim.</p>
+            <span class="pr-tag">Applied to: Onboarding, Score, Claims, Privacy settings</span>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="pr-top">
+            <div class="pr-num">Principle 04</div>
+            <div class="pr-title">Behavior-Driven Feedback</div>
+          </div>
+          <div class="pr-body">
+            <p>The system's primary function is not just insurance — it is a behavior change platform. Feedback loops must be immediate, specific, and actionable. Vague feedback ("Drive better") is never acceptable.</p>
+            <p><strong>Application:</strong> Alerts link directly to the specific trip and behavior. Score improvements show a delta ("↑ 4.3 points this week") with the specific action that caused it. Reward events are tied to explicit milestones, not random.</p>
+            <span class="pr-tag">Applied to: Dashboard, My Score, Notifications, Rewards</span>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="pr-top">
+            <div class="pr-num">Principle 05</div>
+            <div class="pr-title">Minimal Cognitive Load</div>
+          </div>
+          <div class="pr-body">
+            <p>The system holds enormous amounts of data. The interface never transfers that burden to the user. Decisions are pre-digested — the platform tells users what matters, when it matters, without requiring them to explore to find it.</p>
+            <p><strong>Application:</strong> Dashboard surfaces one key number (today's score) not ten. Insights are singular — one actionable tip per session. Premium comparison shows three options maximum. Claims form has step-by-step structure, not one overwhelming form.</p>
+            <span class="pr-tag">Applied to: Dashboard, Analytics, Claims, Renewal</span>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="pr-top">
+            <div class="pr-num">Principle 06</div>
+            <div class="pr-title">Positive Framing</div>
+          </div>
+          <div class="pr-body">
+            <p>A system that charges people more for bad behavior must be careful about tone. Negative framing destroys engagement. Every penalty is reframed as an opportunity. Every low score is accompanied by a path to improvement.</p>
+            <p><strong>Application:</strong> "Your score is below average" becomes "Improving these 2 habits could save you ₹800/year." Claim deductions shown with the score threshold for getting the bonus instead. No red warning banners on the home screen.</p>
+            <span class="pr-tag">Applied to: All score feedback, claim outcomes, empty states</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- S1b: GOALS & CHALLENGES -->
+    <div class="sec" id="s1b">
+      <div class="sec-eye"><span class="sec-n">01b /</span> Goals & Challenges</div>
+      <h2 class="sec-h2">UX Goals & <em>Key Challenges</em></h2>
+      <p class="sec-lead">Three layers of goals must be balanced simultaneously. When they align, the product is successful. When they conflict, UX design provides the resolution layer.</p>
+
+      <table class="goal-table" style="margin-bottom:1.75rem">
+        <thead><tr><th>Goal Layer</th><th>Specific Goals</th><th>UX Success Metric</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr><td>User Goals</td><td>Save money on premiums; understand why they pay what they pay; drive safer; trust the system; get fair claim settlements</td><td>Premium discount achieved within 30 days; claim resolved without confusion</td><td><span class="gt-g">Primary</span></td></tr>
+          <tr><td>Business Goals</td><td>Reduce insurance fraud; increase policy renewal rate; enable dynamic pricing; grow fleet segment; reduce claim processing cost</td><td>Fraud flag rate; renewal conversion %; claims processed via smart contract</td><td><span class="gt-o">Secondary</span></td></tr>
+          <tr><td>System Goals</td><td>Accurate ML scoring; real-time OBD data sync; blockchain record integrity; low latency dashboard; consistent cross-device state</td><td>Score accuracy; sync latency; blockchain verification time; zero stale data shown</td><td><span class="gt-v">System</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:14.5px;font-weight:600;color:var(--ink);margin-bottom:1rem;letter-spacing:-0.01em">Four Key UX Challenges — With Design Solutions</h3>
+      <div class="g2">
+        <div class="challenge">
+          <div class="ch-top"><div class="ch-icon ci-o">🔢</div><div class="ch-title">Making Complex Data Understandable</div></div>
+          <div class="ch-body">
+            <div class="ch-prob">OBD data includes G-force values, RPM readings, and multi-axis acceleration — incomprehensible to a non-technical driver. ML confidence scores and blockchain hashes are meaningless to end users.</div>
+            <div><div class="ch-sol-label">UX Solution</div><div class="ch-sol">All raw data is translated to three layers: (1) plain outcome — "Your braking improved," (2) a normalized 0–100 score, (3) a financial impact — "This saved you ₹X." Raw data accessible only via an "Advanced View" toggle. ML confidence shown as "Data quality: Good/Fair/Low" not a decimal number.</div></div>
+          </div>
+        </div>
+        <div class="challenge">
+          <div class="ch-top"><div class="ch-icon ci-v">🤖</div><div class="ch-title">Building Trust in Automated Decisions</div></div>
+          <div class="ch-body">
+            <div class="ch-prob">When an algorithm reduces a claim payout by 20%, users feel powerless and cheated. Without visible reasoning, automated systems feel arbitrary and hostile — destroying retention.</div>
+            <div><div class="ch-sol-label">UX Solution</div><div class="ch-sol">Every automated decision has a "Why did this happen?" link that opens a plain-language explanation. For claims: the exact blockchain record showing the driving score on the day of the incident is surfaced. Users can see — not just be told — the reason. Dispute pathway always visible.</div></div>
+          </div>
+        </div>
+        <div class="challenge">
+          <div class="ch-top"><div class="ch-icon ci-b">🧠</div><div class="ch-title">Avoiding Information Overwhelm</div></div>
+          <div class="ch-body">
+            <div class="ch-prob">The platform generates vast amounts of driving data across multiple sessions per day. Showing all of it creates paralysis and disengagement — users stop checking.</div>
+            <div><div class="ch-sol-label">UX Solution</div><div class="ch-sol">Dashboard surfaces exactly three things: today's score, one behavior insight, one financial impact. All other data lives one level deeper. Notifications are curated — only triggered when data crosses meaningful thresholds, not for every event. Weekly digest replaces daily data flood.</div></div>
+          </div>
+        </div>
+        <div class="challenge">
+          <div class="ch-top"><div class="ch-icon ci-r">🔄</div><div class="ch-title">Encouraging Behavior Change Without Frustration</div></div>
+          <div class="ch-body">
+            <div class="ch-prob">Drivers who receive only negative feedback ("Your score dropped again") disengage quickly. Punitive framing causes defensive responses, not behavior change. Conversely, vague positive feedback doesn't drive improvement either.</div>
+            <div><div class="ch-sol-label">UX Solution</div><div class="ch-sol">Feedback is always specific and improvement-oriented: "3 harsh braking events detected — easing off 15 meters earlier than usual would eliminate these." Streak mechanics reward consistency over perfection. Score improvement is celebrated more loudly than absolute score level.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- S1c: EXPERIENCE STRATEGY -->
+    <div class="sec" id="s1c">
+      <div class="sec-eye"><span class="sec-n">01c /</span> Experience Strategy</div>
+      <h2 class="sec-h2">Experience <em>Strategy</em></h2>
+      <p class="sec-lead">How the product communicates, what feedback loop it creates, and what emotional state it leaves users in — these are not incidental. They are designed intentionally.</p>
+
+      <div class="banner" style="margin-bottom:1.75rem">
+        <span class="bn-icon">🎯</span>
+        <div><div class="bn-label">Core Feedback Loop</div><div class="bn-text"><strong>Drive safely → OBD captures data → ML generates score → Score updates dashboard → Score reduces premium → User feels rewarded → User drives more safely.</strong> This loop must be completed within 24 hours of any trip for the feedback to be behaviorally meaningful.</div></div>
+      </div>
+
+      <div class="g3" style="margin-bottom:1.5rem">
+        <div class="card cg">
+          <h3>How Insights Are Communicated</h3>
+          <ul>
+            <li>Outcome-first, data-second: "You drove 18% more smoothly" before showing graphs</li>
+            <li>Comparative framing: "Better than your last 3 trips" beats an absolute score number</li>
+            <li>Financial translation: Every score insight has a ₹ equivalent shown clearly</li>
+            <li>Single most important insight shown first — never a list of 8 findings</li>
+            <li>Negative insights always paired with a specific, actionable next step</li>
+          </ul>
+        </div>
+        <div class="card co">
+          <h3>How Feedback Loops Work</h3>
+          <ul>
+            <li><strong>Immediate (in-trip):</strong> Future feature — real-time gentle audio cues</li>
+            <li><strong>Same-day:</strong> Score updates within 2 hours of trip end — user checks app</li>
+            <li><strong>Weekly:</strong> "Your week in review" digest — biggest win + biggest opportunity</li>
+            <li><strong>Monthly:</strong> Premium impact preview — "At this rate, you'll save ₹X this year"</li>
+            <li><strong>Renewal:</strong> Full year summary tied to exact premium discount earned</li>
+          </ul>
+        </div>
+        <div class="card cv">
+          <h3>Emotional Design Goals</h3>
+          <ul>
+            <li><strong>Confidence:</strong> User understands their score and how to improve it</li>
+            <li><strong>Control:</strong> User believes their behavior directly controls their premium</li>
+            <li><strong>Fairness:</strong> User trusts that the system treats them based on their actual driving</li>
+            <li><strong>Progress:</strong> User feels they are improving over time, not just being judged</li>
+            <li><strong>Pride:</strong> Streak badges and top-tier status create identity, not just savings</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Score Visualization -->
+      <div class="score-viz">
+        <div class="sv-label">Sample Score Trend — How Progress is Communicated</div>
+        <div style="display:flex;align-items:flex-end;gap:1.5rem">
+          <div style="flex:1">
+            <div class="sv-bars">
+              <div class="sv-bar" style="background:rgba(159,207,184,0.25);height:45%"></div>
+              <div class="sv-bar" style="background:rgba(159,207,184,0.3);height:52%"></div>
+              <div class="sv-bar" style="background:rgba(159,207,184,0.4);height:48%"></div>
+              <div class="sv-bar" style="background:rgba(159,207,184,0.5);height:61%"></div>
+              <div class="sv-bar" style="background:rgba(159,207,184,0.6);height:70%"></div>
+              <div class="sv-bar" style="background:rgba(159,207,184,0.75);height:78%"></div>
+              <div class="sv-bar" style="background:var(--green-md);height:88%"></div>
+            </div>
+            <div class="sv-days">
+              <div class="sv-day">Mon</div><div class="sv-day">Tue</div><div class="sv-day">Wed</div><div class="sv-day">Thu</div><div class="sv-day">Fri</div><div class="sv-day">Sat</div><div class="sv-day">Sun</div>
+            </div>
+          </div>
+          <div>
+            <div class="sv-score">84.1%</div>
+            <div class="sv-delta"><span class="sv-up">↑ 6.3 points</span> this week</div>
+            <div style="margin-top:0.5rem;font-size:11px;color:rgba(255,255,255,0.3);line-height:1.5">Reducing harsh braking<br/>improved your score most</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ═══ FLOW A: ONBOARDING ═══ -->
+    <div class="sec" id="s2a">
+      <div class="sec-eye"><span class="sec-n">02A /</span> Core Journey</div>
+      <h2 class="sec-h2">First-Time <em>Onboarding Flow</em></h2>
+      <p class="sec-lead">The onboarding journey transforms a new user from complete stranger to active participant with their first driving score visible. Every step is designed to build trust before asking for data, and to show value before asking for commitment.</p>
+
+      <div class="banner">
+        <span class="bn-icon">🎯</span>
+        <div><div class="bn-label">Flow Objective</div><div class="bn-text"><strong>Entry point: App launch.</strong> End condition: User has registered, connected their OBD device, granted data permissions, and sees their first driving score with an insurance premium preview. Target time: under 12 minutes total.</div></div>
+      </div>
+
+      <div class="flow-wrap">
+        <div class="fw-header">
+          <div class="fw-title">Onboarding — From Launch to First Score</div>
+          <div class="fw-tags"><span class="fw-tag ft-green">Driver</span><span class="fw-tag ft-orange">First-Time</span></div>
+        </div>
+        <div class="fw-body">
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">App Launch → Welcome Screen (2 seconds)</div>
+              <div class="fs-detail">Single-screen: animated brand mark, one-line value proposition: <em>"Your premium. Your driving. Your choice."</em> Two CTAs: "Get Started" (primary) and "Sign In" (secondary). No carousel, no feature walkthrough. Value is experienced, not explained.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-user">U</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-u">User Action</div>
+              <div class="fs-title">Account Registration — Minimal Fields Only</div>
+              <div class="fs-detail">Required: Full name, phone number (for OTP), email. Optional: Referral code. No password creation upfront — OTP-first authentication. Progress indicator: Step 1 of 4. Social login available (Google/Apple). KYC deferred to after first value delivery.
+                <ul><li>Validation: real-time phone format check, email validity</li><li>Error: inline, not modal — "Enter a valid 10-digit number"</li></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">OTP Verification + Welcome State</div>
+              <div class="fs-detail">6-digit OTP sent to phone. Auto-read on Android. 60-second resend timer. On success: brief celebration animation ("Welcome, [Name]!"), then immediately into vehicle setup — no dead pause.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-user">U</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-u">User Action</div>
+              <div class="fs-title">Vehicle Details — Step 2 of 4</div>
+              <div class="fs-detail">Vehicle registration number (auto-fills make/model/year via RC lookup API). Manual entry fallback if API fails. Fields: Vehicle No., Owner Name (pre-filled from registration), Fuel Type, Chassis No. Existing insurance number (optional at this step). Each field has contextual help tooltip explaining why it's needed.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-user">U</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-u">User Action</div>
+              <div class="fs-title">OBD Device Connection — Step 3 of 4</div>
+              <div class="fs-detail">Illustrated guide (3 images): plug OBD into dashboard port, turn ignition on, enable Bluetooth. Live connection status indicator. If Bluetooth off: system shows "Enable Bluetooth" with deep-link to device settings. Device pairing via scanning for nearby OBD devices. Success state: device name shown, green pulse animation. <br/><br/><strong>Skip option available</strong> — user can connect later and use manual upload in the interim. Skipping shows a persistent but non-intrusive banner on dashboard.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-dec"><span>?</span></div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-d">Decision Point</div>
+              <div class="fs-title">Data Tracking Permissions — Step 4 of 4</div>
+              <div class="fs-detail">Before OS permission dialogs fire: custom pre-prompt explains exactly what data is collected, why, and who sees it. Granular toggles: Location (for context), Driving behavior (required for score), OBD sync (required). Each toggle has a "What is this?" expandable row. <strong>No permission is forced</strong> — reduced feature set if declined, with clear explanation of impact.</div>
+            </div>
+            <div class="branch">
+              <div class="bc"><div class="bc-y">✓ All Permissions Granted</div><div class="bc-t">Full feature set enabled. OBD begins passive data collection. Score generation scheduled after first 5-minute trip.</div></div>
+              <div class="bc"><div class="bc-n">→ Partial / Denied</div><div class="bc-t">Minimum viable experience with manual CSV upload. Persistent but non-blocking banner: "Connect your car to unlock full scoring." Re-prompt after 7 days or user-initiated.</div></div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">Initial Data Collection — First Trip Trigger</div>
+              <div class="fs-detail">Background OBD sync begins. After first trip ≥ 5 minutes: ML model processes telemetry. Score generation takes 15–90 seconds. While waiting: "Your first score is being calculated" progress screen with contextual education ("Did you know smooth braking can save up to 25% on your premium?"). Not a spinner — educates while waiting.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-end">✓</div></div>
+            <div class="fs-right">
+              <div class="fs-type type-end">End State</div>
+              <div class="fs-title">First Score Reveal + Premium Preview</div>
+              <div class="fs-detail">Celebratory reveal: score animates from 0 to final number. Below: "Based on this score, your estimated premium is ₹X/month — that's ₹Y less than the average driver." CTA: "See what affects your score" links to score breakdown. User lands on Dashboard with score visible, full feature set accessible. KYC documents prompted 24 hours later, not immediately.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ═══ FLOW B: DAILY USAGE ═══ -->
+    <div class="sec" id="s2b">
+      <div class="sec-eye"><span class="sec-n">02B /</span> Core Journey</div>
+      <h2 class="sec-h2">Daily Usage — <em>Core Engagement Loop</em></h2>
+      <p class="sec-lead">The daily flow is the heartbeat of the product. It must form a habit in 30 days. This requires the interaction to be fast, rewarding, and always revealing something worth seeing. Total daily engagement target: under 90 seconds.</p>
+
+      <div class="banner orange">
+        <span class="bn-icon">⚡</span>
+        <div><div class="bn-label">Habit Formation Target</div><div class="bn-text"><strong>30-day activation goal:</strong> User checks dashboard daily, takes at least one score-improving action per week, achieves first premium discount within 30 days. The loop must complete fast enough to feel worth repeating.</div></div>
+      </div>
+
+      <div class="flow-wrap">
+        <div class="fw-header">
+          <div class="fw-title">Daily Usage — Engagement Loop</div>
+          <div class="fw-tags"><span class="fw-tag ft-green">Driver</span><span class="fw-tag ft-green">Daily</span></div>
+        </div>
+        <div class="fw-body">
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-user">U</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-u">User Action</div>
+              <div class="fs-title">User Opens Dashboard (Entry Point)</div>
+              <div class="fs-detail">Dashboard loads from local cache — zero network wait on first render. Score is the visual centrepiece: large circular score display, color-coded by tier (green ≥80%, amber 65–79%, orange &lt;65%). Date shown: "Today, Mon 7." If no new data: yesterday's score shown with "Drive today to update" prompt — not an empty state.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">Score Card + Trend Sparkline Displayed</div>
+              <div class="fs-detail">Below the main score: 7-day mini bar chart showing trend direction. Delta indicator: "↑ 3.2 this week." Premium impact preview: "At this score: ₹X/month." One highlighted insight card: the single most actionable item from last trip (not three — just one). Streak counter: "12-day consistent driving streak 🔥"</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-dec"><span>?</span></div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-d">Decision Point</div>
+              <div class="fs-title">User Engages with Insight or Exits</div>
+            </div>
+            <div class="branch">
+              <div class="bc"><div class="bc-y">→ Taps Insight Card</div><div class="bc-t">Opens score breakdown — shows which behavior caused the insight. Displays trip where it occurred with a replay summary. CTA: "Got it" marks as read.</div></div>
+              <div class="bc"><div class="bc-y">→ Exits App</div><div class="bc-t">Valid path — daily check-in complete. Notification scheduled for next day based on trip pattern. Score syncs in background.</div></div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">Behavior Alert (If Triggered)</div>
+              <div class="fs-detail">Alert appears as an in-app banner (not a push notification) when a specific behavior threshold is crossed: 3+ harsh braking events in one trip, or driving at speeds that affect the score. Alert format: "3 harsh braking events on your last trip — here's what it looked like" with a simple speed-over-time graph. CTA: "Understand this" or "Dismiss." Never alarming — always educational tone.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-user">U</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-u">User Action (Optional)</div>
+              <div class="fs-title">User Reviews Behavior Breakdown</div>
+              <div class="fs-detail">Navigates to My Score → Score Breakdown. Four behavior bars: Speed, Braking, Acceleration, Engine Load. Each bar shows: current score, trend arrow, and one tip. Example: "Braking: 71 / 100 — You tend to brake hard near traffic signals. Try releasing the accelerator 100m earlier." Quick action: mark tip as "I'll try this" which sets a subtle reminder context.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">Next-Day Score Update After Behavior Change</div>
+              <div class="fs-detail">After user drives with improved behavior: score update pushed as notification: "Your braking score improved by 8 points today! 🎉 Your projected premium dropped by ₹42." This notification is the reward — it closes the behavior loop. Opens directly to the updated score card. <strong>This moment is the product's most important retention event.</strong></div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-end">✓</div></div>
+            <div class="fs-right">
+              <div class="fs-type type-end">Loop Complete</div>
+              <div class="fs-title">User Sees Updated Score → Loop Restarts Tomorrow</div>
+              <div class="fs-detail">Score updated. Streak incremented if consistent. Reward token added if milestone hit. Premium preview updated. User exits with a measurable sense of progress. <strong>The loop is complete in under 90 seconds on returning days.</strong></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ═══ FLOW C: INSURANCE PURCHASE ═══ -->
+    <div class="sec" id="s2c">
+      <div class="sec-eye"><span class="sec-n">02C /</span> Core Journey</div>
+      <h2 class="sec-h2">Insurance Purchase & <em>Renewal Flow</em></h2>
+      <p class="sec-lead">The purchase flow handles a high-stakes, infrequent decision. Users must understand exactly what they're paying and why before committing. Transparency and decision confidence are the dominant design priorities here — not speed.</p>
+
+      <div class="flow-wrap">
+        <div class="fw-header">
+          <div class="fw-title">Insurance Purchase / Renewal — Decision Flow</div>
+          <div class="fw-tags"><span class="fw-tag ft-green">Driver</span><span class="fw-tag ft-orange">High Stakes</span></div>
+        </div>
+        <div class="fw-body">
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-user">U</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-u">User Action</div>
+              <div class="fs-title">Entry: Dashboard Quick Action or Renewal Notification</div>
+              <div class="fs-detail">Two entry points: (1) Dashboard → "View Insurance" quick action, (2) Renewal notification 30 days before expiry: "Your policy expires on [date]. See your renewal options." Both land on Insurance → My Policy page. Consistent landing regardless of entry point.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">Current Policy Overview — Clarity First</div>
+              <div class="fs-detail">Page opens to current policy status: large status badge (Active / Expiring in 14 days / Expired). Three key numbers prominently: current monthly premium, score-based discount applied, next due date. Plain-language coverage summary — not insurance legal text. "What's covered" expandable section. Certificate of insurance download always visible.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">Premium Breakdown — "Why This Amount?" Section</div>
+              <div class="fs-detail">Accordion section reveals premium calculation in plain language: <em>Base premium: ₹6,000</em> → <em>Your driving score (84%): −25% discount</em> → <em>CGST 9% + SGST 9%: ₹390 each</em> → <em>Stamp Duty: ₹1</em> → <strong>Total: ₹5,117.</strong> Horizontal bar visualization shows how score tier affects price. Interactive slider: "If your score were [X], you'd pay [Y]." This is the system's trust-building centrepiece.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-dec"><span>?</span></div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-d">Decision Point</div>
+              <div class="fs-title">Compare Insurer Offers (Optional)</div>
+            </div>
+            <div class="branch">
+              <div class="bc"><div class="bc-y">→ View Comparisons</div><div class="bc-t">Maximum 3 insurer options shown. Side-by-side: price, coverage highlights, and your score impact for each. No overwhelming feature matrices — just the 3 things that differ most meaningfully. Recommended option highlighted.</div></div>
+              <div class="bc"><div class="bc-y">→ Renew Current Policy</div><div class="bc-t">Skips comparison. Proceeds directly to payment confirmation with current insurer at calculated premium. No friction added to the direct path.</div></div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-user">U</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-u">User Action</div>
+              <div class="fs-title">Payment Confirmation — Final Decision Screen</div>
+              <div class="fs-detail">Summary card: exactly what is being paid, for what vehicle, for what period. Score discount line explicitly shown again: "Score discount applied: −₹1,500." Payment method selector (UPI, card, net banking). Auto-pay toggle. CTA: "Confirm & Pay ₹5,117." No hidden fees. Stamp duty and GST broken out. Cancellation policy one tap away.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">Payment Processing State</div>
+              <div class="fs-detail">Progress indicator — not a spinner. Shows: "Processing payment → Generating certificate → Updating blockchain record → Done." Each step confirms the value chain. If payment fails: specific reason shown ("Bank declined — try another method") with immediate recovery options. Never "An error occurred."</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-end">✓</div></div>
+            <div class="fs-right">
+              <div class="fs-type type-end">End State</div>
+              <div class="fs-title">Policy Confirmed — Certificate Available Immediately</div>
+              <div class="fs-detail">Success screen: policy number, coverage period, premium paid, score discount applied. Certificate of insurance available for immediate download. Blockchain verification badge shown: "Policy record verified and secured." Email confirmation sent. User returns to Dashboard where policy status updates to "Active." <strong>The policy is real, verifiable, and understood.</strong></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ═══ FLOW D: CLAIM SUBMISSION ═══ -->
+    <div class="sec" id="s2d">
+      <div class="sec-eye"><span class="sec-n">02D /</span> Core Journey</div>
+      <h2 class="sec-h2">Claim Submission <em>Flow</em></h2>
+      <p class="sec-lead">Claim submission happens under stress — after an accident or incident. The flow must be calming, step-by-step, and never require the user to understand the blockchain or ML scoring system to complete it. Trust is established through transparency, not complexity.</p>
+
+      <div class="banner red">
+        <span class="bn-icon">⚠️</span>
+        <div><div class="bn-label">Design Priority</div><div class="bn-text"><strong>Users arrive at this flow under emotional stress.</strong> Every design choice must reduce anxiety: one step at a time, clear progress, no jargon, explicit explanation of how the driving score on the incident day affects their settlement — before they submit, not after.</div></div>
+      </div>
+
+      <div class="flow-wrap">
+        <div class="fw-header">
+          <div class="fw-title">Claim Submission — Step-by-Step Flow</div>
+          <div class="fw-tags"><span class="fw-tag ft-red">Driver</span><span class="fw-tag ft-orange">High Stress</span></div>
+        </div>
+        <div class="fw-body">
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-user">U</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-u">User Action</div>
+              <div class="fs-title">Entry: Claims Tab → "File New Claim"</div>
+              <div class="fs-detail">Entry from Dashboard quick action or Claims tab. Full-screen step indicator shown immediately: Step 1 of 5. Calm, clean design — no red alerts or alarming visuals. First screen: "Let's get your claim started. We'll guide you through it." Plain, human language. Progress bar at top throughout.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-user">U</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-u">User Action — Step 1</div>
+              <div class="fs-title">Incident Date & Type Selection</div>
+              <div class="fs-detail">Date picker — calendar highlighting only dates with active policy coverage. Incident type: visual chip selector (Accident, Theft, Natural damage, Vandalism, Other). <strong>As soon as date is selected:</strong> system silently retrieves the blockchain-verified driving score for that date and queues it for display in the next step.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">Score Transparency Before Submission — Step 2</div>
+              <div class="fs-detail">Critical trust moment: "Your driving score on [date] was <strong>72.4%</strong> — verified and recorded on the blockchain." Then: the exact settlement formula explained in plain language: "Because your score was between 50–70%, your claim will be processed at the standard amount — no bonus, no deduction." If score &gt;70%: "You'll receive a 20% bonus on your claim." If &lt;50%: "A 20% deduction applies. Here's why." <strong>User understands their outcome before completing the form</strong> — no surprises at the end.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-user">U</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-u">User Action — Step 3</div>
+              <div class="fs-title">Incident Description + Evidence Upload</div>
+              <div class="fs-detail">Description: open text (optional — not required for automated processing). Photo upload: camera or gallery, multiple files. Document upload: FIR report, repair estimate, photos. Upload progress shown per file. Auto-compression for large files. Minimum requirement: one photo or document to proceed. Optional: location (auto-filled if GPS enabled).</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">System Validation — Step 4</div>
+              <div class="fs-detail">Background checks (shown as progress, not hidden): <br/>• Policy active on incident date ✓<br/>• Driving score retrieved from blockchain ✓<br/>• Uploaded documents validated (not corrupt) ✓<br/>• Duplicate claim check ✓<br/><br/>If any check fails: specific failure shown with recovery action. Example: "No active policy found on this date — please select a date within your coverage period." Estimated payout preview shown at bottom of step 4.</div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-dec"><span>?</span></div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-d">Decision Point</div>
+              <div class="fs-title">Review & Submit — Step 5</div>
+            </div>
+            <div class="branch">
+              <div class="bc"><div class="bc-y">✓ Confirmed Submit</div><div class="bc-t">Claim submitted. Claim ID generated. Status: "Received — under review." Email confirmation with claim details and timeline. Smart contract begins automated adjudication for eligible claim types.</div></div>
+              <div class="bc"><div class="bc-n">→ Edit Details</div><div class="bc-t">Returns to specific step that needs editing. All previously entered data preserved. No restart required.</div></div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-sys">S</div><div class="fs-line"></div></div>
+            <div class="fs-right">
+              <div class="fs-type type-s">System</div>
+              <div class="fs-title">Approval / Rejection Communication</div>
+              <div class="fs-detail">
+                <strong>Approved:</strong> Push notification: "Claim #1234 approved. ₹8,400 will be credited in 3-5 days." App shows full settlement breakdown with score adjustment line.<br/><br/>
+                <strong>Rejected:</strong> Never a bare "Rejected." Always: specific reason, supporting data shown, dispute option, and next steps. Example: "Claim could not be processed — uploaded photos do not clearly show the vehicle. Please resubmit with clearer images." Re-submission path is one tap.
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="fs-left"><div class="fs-dot dot-end">✓</div></div>
+            <div class="fs-right">
+              <div class="fs-type type-end">End State</div>
+              <div class="fs-title">Claim Settled — Record Available on Blockchain</div>
+              <div class="fs-detail">Settlement amount credited. Claim history updated with full record: claim date, incident date, score used, adjustment applied, final amount. Blockchain verification badge on settled claim. User can download settlement letter. Premium impact (if any) reflected in next renewal calculation. <strong>Zero confusion about why they received what they received.</strong></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ═══ FLOW E: ERROR CASES ═══ -->
+    <div class="sec" id="s2e">
+      <div class="sec-eye"><span class="sec-n">02E /</span> Edge Cases</div>
+      <h2 class="sec-h2">Error & <em>Edge Case Flows</em></h2>
+      <p class="sec-lead">Every failure point must have a recovery path, a plain-language explanation, and a next step. Dead ends are not acceptable. The goal is to convert every error state from frustration into a guided recovery.</p>
+
+      <div class="g2">
+        <div class="err-card">
+          <div class="ec-head"><span class="ec-icon">📡</span><div class="ec-title">OBD Device Not Connected</div></div>
+          <div class="ec-body">
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">Trigger</div><div class="ec-cause">Dashboard loads but OBD device is not paired or Bluetooth is off. No driving data available for the current session.</div></div>
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">System Response</div><div class="ec-response">Dashboard shows last available score with timestamp: "Score last updated 2 days ago — connect your device to refresh." Non-blocking banner at top: "Car not connected — tap to reconnect." Score ring shown in muted state, not hidden.</div></div>
+            <div class="ec-recovery">Recovery: Tap banner → step-by-step reconnection guide → device found → score sync begins. Alternative: "Upload trip data manually" always visible as fallback.</div>
+          </div>
+        </div>
+        <div class="err-card">
+          <div class="ec-head"><span class="ec-icon">🚫</span><div class="ec-title">No Driving Data Available</div></div>
+          <div class="ec-body">
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">Trigger</div><div class="ec-cause">New user hasn't driven yet, or user hasn't driven in 14+ days. ML model has no data to score.</div></div>
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">System Response</div><div class="ec-response">Empty state with illustration: "Your score appears after your first drive." Not a blank white screen — shows what the score will look like when populated, with clear motivation: "Drive today to see your first score and estimated premium."</div></div>
+            <div class="ec-recovery">Recovery: Contextual education shown while waiting — "Here's how your score is calculated." Premium preview shown using average score: "Most drivers save ₹X — drive safely to claim yours."</div>
+          </div>
+        </div>
+        <div class="err-card">
+          <div class="ec-head"><span class="ec-icon">⚠️</span><div class="ec-title">Incorrect or Anomalous Driving Data</div></div>
+          <div class="ec-body">
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">Trigger</div><div class="ec-cause">OBD reports data that falls outside normal parameters (e.g., corrupted telemetry, speed reading of 800 km/h, or incomplete trip log due to Bluetooth drop).</div></div>
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">System Response</div><div class="ec-response">Anomalous trip flagged automatically. Score not updated from corrupted trip. Notification: "One trip could not be scored — data quality issue detected. This trip has been excluded from your score." Never silently drops data.</div></div>
+            <div class="ec-recovery">Recovery: User can view the excluded trip, see the specific issue, and flag for manual review. Support ticket auto-generated. Score calculated from remaining valid trips.</div>
+          </div>
+        </div>
+        <div class="err-card">
+          <div class="ec-head"><span class="ec-icon">❌</span><div class="ec-title">Claim Rejection Scenario</div></div>
+          <div class="ec-body">
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">Trigger</div><div class="ec-cause">Claim is rejected — due to invalid documentation, no active policy, or fraud detection flag triggered by anomalous data pattern.</div></div>
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">System Response</div><div class="ec-response">Rejection never shown as a bare status. Full context: specific reason, the exact data or rule that triggered the rejection, and what the user can do. Dispute option always available. Adjuster contact available for manual review.</div></div>
+            <div class="ec-recovery">Recovery: "Resubmit with updated documents" (one tap), or "Dispute this decision" opens a review request form. Timeline for dispute review shown. User never feels abandoned.</div>
+          </div>
+        </div>
+        <div class="err-card">
+          <div class="ec-head"><span class="ec-icon">🌐</span><div class="ec-title">Offline / No Network State</div></div>
+          <div class="ec-body">
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">Trigger</div><div class="ec-cause">User loses internet connectivity while using the app — during score loading, payment processing, or claim submission.</div></div>
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">System Response</div><div class="ec-response">Cached data shown immediately. Offline banner: "You're offline — showing your last known data." All read operations work offline. Write operations (payments, claim submission) held and retried on reconnect.</div></div>
+            <div class="ec-recovery">Recovery: On reconnect, pending operations auto-retry with a notification: "Your claim was submitted successfully." Any form data entered while offline is never lost — stored locally first.</div>
+          </div>
+        </div>
+        <div class="err-card">
+          <div class="ec-head"><span class="ec-icon">🔒</span><div class="ec-title">Blockchain Sync Delayed</div></div>
+          <div class="ec-body">
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">Trigger</div><div class="ec-cause">Driving score has been calculated but the blockchain record hasn't been committed yet (Hyperledger Fabric network delay or peer endorsement pending).</div></div>
+            <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">System Response</div><div class="ec-response">Score shown with "Pending verification" badge instead of "Verified." Not hidden — shown with context: "Your score is calculated and accurate — blockchain verification in progress (usually &lt;2 min)." User is not alarmed.</div></div>
+            <div class="ec-recovery">Recovery: Badge auto-updates to "Verified" when sync completes. No user action required. Insurance and claims remain functional during the brief window — score itself is trusted even before blockchain confirmation.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ═══ S3: INTERACTION DESIGN ═══ -->
+    <div class="sec" id="s3">
+      <div class="sec-eye"><span class="sec-n">03 /</span> Interaction Design</div>
+      <h2 class="sec-h2">Interaction <em>Design Layer</em></h2>
+      <p class="sec-lead">Micro-interactions are not decoration — they are the system's communication layer. Every state change must be acknowledged, every success celebrated proportionally, and every failure explained immediately.</p>
+
+      <div class="g3" style="margin-bottom:1.25rem">
+        <div class="micro">
+          <div class="micro-head"><div class="micro-icon mi-g">⭕</div><div class="micro-title">Score Update Animation</div></div>
+          <div class="micro-body">Score ring sweeps from previous value to new value (0.8s, easing cubic-bezier). Number counts up to new score. Color transitions smoothly through tier boundaries. Delta badge pops in: "↑ 4.3" with green accent. If score drops: amber delta, no alarming red — neutral improvement framing maintained.</div>
+        </div>
+        <div class="micro">
+          <div class="micro-head"><div class="micro-icon mi-o">🔔</div><div class="micro-title">Alert Notification Behavior</div></div>
+          <div class="micro-body">In-app banners appear at top of screen for 6 seconds then slide out. For score alerts: banner has score delta and one-line explanation. Tap opens detail, swipe dismisses. Push notifications for: score improvement milestones, claim status changes, renewal reminders. Never more than 2 notifications per day from any category.</div>
+        </div>
+        <div class="micro">
+          <div class="micro-head"><div class="micro-icon mi-v">✓</div><div class="micro-title">Form Confirmation Feedback</div></div>
+          <div class="micro-body">CTA buttons show loading state immediately on tap (spinner replaces label text). Never double-tappable. Success: checkmark animation (0.4s) before page transition. Payment success: full-screen green checkmark (1s) — proportional to the high-stakes nature of the action. Never a bare "Success" toast for payments.</div>
+        </div>
+        <div class="micro">
+          <div class="micro-head"><div class="micro-icon mi-b">⏳</div><div class="micro-title">Loading & Empty States</div></div>
+          <div class="micro-body">Skeleton screens instead of spinners — structural placeholders prevent layout shift. Empty states always have an illustration, a headline explaining the empty condition, and one CTA. Score calculation in progress: pulsing ring + "Calculating your score…" with contextual education below. Never a blank white void anywhere in the app.</div>
+        </div>
+        <div class="micro">
+          <div class="micro-head"><div class="micro-icon mi-g">📝</div><div class="micro-title">Error Message Patterns</div></div>
+          <div class="micro-body">Three error levels: (1) Inline validation — red text below the specific field, no modal, (2) Non-blocking banner — amber, dismissible, shows for 8 seconds, (3) Blocking dialog — only for irreversible actions (delete, permanent data changes). Error messages always: name the problem + explain what to do. No system codes. No "Something went wrong."</div>
+        </div>
+        <div class="micro">
+          <div class="micro-head"><div class="micro-icon mi-o">🎉</div><div class="micro-title">Reward & Milestone Events</div></div>
+          <div class="micro-body">Score milestone (80%+, 90%+): confetti burst animation, celebratory headline: "Excellent driver status unlocked!" Token awarded with pop animation. Streak milestones (7, 30 days): badge animation in dashboard. Premium discount applied: distinct green banner: "Your score just saved you ₹X this month." These moments are given full-screen treatment proportional to their significance.</div>
+        </div>
+      </div>
+
+      <!-- Feedback timing grid -->
+      <div class="fb-row">
+        <div class="fb-cell">
+          <div class="fb-cell-label fbl-g">Immediate (&lt;2s)</div>
+          <div class="fb-cell-title">Real-Time Feedback</div>
+          <div class="fb-cell-text">Form validation, button states, OBD connection status, payment processing confirmation. All UI state changes acknowledged within 100ms of user action.</div>
+        </div>
+        <div class="fb-cell">
+          <div class="fb-cell-label fbl-o">Same-Day (2–4h)</div>
+          <div class="fb-cell-title">Trip Processing Feedback</div>
+          <div class="fb-cell-text">Score update after trip completion, behavior insight card generated, blockchain record committed, notification sent. All within 2–4 hours of trip end.</div>
+        </div>
+        <div class="fb-cell">
+          <div class="fb-cell-label fbl-v">Weekly Digest</div>
+          <div class="fb-cell-title">Progress Review</div>
+          <div class="fb-cell-text">Week summary: biggest improvement, biggest opportunity, premium projection. Delivered Sunday evening. Single notification, single screen. Never more than 3 data points per digest.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ═══ S4: BEHAVIORAL UX ═══ -->
+    <div class="sec" id="s4">
+      <div class="sec-eye"><span class="sec-n">04 /</span> Behavioral UX</div>
+      <h2 class="sec-h2">Behavioral <em>UX System</em></h2>
+      <p class="sec-lead">The most important layer of this product. Insurance premiums are only a financial incentive — not enough to change driving habits on their own. The behavioral design layer creates the psychological mechanisms that make change feel achievable, rewarding, and worth maintaining.</p>
+
+      <!-- Behavior loop visual -->
+      <div class="loop-ring" style="margin-bottom:1.75rem">
+        <div class="loop-node">
+          <div class="ln-circle">🚗</div>
+          <div class="ln-label">Drive</div>
+        </div>
+        <div class="loop-arr"><div style="display:flex;align-items:center"><div class="la-line"></div><div class="la-head"></div></div></div>
+        <div class="loop-node">
+          <div class="ln-circle active">📡</div>
+          <div class="ln-label">OBD Captures Data</div>
+        </div>
+        <div class="loop-arr"><div style="display:flex;align-items:center"><div class="la-line"></div><div class="la-head"></div></div></div>
+        <div class="loop-node">
+          <div class="ln-circle active">🤖</div>
+          <div class="ln-label">ML Scores Drive</div>
+        </div>
+        <div class="loop-arr"><div style="display:flex;align-items:center"><div class="la-line"></div><div class="la-head"></div></div></div>
+        <div class="loop-node">
+          <div class="ln-circle active">📊</div>
+          <div class="ln-label">Score Updates</div>
+        </div>
+        <div class="loop-arr"><div style="display:flex;align-items:center"><div class="la-line"></div><div class="la-head"></div></div></div>
+        <div class="loop-node">
+          <div class="ln-circle active">💬</div>
+          <div class="ln-label">Insight Delivered</div>
+        </div>
+        <div class="loop-arr"><div style="display:flex;align-items:center"><div class="la-line"></div><div class="la-head"></div></div></div>
+        <div class="loop-node">
+          <div class="ln-circle">🏆</div>
+          <div class="ln-label">Reward / Savings</div>
+        </div>
+        <div class="loop-arr"><div style="display:flex;align-items:center"><div class="la-line"></div><div class="la-head"></div></div></div>
+        <div class="loop-node">
+          <div class="ln-circle">🔄</div>
+          <div class="ln-label">Drive Better</div>
+        </div>
+      </div>
+
+      <div class="g2" style="margin-bottom:1.25rem">
+        <div class="card cg">
+          <h3>Positive Reinforcement Mechanisms</h3>
+          <ul>
+            <li><strong>Variable ratio rewards:</strong> Token rewards don't follow a fixed schedule — this creates higher engagement (same mechanism as effective habit apps)</li>
+            <li><strong>Streak protection:</strong> After a bad driving day, streak is shown as "at risk" with a recovery path for the next day — not immediately broken</li>
+            <li><strong>Progress anchoring:</strong> Score shown relative to personal best, not just absolute value — "3 points from your best ever score" motivates more than a number alone</li>
+            <li><strong>Micro-wins:</strong> Even a 0.5-point improvement shown as a win: "Your smoothest Monday drive in 3 weeks"</li>
+            <li><strong>Social proof (optional):</strong> "Drivers like you save an average of ₹1,200/year" — no competitive leaderboard unless opted in</li>
+          </ul>
+        </div>
+        <div class="card co">
+          <h3>Avoiding Negative Frustration Patterns</h3>
+          <ul>
+            <li><strong>No punishment framing:</strong> Score drops shown as "opportunity to recover" not failures</li>
+            <li><strong>Attribution clarity:</strong> Score drop always explained: "3 hard braking events on Tuesday's commute" — never mysterious</li>
+            <li><strong>No shame mechanics:</strong> Never compare unfavorably to other users without consent. Never show national rank prominently</li>
+            <li><strong>Grace periods:</strong> First 7 days labeled "Learning period" — score shown but not counted for premium calculation yet</li>
+            <li><strong>Context sensitivity:</strong> Alerts about driving in bad weather or heavy traffic are suppressed or contextually softened — system understands external factors</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1.25rem">
+        <h3 style="margin-bottom:1rem">Habit Formation — 30-Day Activation Plan</h3>
+        <div class="g4">
+          <div style="padding:1rem;background:var(--green-lt);border-radius:var(--r-sm);border:1px solid var(--green-md)">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:0.4rem">Days 1–7</div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:0.3rem">Discovery</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.55">First score generated. System explains what affects score. Premium preview shown. User sees the financial opportunity clearly.</div>
+          </div>
+          <div style="padding:1rem;background:var(--orange-lt);border-radius:var(--r-sm);border:1px solid var(--orange-md)">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--orange);margin-bottom:0.4rem">Days 8–14</div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:0.3rem">Engagement</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.55">First behavior insight acted upon. Score improves noticeably. Streak starts. User forms daily check-in habit. First token earned.</div>
+          </div>
+          <div style="padding:1rem;background:var(--violet-lt);border-radius:var(--r-sm);border:1px solid var(--violet-md)">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--violet);margin-bottom:0.4rem">Days 15–21</div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:0.3rem">Activation</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.55">Score above 70% threshold. "Good Driver" badge unlocked. Premium discount preview becomes concrete: "₹X saved so far." Behavior change feels real and measurable.</div>
+          </div>
+          <div style="padding:1rem;background:var(--blue-lt);border-radius:var(--r-sm);border:1px solid #A0C0F0">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:0.4rem">Days 22–30</div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:0.3rem">Retention</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.55">30-day streak achieved. First premium adjustment applied. User now has a vested financial interest in maintaining driving quality. Product is embedded in routine.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ═══ S5: TRUST & TRANSPARENCY ═══ -->
+    <div class="sec" id="s5">
+      <div class="sec-eye"><span class="sec-n">05 /</span> Trust Architecture</div>
+      <h2 class="sec-h2">Trust & <em>Transparency Design</em></h2>
+      <p class="sec-lead">In a system where algorithms directly affect financial outcomes, trust is not a feature — it is the foundation. Every layer of the product must actively build it. Users who trust the system improve their driving and retain their policies. Users who don't, churn.</p>
+
+      <div class="banner violet">
+        <span class="bn-icon">🔐</span>
+        <div><div class="bn-label">Trust Architecture Principle</div><div class="bn-text"><strong>Trust is built through: explanation (why did this happen?), evidence (here is the data that supports it), and control (here is what you can do about it).</strong> All three must be present for every automated decision the system makes.</div></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:0.875rem;margin-bottom:1.75rem">
+
+        <div class="trust-item">
+          <div class="ti-icon" style="background:var(--green-lt)">📈</div>
+          <div class="ti-body">
+            <div class="ti-title">Communicating Score Changes — "Why Did My Score Change?"</div>
+            <div class="ti-text">Every score delta must be accompanied by a specific, factual explanation. Users never face a score drop without an answer. The explanation follows a three-part formula: <strong>What happened</strong> (3 harsh braking events) → <strong>Where it happened</strong> (Tuesday 8:23 AM, near [area]) → <strong>How to fix it</strong> (ease off 80m earlier from the signal). This is not a notification feature — it is the product's core trust mechanism.</div>
+            <div class="ti-example">"Your score dropped 3.2 points — 3 harsh braking events were detected on your Tuesday morning trip. Braking more gradually near MG Road junction will prevent this."</div>
+          </div>
+        </div>
+
+        <div class="trust-item">
+          <div class="ti-icon" style="background:var(--orange-lt)">🛡️</div>
+          <div class="ti-body">
+            <div class="ti-title">How Premiums Are Calculated — Full Transparency</div>
+            <div class="ti-text">Premium calculation is never a black box. The Insurance page shows the complete calculation in plain language with all components labeled. Every number is explainable: the base premium, how the driving score tier maps to a multiplier, the tax components, and the stamp duty. An interactive "What if" slider shows the user exactly what their premium would be at different score levels — giving them direct, visualizable control over their cost.</div>
+            <div class="ti-example">"At your current score of 84%: Base ₹6,000 × 0.75 discount = ₹4,500 + CGST ₹405 + SGST ₹405 + Stamp Duty ₹1 = ₹5,311 total."</div>
+          </div>
+        </div>
+
+        <div class="trust-item">
+          <div class="ti-icon" style="background:var(--violet-lt)">🔒</div>
+          <div class="ti-body">
+            <div class="ti-title">Data Privacy Communication — Granular, Honest, Respected</div>
+            <div class="ti-text">Data consent is collected granularly (not all-or-nothing) and explained in plain language at each permission request. The privacy page uses a simple table: what data, who sees it, how long it's kept. Data sharing with third parties (insurers, MVD) is shown explicitly with toggle controls. Annual "Your Data Review" notification reminds users what data the system holds and allows bulk deletion requests. <strong>Privacy is designed in, not bolted on.</strong></div>
+            <div class="ti-example">"Your driving score is shared with Bajaj Allianz (your insurer) and the Motor Vehicle Department. It is not sold to any third party. You can revoke sharing anytime in Settings → Privacy."</div>
+          </div>
+        </div>
+
+        <div class="trust-item">
+          <div class="ti-icon" style="background:var(--blue-lt)">⛓️</div>
+          <div class="ti-body">
+            <div class="ti-title">Blockchain Trust — Without Technical Overload</div>
+            <div class="ti-text">The blockchain is the system's most powerful trust tool — but only if users understand what it means without needing to understand how it works. The UI communicates blockchain verification through a simple, recognizable trust badge: a checkmark shield labeled "Verified Record." Tapping it reveals a plain-language explanation: <em>"Your driving score is stored on a secure network that cannot be changed by anyone — not by you, the insurer, or DriveSure."</em> Block timestamps shown in human-readable format, not as hexadecimal hashes. The "Blockchain" word itself is used sparingly — "Verified Record" is more user-meaningful.</div>
+            <div class="ti-example">"Verified on 21 May 2023 at 10:54 AM · Score: 84.07% · This record cannot be altered by any party. Your insurer and the MVD can view but not modify this record."</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Closing summary -->
+      <div style="background:var(--ink);border-radius:var(--r);padding:2rem 2.5rem;max-width:800px">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--green-md);margin-bottom:0.75rem">Unifying UX Philosophy</div>
+        <div style="font-family:var(--serif);font-size:1.3rem;font-style:italic;font-weight:400;color:#F5F2ED;line-height:1.5;margin-bottom:1rem">"The goal is not to make insurance simpler — it is to make a complex system feel fair. When a driver understands why they pay what they pay, and believes they can change it, the product has succeeded."</div>
+        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1.25rem">
+          <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:4px">User feels</div><div style="font-size:13px;color:var(--green-md);font-weight:500">Informed · In Control · Fairly Treated</div></div>
+          <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:4px">Business achieves</div><div style="font-size:13px;color:var(--green-md);font-weight:500">Lower Fraud · Higher Retention · Better Risk Pricing</div></div>
+          <div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:4px">Roads become</div><div style="font-size:13px;color:var(--green-md);font-weight:500">Safer · More Accountable · Data-Informed</div></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /content -->
+
+  <div style="border-top:1.5px solid var(--border);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;background:var(--bg2)">
+    <span style="font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:0.05em">Dynamic Insurance System · UX Strategy & User Flows v1.0</span>
+    <span style="font-size:12px;color:var(--ink3)">6 Principles · 5 Flows · Behavioral UX · Trust Design</span>
+  </div>
+
+</main>
+
+<script>
+const pbar = document.getElementById('pbar');
+const navItems = document.querySelectorAll('.sn');
+const sections = document.querySelectorAll('.sec');
+
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const totalH = document.documentElement.scrollHeight - window.innerHeight;
+  pbar.style.width = (scrollTop / totalH * 100) + '%';
+  let current = 's1';
+  sections.forEach(s => {
+    if (s.getBoundingClientRect().top < 90) current = s.id;
+  });
+  navItems.forEach(item => {
+    item.classList.toggle('active', item.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>

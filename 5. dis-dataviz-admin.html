@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dynamic Insurance System — Data Visualization & Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#1042C8;--brand-lt:#EEF2FF;--brand-md:#7B9EF5;--brand-dk:#0C2E9A;
+  --success:#0C6E3D;--success-lt:#DCFCE7;--success-md:#4ADE80;
+  --warn:#B45309;--warn-lt:#FEF3C7;--warn-md:#FCD34D;
+  --danger:#B91C1C;--danger-lt:#FEE2E2;--danger-md:#FCA5A5;
+  --info:#1D4ED8;--info-lt:#DBEAFE;--info-md:#93C5FD;
+  --purple:#6D28D9;--purple-lt:#EDE9FE;--purple-md:#A78BFA;
+  --teal:#0D766B;--teal-lt:#CCFBF1;--teal-md:#2DD4BF;
+  --n0:#FFFFFF;--n50:#F9FAFB;--n100:#F3F4F6;--n200:#E5E7EB;--n300:#D1D5DB;
+  --n400:#9CA3AF;--n500:#6B7280;--n600:#4B5563;--n700:#374151;--n800:#1F2937;--n900:#111827;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'Manrope',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --r4:4px;--r8:8px;--r12:12px;--r16:16px;--r24:24px;--rpill:999px;
+  --sh1:0 1px 2px rgba(0,0,0,0.05);
+  --sh2:0 1px 3px rgba(0,0,0,0.07),0 4px 12px rgba(0,0,0,0.05);
+  --sh3:0 4px 16px rgba(0,0,0,0.1),0 1px 4px rgba(0,0,0,0.05);
+  --sb:268px;
+}
+html{scroll-behavior:smooth}
+body{background:#EDF0F7;color:var(--n900);font-family:var(--sans);font-size:14px;line-height:1.6;display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.dsb{width:var(--sb);min-height:100vh;background:var(--n900);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;display:flex;flex-direction:column;z-index:100;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.07) transparent}
+.dsb::-webkit-scrollbar{width:3px}.dsb::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1)}
+.dsb-hd{padding:1.5rem 1.25rem 1.1rem;border-bottom:1px solid rgba(255,255,255,0.07)}
+.dsb-logo{display:flex;align-items:center;gap:9px;margin-bottom:0.5rem}
+.dsb-mark{width:30px;height:30px;border-radius:var(--r8);background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:14px}
+.dsb-brand{font-family:var(--serif);font-size:0.9rem;color:#F3F4F6}
+.dsb-sub{font-family:var(--mono);font-size:8.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.22)}
+.dsb-nav{padding:0.4rem 0;flex:1}
+.dsg{margin-bottom:0.125rem}
+.dsg-l{font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.18);padding:0.6rem 1.25rem 0.2rem}
+.dsn{display:flex;align-items:center;gap:0.5rem;padding:0.38rem 1.25rem;text-decoration:none;transition:background 0.15s;border-left:2px solid transparent;cursor:pointer}
+.dsn:hover{background:rgba(255,255,255,0.04)}
+.dsn.active{background:rgba(16,66,200,0.2);border-left-color:var(--brand-md)}
+.dsn-n{font-family:var(--mono);font-size:8.5px;color:rgba(255,255,255,0.2);min-width:18px}
+.dsn.active .dsn-n{color:var(--brand-md)}
+.dsn-t{font-size:11.5px;color:rgba(255,255,255,0.42);line-height:1.25}
+.dsn.active .dsn-t{color:rgba(255,255,255,0.9);font-weight:600}
+.dsb-ft{padding:0.875rem 1.25rem;border-top:1px solid rgba(255,255,255,0.07);font-family:var(--mono);font-size:8.5px;color:rgba(255,255,255,0.2)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sb);flex:1}
+.topbar{position:sticky;top:0;background:rgba(237,240,247,0.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--n200);padding:0.65rem 2.5rem;display:flex;align-items:center;justify-content:space-between;z-index:50}
+.tb-l{font-family:var(--mono);font-size:10px;color:var(--n400);letter-spacing:0.05em}
+.tb-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.07em;text-transform:uppercase;padding:3px 10px;border-radius:var(--rpill);border:1px solid var(--brand-md);color:var(--brand);background:var(--brand-lt)}
+.pbar{position:fixed;top:0;left:var(--sb);right:0;height:2px;background:var(--brand);z-index:200;width:0%}
+.content{padding:2rem 2.5rem 5rem}
+strong{font-weight:700;color:var(--n800)}
+
+/* ── HERO ── */
+.hero{margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1.5px solid var(--n200)}
+.hero-eye{font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--brand);margin-bottom:0.875rem;display:flex;align-items:center;gap:9px}
+.hero-eye::before{content:'';display:inline-block;width:22px;height:1.5px;background:var(--brand)}
+.hero-h1{font-family:var(--serif);font-size:clamp(2rem,3.5vw,3rem);font-weight:400;line-height:1.12;color:var(--n900);margin-bottom:0.75rem}
+.hero-h1 em{font-style:italic;color:var(--brand)}
+.hero-p{font-size:0.94rem;color:var(--n500);max-width:620px;line-height:1.75;margin-bottom:1.75rem}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--n200);border:1px solid var(--n200);border-radius:var(--r8);overflow:hidden;max-width:680px}
+.hs{background:var(--n0);padding:1rem 1.25rem}
+.hs-n{font-family:var(--serif);font-size:1.75rem;color:var(--brand);line-height:1}
+.hs-l{font-family:var(--mono);font-size:8.5px;color:var(--n400);letter-spacing:0.06em;text-transform:uppercase;margin-top:0.25rem}
+
+/* ── SECTIONS ── */
+.sec{scroll-margin-top:62px;margin-bottom:3rem}
+.sec-eye{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--brand);margin-bottom:0.35rem;display:flex;align-items:center;gap:8px}
+.sec-eye::before{content:'';display:inline-block;width:14px;height:1.5px;background:var(--brand)}
+.sec-n{color:var(--n300);margin-right:2px}
+.sec-h2{font-family:var(--serif);font-size:clamp(1.4rem,2.5vw,2.25rem);font-weight:400;line-height:1.2;color:var(--n900);margin-bottom:0.5rem}
+.sec-h2 em{font-style:italic;color:var(--brand)}
+.sec-desc{font-size:0.875rem;color:var(--n500);max-width:660px;line-height:1.75;margin-bottom:1.5rem}
+.sdiv{height:1.5px;background:var(--n200);margin:2.5rem 0}
+.sub-h{font-size:13.5px;font-weight:700;color:var(--n800);margin-bottom:0.875rem;padding-bottom:0.4rem;border-bottom:1px solid var(--n100);letter-spacing:-0.01em}
+
+/* ── BASE CARDS ── */
+.card{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:1.25rem;box-shadow:var(--sh1)}
+.card h3{font-size:13.5px;font-weight:700;color:var(--n800);margin-bottom:0.5rem}
+.card p,.card-p{font-size:12.5px;color:var(--n500);line-height:1.65}
+.card ul{font-size:12.5px;color:var(--n500);padding-left:1.1rem;display:flex;flex-direction:column;gap:3px;line-height:1.55}
+.card ul li::marker{color:var(--brand)}
+.card-b{border-left:3px solid var(--brand);border-radius:0 var(--r8) var(--r8) 0}
+.card-g{border-left:3px solid var(--success);border-radius:0 var(--r8) var(--r8) 0}
+.card-w{border-left:3px solid var(--warn);border-radius:0 var(--r8) var(--r8) 0}
+.card-d{border-left:3px solid var(--danger);border-radius:0 var(--r8) var(--r8) 0}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:0.875rem}
+
+/* ── PRINCIPLE CARDS ── */
+.principle{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r12);overflow:hidden;box-shadow:var(--sh1)}
+.pr-top{background:var(--n900);padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem}
+.pr-num{font-family:var(--mono);font-size:1.25rem;font-weight:500;color:rgba(255,255,255,0.12);min-width:28px}
+.pr-title{font-family:var(--serif);font-size:1rem;color:#F3F4F6}
+.pr-body{padding:0.875rem 1.25rem}
+.pr-body p{font-size:12px;color:var(--n500);line-height:1.65;margin-bottom:0.5rem}
+.pr-apply{font-size:11px;color:var(--brand);background:var(--brand-lt);border-radius:var(--r4);padding:0.35rem 0.625rem;line-height:1.5}
+
+/* ── BANNERS ── */
+.banner{border-radius:var(--r8);padding:0.875rem 1.1rem;display:flex;gap:0.75rem;align-items:flex-start;margin-bottom:1.25rem}
+.banner-b{background:var(--brand-lt);border:1px solid var(--brand-md)}
+.banner-w{background:var(--warn-lt);border:1px solid var(--warn-md)}
+.bn-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+.bn-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--brand);margin-bottom:0.2rem}
+.banner-w .bn-label{color:var(--warn)}
+.bn-text{font-size:12.5px;color:var(--n600);line-height:1.6}
+
+/* ── TAGS ── */
+.tag{font-family:var(--mono);font-size:8.5px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;padding:2px 8px;border-radius:var(--rpill);border:1px solid;display:inline-flex;align-items:center;gap:4px}
+.t-g{color:var(--success);border-color:var(--success-md);background:var(--success-lt)}
+.t-w{color:var(--warn);border-color:var(--warn-md);background:var(--warn-lt)}
+.t-d{color:var(--danger);border-color:var(--danger-md);background:var(--danger-lt)}
+.t-b{color:var(--brand);border-color:var(--brand-md);background:var(--brand-lt)}
+.t-n{color:var(--n600);border-color:var(--n300);background:var(--n100)}
+.t-p{color:var(--purple);border-color:var(--purple-md);background:var(--purple-lt)}
+.t-t{color:var(--teal);border-color:var(--teal-md);background:var(--teal-lt)}
+.tag-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+/* ── CHART COMPONENTS ── */
+.chart-card{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r12);padding:1.25rem;box-shadow:var(--sh2)}
+.cc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem}
+.cc-title{font-size:13px;font-weight:700;color:var(--n800)}
+.cc-sub{font-size:11px;color:var(--n400);margin-top:1px}
+.cc-badge{font-family:var(--mono);font-size:8.5px;padding:2px 8px;border-radius:var(--rpill)}
+
+/* Line chart SVG */
+.lc-area{width:100%;height:80px;overflow:visible}
+
+/* Bar chart */
+.bar-group{display:flex;align-items:flex-end;gap:4px;height:80px;margin-bottom:6px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar{width:100%;border-radius:2px 2px 0 0;min-height:3px;position:relative}
+.bar-lbl{font-family:var(--mono);font-size:8px;color:var(--n400);text-align:center}
+
+/* Radial/gauge */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;padding:0.5rem 0}
+.gauge-ring{position:relative}
+.gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge-val{font-family:var(--serif);font-size:1.5rem;color:var(--n900);line-height:1}
+.gauge-lbl{font-family:var(--mono);font-size:7.5px;color:var(--n400);letter-spacing:0.08em;text-transform:uppercase}
+
+/* Heatmap */
+.hm-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.hm-cell{aspect-ratio:1;border-radius:3px;min-height:14px}
+
+/* Progress bars */
+.prog{margin-bottom:0.5rem}
+.prog-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.prog-lbl{font-size:11px;font-weight:600;color:var(--n700)}
+.prog-val{font-family:var(--mono);font-size:10px;color:var(--n500)}
+.prog-track{height:6px;background:var(--n100);border-radius:var(--rpill);overflow:hidden}
+.prog-fill{height:100%;border-radius:var(--rpill)}
+
+/* ── ADMIN SHELL ── */
+.admin-shell{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r16);overflow:hidden;box-shadow:var(--sh3);margin-bottom:1.25rem}
+.as-topbar{background:var(--n900);padding:0.6rem 1.25rem;display:flex;align-items:center;gap:0.6rem}
+.as-dots{display:flex;gap:4px}
+.as-dot{width:9px;height:9px;border-radius:50%}
+.as-dot:nth-child(1){background:#FF5F57}
+.as-dot:nth-child(2){background:#FFBD2E}
+.as-dot:nth-child(3){background:#28C840}
+.as-url{flex:1;background:rgba(255,255,255,0.07);border-radius:var(--r4);padding:3px 10px;font-family:var(--mono);font-size:8.5px;color:rgba(255,255,255,0.35);letter-spacing:0.03em}
+.as-body{display:flex;min-height:480px}
+
+/* Admin sidebar */
+.admin-sb{width:180px;min-height:480px;background:var(--n800);flex-shrink:0;display:flex;flex-direction:column}
+.asb-logo-row{padding:0.875rem 0.875rem 0.75rem;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:7px}
+.asb-mark{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.asb-brand-text{font-family:var(--serif);font-size:0.775rem;color:#E5E7EB}
+.asb-nav{padding:0.375rem 0;flex:1}
+.asb-itm{display:flex;align-items:center;gap:6px;padding:0.4rem 0.875rem;cursor:pointer;border-left:2px solid transparent}
+.asb-itm.active{background:rgba(16,66,200,0.2);border-left-color:var(--brand-md)}
+.asb-itm-i{font-size:11px;min-width:14px;text-align:center}
+.asb-itm-l{font-size:10.5px;color:rgba(255,255,255,0.42)}
+.asb-itm.active .asb-itm-l{color:rgba(255,255,255,0.9);font-weight:600}
+.asb-footer{padding:0.625rem 0.875rem;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:6px}
+.asb-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;font-weight:700;flex-shrink:0}
+.asb-user-nm{font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.7)}
+.asb-user-rl{font-family:var(--mono);font-size:7.5px;color:rgba(255,255,255,0.3)}
+
+/* Admin content */
+.admin-content{flex:1;overflow:hidden;background:var(--n50)}
+.admin-header{background:var(--n0);border-bottom:1px solid var(--n200);padding:0.7rem 1.1rem;display:flex;align-items:center;justify-content:space-between}
+.ah-title{font-size:12.5px;font-weight:700;color:var(--n800)}
+.ah-bc{font-family:var(--mono);font-size:7.5px;color:var(--n400);margin-top:1px;letter-spacing:0.03em}
+.ah-acts{display:flex;gap:0.4rem;align-items:center}
+.ah-btn{font-family:var(--sans);font-size:9.5px;font-weight:600;padding:4px 10px;border-radius:var(--r8);border:none;cursor:pointer}
+.ah-btn-p{background:var(--brand);color:#fff}
+.ah-btn-s{background:var(--brand-lt);color:var(--brand);border:1.5px solid var(--brand-md)}
+.ah-btn-g{background:var(--n100);color:var(--n600);border:1px solid var(--n200)}
+.ah-ico{width:26px;height:26px;border-radius:var(--r8);background:var(--n100);border:1px solid var(--n200);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer}
+.admin-main{padding:0.875rem 1.1rem;overflow-y:auto;max-height:436px}
+
+/* ── MICRO COMPONENTS ── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:0.75rem}
+.kpi{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.625rem 0.75rem;box-shadow:var(--sh1)}
+.kpi-lbl{font-family:var(--mono);font-size:7.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-bottom:0.2rem}
+.kpi-val{font-family:var(--serif);font-size:1.25rem;color:var(--n900);line-height:1}
+.kpi-delta{font-size:9px;font-weight:600;margin-top:2px}
+.du{color:var(--teal)}.dd{color:var(--danger)}.dn{color:var(--n400)}
+
+.mc{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.75rem;box-shadow:var(--sh1)}
+.mc-lbl{font-family:var(--mono);font-size:7.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-bottom:0.25rem}
+.mc-val{font-size:12px;font-weight:700;color:var(--n900)}
+.mc-sub{font-size:9.5px;color:var(--n500)}
+
+/* ── DATA TABLE ── */
+.dt{width:100%;border-collapse:collapse;font-size:10.5px}
+.dt th{text-align:left;padding:0.4rem 0.6rem;font-size:8.5px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--n400);border-bottom:1px solid var(--n200);background:var(--n50)}
+.dt td{padding:0.45rem 0.6rem;border-bottom:1px solid var(--n100);color:var(--n600);vertical-align:middle}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:var(--n50);cursor:pointer}
+.dt td:first-child{color:var(--n800);font-weight:600}
+
+.risk-pill{font-family:var(--mono);font-size:8px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:2px 7px;border-radius:var(--rpill);border:1px solid}
+.rp-e{color:var(--teal);border-color:var(--teal-md);background:var(--teal-lt)}
+.rp-g{color:var(--success);border-color:var(--success-md);background:var(--success-lt)}
+.rp-m{color:var(--warn);border-color:var(--warn-md);background:var(--warn-lt)}
+.rp-h{color:var(--danger);border-color:var(--danger-md);background:var(--danger-lt)}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;gap:0.4rem;align-items:center;margin-bottom:0.625rem;flex-wrap:wrap}
+.fc{font-family:var(--mono);font-size:8px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:3px 9px;border-radius:var(--rpill);border:1.5px solid var(--n200);background:var(--n0);color:var(--n500);cursor:pointer}
+.fc.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.fi-input{font-family:var(--sans);font-size:9.5px;background:var(--n0);border:1.5px solid var(--n200);border-radius:var(--r8);padding:4px 8px;color:var(--n700);outline:none;min-width:120px}
+.ml{margin-left:auto}
+
+/* ── CHART LEGEND ── */
+.legend{display:flex;gap:0.75rem;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--n500)}
+.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── SECTION TITLE ── */
+.st{font-size:11px;font-weight:700;color:var(--n700);letter-spacing:0.01em;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:space-between}
+.st-link{font-size:9.5px;font-weight:500;color:var(--brand);cursor:pointer}
+
+/* ── CLAIM TIMELINE ── */
+.ct-step{display:flex;gap:0.5rem;padding-bottom:0.75rem}
+.ct-step:last-child{padding-bottom:0}
+.ct-left{display:flex;flex-direction:column;align-items:center;width:16px;flex-shrink:0}
+.ct-dot{width:13px;height:13px;border-radius:50%;border:2px solid;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:6.5px;font-weight:700}
+.ct-done{background:var(--teal);border-color:var(--teal);color:#fff}
+.ct-act{background:var(--brand);border-color:var(--brand);color:#fff}
+.ct-pend{background:var(--n100);border-color:var(--n300);color:var(--n400)}
+.ct-ln{width:1.5px;flex:1;background:var(--n200);margin:2px 0}
+.ct-title{font-size:10px;font-weight:600;color:var(--n800)}
+.ct-meta{font-family:var(--mono);font-size:8px;color:var(--n400);margin-top:1px}
+
+/* ── ALERT ROWS ── */
+.alert-row{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.55rem 0.75rem;display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.35rem;box-shadow:var(--sh1)}
+.ar-pri{width:3px;align-self:stretch;border-radius:var(--rpill);flex-shrink:0}
+.ar-h{background:var(--danger)}.ar-m{background:var(--warn)}.ar-l{background:var(--n300)}
+.ar-icon{font-size:12px;flex-shrink:0;margin-top:1px}
+.ar-title{font-size:10.5px;font-weight:600;color:var(--n800)}
+.ar-desc{font-size:9.5px;color:var(--n500);line-height:1.4}
+.ar-time{font-family:var(--mono);font-size:8px;color:var(--n400)}
+.ar-act{font-size:9px;font-weight:600;color:var(--brand);cursor:pointer;white-space:nowrap;flex-shrink:0}
+
+/* ── SPEC BOXES ── */
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.875rem;margin-bottom:1.5rem}
+.spec-card{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:1rem;box-shadow:var(--sh1)}
+.spec-card h4{font-size:12px;font-weight:700;color:var(--n800);margin-bottom:0.5rem;padding-bottom:0.375rem;border-bottom:1px solid var(--n100)}
+.spec-card ul{font-size:11.5px;color:var(--n500);padding-left:1.1rem;display:flex;flex-direction:column;gap:3px;line-height:1.5}
+.spec-card ul li::marker{color:var(--brand)}
+
+/* ── HEATMAP LEGEND ── */
+.hm-scale{display:flex;align-items:center;gap:6px;font-size:9.5px;color:var(--n400);margin-top:0.5rem}
+.hm-scale-bar{display:flex;gap:2px}
+.hm-scale-cell{width:12px;height:8px;border-radius:2px}
+
+/* ── TOOLTIP DEMO ── */
+.tooltip-demo{background:var(--n0);border:1px solid var(--n200);border-radius:var(--r8);padding:0.875rem 1rem;box-shadow:var(--sh2);max-width:200px}
+.tt-label{font-family:var(--mono);font-size:8.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--n400);margin-bottom:0.35rem}
+.tt-val{font-family:var(--serif);font-size:1.25rem;color:var(--n900);line-height:1;margin-bottom:0.25rem}
+.tt-rows{display:flex;flex-direction:column;gap:3px}
+.tt-row{display:flex;justify-content:space-between;font-size:10px}
+.tt-key{color:var(--n500)}
+.tt-v{color:var(--n800);font-weight:600}
+
+/* ── STACKED BAR ── */
+.stacked-bar-wrap{display:flex;align-items:flex-end;gap:6px;height:90px;margin-bottom:6px}
+.sb-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.sb-stack{width:100%;display:flex;flex-direction:column-reverse;border-radius:2px 2px 0 0;overflow:hidden}
+.sb-seg{width:100%;min-height:2px}
+
+/* ── WORKFLOW ── */
+.workflow{display:flex;align-items:stretch;gap:0;margin-bottom:1rem}
+.wf-step{flex:1;background:var(--n0);border:1px solid var(--n200);padding:0.875rem;position:relative}
+.wf-step:first-child{border-radius:var(--r8) 0 0 var(--r8)}
+.wf-step:last-child{border-radius:0 var(--r8) var(--r8) 0}
+.wf-num{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:0.1em;color:var(--n400);margin-bottom:0.3rem}
+.wf-title{font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.2rem}
+.wf-desc{font-size:10px;color:var(--n500);line-height:1.5}
+.wf-arr{width:20px;background:var(--n100);border-top:1px solid var(--n200);border-bottom:1px solid var(--n200);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--n400);flex-shrink:0}
+
+/* ── DO/DONT ── */
+.do-dont{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+.do-box{background:var(--success-lt);border:1px solid var(--success-md);border-radius:var(--r8);padding:1rem 1.1rem}
+.dont-box{background:var(--danger-lt);border:1px solid var(--danger-md);border-radius:var(--r8);padding:1rem 1.1rem}
+.do-lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--success);margin-bottom:0.4rem;font-weight:600}
+.dont-lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--danger);margin-bottom:0.4rem;font-weight:600}
+.dd-text{font-size:12px;color:var(--n600);line-height:1.6}
+.dd-text ul{padding-left:1rem}
+.dd-text li{margin-bottom:3px}
+
+/* ── AUDIT LOG ── */
+.audit-row{display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid var(--n100);font-size:10px}
+.audit-time{font-family:var(--mono);font-size:8.5px;color:var(--n400);min-width:100px}
+.audit-user{font-weight:600;color:var(--n800);min-width:80px}
+.audit-action{color:var(--n600);flex:1}
+.audit-badge{flex-shrink:0}
+
+/* ── SKELETON ── */
+.sk{background:linear-gradient(90deg,var(--n200) 25%,var(--n100) 50%,var(--n200) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--r4)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── INLINE HIGHLIGHT ── */
+.hl{color:var(--brand);font-weight:600}
+.hl-g{color:var(--success);font-weight:600}
+.hl-d{color:var(--danger);font-weight:600}
+.hl-w{color:var(--warn);font-weight:600}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){:root{--sb:0px}.dsb{display:none}.main{margin-left:0}.content{padding:1.25rem 1rem 4rem}.g2,.g3,.g4,.spec-grid,.do-dont{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}.hero-stats{grid-template-columns:repeat(2,1fr)}.workflow{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="pbar" id="pbar"></div>
+
+<aside class="dsb">
+  <div class="dsb-hd">
+    <div class="dsb-logo"><div class="dsb-mark">📊</div><div class="dsb-brand">DriveSure Analytics</div></div>
+    <div class="dsb-sub">Viz Strategy & Admin Panel</div>
+  </div>
+  <nav class="dsb-nav">
+    <div class="dsg"><div class="dsg-l">Viz Strategy</div>
+      <a class="dsn active" href="#s1"><span class="dsn-n">01</span><span class="dsn-t">Visualization Principles</span></a>
+      <a class="dsn" href="#s2"><span class="dsn-n">02</span><span class="dsn-t">Data Types to Visualize</span></a>
+      <a class="dsn" href="#s3"><span class="dsn-n">03</span><span class="dsn-t">Chart Selection Strategy</span></a>
+      <a class="dsn" href="#s4"><span class="dsn-n">04</span><span class="dsn-t">Visual Hierarchy & Color</span></a>
+      <a class="dsn" href="#s5"><span class="dsn-n">05</span><span class="dsn-t">Data Simplification</span></a>
+      <a class="dsn" href="#s6"><span class="dsn-n">06</span><span class="dsn-t">Real-Time vs Historical</span></a>
+      <a class="dsn" href="#s7"><span class="dsn-n">07</span><span class="dsn-t">Interaction & Edge Cases</span></a>
+    </div>
+    <div class="dsg"><div class="dsg-l">Admin Panel</div>
+      <a class="dsn" href="#s8"><span class="dsn-n">08</span><span class="dsn-t">Insurance Admin Dashboard</span></a>
+      <a class="dsn" href="#s9"><span class="dsn-n">09</span><span class="dsn-t">Claims Management</span></a>
+      <a class="dsn" href="#s10"><span class="dsn-n">10</span><span class="dsn-t">MVD Government Portal</span></a>
+      <a class="dsn" href="#s11"><span class="dsn-n">11</span><span class="dsn-t">Workflows & Governance</span></a>
+    </div>
+  </nav>
+  <div class="dsb-ft">DIS Viz & Admin · v1.0 · 2025</div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="tb-l">Dynamic Insurance System · Data Visualization & Admin Panel</span>
+    <span class="tb-tag">Senior Data Viz Expert</span>
+  </div>
+
+  <div class="content">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eye">Data Visualization Strategy & Admin Panel</div>
+      <h1 class="hero-h1">Turning <em>Complex Data</em><br/>Into Clear Decisions</h1>
+      <p class="hero-p">A complete data visualization framework and admin panel design for the Dynamic Insurance System — covering chart strategy, interaction design, semantic color rules, real-time vs. historical data differentiation, and production-grade admin interfaces for insurance companies and government regulators.</p>
+      <div class="hero-stats">
+        <div class="hs"><div class="hs-n">6</div><div class="hs-l">Viz Principles</div></div>
+        <div class="hs"><div class="hs-n">5</div><div class="hs-l">Chart Types</div></div>
+        <div class="hs"><div class="hs-n">2</div><div class="hs-l">Admin Roles</div></div>
+        <div class="hs"><div class="hs-n">∞</div><div class="hs-l">Scalability</div></div>
+      </div>
+    </div>
+
+    <!-- ══ S1: PRINCIPLES ══ -->
+    <div class="sec" id="s1">
+      <div class="sec-eye"><span class="sec-n">01 /</span> Foundation</div>
+      <h2 class="sec-h2">Visualization <em>Principles</em></h2>
+      <p class="sec-desc">Six non-negotiable principles govern every chart, table, and data display in DIS. They are not aesthetic preferences — they are design constraints that ensure a safety-critical, financially sensitive system communicates accurately and trustworthily.</p>
+
+      <div class="g3" style="margin-bottom:1.25rem">
+        <div class="principle">
+          <div class="pr-top"><span class="pr-num">01</span><div class="pr-title">Insight Over Raw Data</div></div>
+          <div class="pr-body"><p>Users and admins should never see raw telemetry values — G-force readings, RPM numbers, or engine load percentages are meaningless to most users. Every data point must be translated into an outcome before it's displayed.</p><p><strong>Applied:</strong> OBD data → normalized 0–100 score. Score → premium impact in rupees. Claim score → plain-language settlement explanation.</p><div class="pr-apply">Driving: "Smoother braking this week" not "G-force delta: −0.4m/s²"</div></div>
+        </div>
+        <div class="principle">
+          <div class="pr-top"><span class="pr-num">02</span><div class="pr-title">Simplicity Over Density</div></div>
+          <div class="pr-body"><p>A chart that requires 30 seconds to understand has failed. DIS users check their score daily — the interaction must be under 5 seconds. Admin users process high volumes — density is acceptable, but only with strong visual hierarchy.</p><p><strong>Applied:</strong> Driver dashboards: max 3 visible metrics above fold. Admin dashboards: dense tables permitted with strong sorting, filtering, and progressive disclosure.</p><div class="pr-apply">Insurance: One breakdown card not 12 line items on the home screen</div></div>
+        </div>
+        <div class="principle">
+          <div class="pr-top"><span class="pr-num">03</span><div class="pr-title">Context Before Detail</div></div>
+          <div class="pr-body"><p>Before showing a number, show its meaning. Before showing a chart, show its headline. The user should understand the significance of data before they explore it — not after.</p><p><strong>Applied:</strong> Score breakdown always leads with the composite score, then reveals the factors. Claims show the settlement amount before the adjustment calculation. Premium shows final amount before the breakdown.</p><div class="pr-apply">Risk evaluation: "Excellent Driver" badge before the score bars are shown</div></div>
+        </div>
+        <div class="principle">
+          <div class="pr-top"><span class="pr-num">04</span><div class="pr-title">Consistency Across Views</div></div>
+          <div class="pr-body"><p>If green means "safe" in the driving score chart, green must mean "safe" everywhere — in tables, badges, notifications, and admin panels. Color inconsistency destroys trust in a system where color communicates financial risk.</p><p><strong>Applied:</strong> Same semantic color palette system-wide. Score tiers have identical color-to-meaning mapping in driver, insurer, and MVD views. Never use success-green for a decorative purpose.</p><div class="pr-apply">Risk levels: teal (excellent) → green (good) → amber (moderate) → red (high)</div></div>
+        </div>
+        <div class="principle">
+          <div class="pr-top"><span class="pr-num">05</span><div class="pr-title">Highlight Anomalies and Risks</div></div>
+          <div class="pr-body"><p>The system's most valuable function for admins is surfacing what is unusual. A driver whose score suddenly drops 30 points in a day, a claim submitted for a date where blockchain shows no trip data — these anomalies must visually demand attention.</p><p><strong>Applied:</strong> Anomaly rows flagged with red left-border in tables. Score deviation charts mark statistical outliers with a distinct dot and tooltip. Fraud detection flags appear as high-contrast warning banners at the top of the claim detail.</p><div class="pr-apply">Admin: Flagged rows break the visual rhythm intentionally to demand review</div></div>
+        </div>
+        <div class="principle">
+          <div class="pr-top"><span class="pr-num">06</span><div class="pr-title">Trustworthy by Design</div></div>
+          <div class="pr-body"><p>Every chart must make the user feel the system is honest, not trying to hide anything. Truncated Y-axes, misleading scales, and cherry-picked time ranges erode trust in a financial platform. All data has a verifiable source.</p><p><strong>Applied:</strong> Score charts always start Y-axis at 0. All charts show data coverage: "Based on 14 trips this month." Blockchain verification badge always appears adjacent to score displays.</p><div class="pr-apply">Blockchain: Every score chart shows "Verified record" indicator in the legend</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S2: DATA TYPES ══ -->
+    <div class="sec" id="s2">
+      <div class="sec-eye"><span class="sec-n">02 /</span> Strategy</div>
+      <h2 class="sec-h2">Key Data Types to <em>Visualize</em></h2>
+
+      <div class="spec-grid">
+        <div class="spec-card">
+          <h4>Driving Behavior Data</h4>
+          <ul>
+            <li><strong>Why critical:</strong> The raw input — OBD feeds speed, braking G-force, acceleration rate, and engine load per trip</li>
+            <li><strong>Visualization form:</strong> Normalized 0–100 progress bars by factor; behavior event markers on trip timeline</li>
+            <li><strong>Decisions it supports:</strong> Which specific behavior to improve; whether a trip score was fair; daily habit formation</li>
+            <li><strong>Audience:</strong> Driver (simplified) + Insurance admin (detailed)</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Driving Score Trends</h4>
+          <ul>
+            <li><strong>Why critical:</strong> The key engagement metric — users return daily to check their score trajectory</li>
+            <li><strong>Visualization form:</strong> 7-day bar chart (color-coded by tier), 30-day line chart with moving average</li>
+            <li><strong>Decisions it supports:</strong> Premium forecasting; habit improvement tracking; streak maintenance motivation</li>
+            <li><strong>Audience:</strong> Driver (primary) + Insurer (risk assessment)</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Insurance Premium Changes</h4>
+          <ul>
+            <li><strong>Why critical:</strong> Direct financial impact — must be completely transparent and understandable</li>
+            <li><strong>Visualization form:</strong> Waterfall breakdown card; premium vs. score interactive slider; month-over-month bar comparison</li>
+            <li><strong>Decisions it supports:</strong> Whether to renew; whether to improve score before renewal; which insurer to choose</li>
+            <li><strong>Audience:</strong> Driver (understand pricing) + Insurer (revenue management)</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Claims Data</h4>
+          <ul>
+            <li><strong>Why critical:</strong> Highest-stakes data — wrong interpretation leads to financial loss or fraud</li>
+            <li><strong>Visualization form:</strong> Timeline tracker (driver); claims queue table (admin); settlement breakdown card</li>
+            <li><strong>Decisions it supports:</strong> Approve/reject/query; fraud detection; settlement amount validation</li>
+            <li><strong>Audience:</strong> Driver (track status) + Insurer admin (process decisions)</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Risk Levels and Predictions</h4>
+          <ul>
+            <li><strong>Why critical:</strong> Predictive layer — identifies high-risk drivers before accidents happen</li>
+            <li><strong>Visualization form:</strong> Risk tier distribution donut chart; driver risk table with color-coded badges; trend alert cards</li>
+            <li><strong>Decisions it supports:</strong> Premium surcharge application; fraud flag prioritization; enforcement action by MVD</li>
+            <li><strong>Audience:</strong> Insurer admin + MVD (primary consumers)</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Aggregate / Population Data</h4>
+          <ul>
+            <li><strong>Why critical:</strong> The regulatory and strategic layer — enables policy decisions and road safety analysis</li>
+            <li><strong>Visualization form:</strong> Region heatmap; score distribution histogram; year-over-year trend lines; compliance rate bars</li>
+            <li><strong>Decisions it supports:</strong> Road safety policy; enforcement resource allocation; insurance market pricing</li>
+            <li><strong>Audience:</strong> MVD / Government (exclusive)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S3: CHART STRATEGY ══ -->
+    <div class="sec" id="s3">
+      <div class="sec-eye"><span class="sec-n">03 /</span> Strategy</div>
+      <h2 class="sec-h2">Chart Selection <em>Strategy</em></h2>
+      <p class="sec-desc">Every chart type has one job. Using the wrong chart for the wrong data is not a minor aesthetic issue — it causes misinterpretation of scores and premiums. These rules are prescriptive, not suggestive.</p>
+
+      <!-- Live chart specimens -->
+      <div class="g2" style="margin-bottom:1.25rem">
+
+        <!-- Line chart -->
+        <div class="chart-card">
+          <div class="cc-header">
+            <div><div class="cc-title">30-Day Score Trend</div><div class="cc-sub">Line chart · Trend over time</div></div>
+            <span class="tag t-b">Line Chart</span>
+          </div>
+          <svg class="lc-area" viewBox="0 0 280 80" preserveAspectRatio="none">
+            <defs><linearGradient id="lg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1042C8" stop-opacity="0.15"/><stop offset="100%" stop-color="#1042C8" stop-opacity="0.01"/></linearGradient></defs>
+            <path d="M0,62 L20,55 L40,60 L60,50 L80,48 L100,42 L120,38 L140,44 L160,35 L180,28 L200,22 L220,18 L240,14 L260,10 L280,8" fill="none" stroke="#1042C8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M0,62 L20,55 L40,60 L60,50 L80,48 L100,42 L120,38 L140,44 L160,35 L180,28 L200,22 L220,18 L240,14 L260,10 L280,8 L280,80 L0,80Z" fill="url(#lg1)"/>
+            <circle cx="200" cy="22" r="4" fill="#1042C8" stroke="white" stroke-width="1.5"/>
+            <line x1="0" y1="70" x2="280" y2="70" stroke="#E5E7EB" stroke-width="0.5"/>
+            <line x1="0" y1="40" x2="280" y2="40" stroke="#E5E7EB" stroke-width="0.5"/>
+            <text x="2" y="69" font-size="7" fill="#9CA3AF" font-family="monospace">0%</text>
+            <text x="2" y="39" font-size="7" fill="#9CA3AF" font-family="monospace">50%</text>
+          </svg>
+          <div style="display:flex;justify-content:space-between;margin-top:4px">
+            <span style="font-family:var(--mono);font-size:8px;color:var(--n400)">1 May</span>
+            <span style="font-family:var(--mono);font-size:8px;color:var(--n400)">30 May</span>
+          </div>
+          <div style="margin-top:0.625rem;padding:0.5rem;background:var(--brand-lt);border-radius:var(--r4)">
+            <div style="font-size:10.5px;font-weight:700;color:var(--brand)">Use when: Showing continuous change over time</div>
+            <div style="font-size:10px;color:var(--n500);margin-top:2px">Score trends, premium over months, streak history. Y-axis must start at 0. Max 2 lines on one chart.</div>
+          </div>
+        </div>
+
+        <!-- Bar chart -->
+        <div class="chart-card">
+          <div class="cc-header">
+            <div><div class="cc-title">7-Day Score Comparison</div><div class="cc-sub">Bar chart · Discrete comparisons</div></div>
+            <span class="tag t-b">Bar Chart</span>
+          </div>
+          <div class="bar-group">
+            <div class="bar-wrap"><div class="bar" style="height:68%;background:var(--warn)"></div><div class="bar-lbl">M</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:72%;background:var(--warn)"></div><div class="bar-lbl">T</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:80%;background:var(--teal)"></div><div class="bar-lbl">W</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:88%;background:var(--teal)"></div><div class="bar-lbl">T</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:92%;background:var(--teal)"></div><div class="bar-lbl">F</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:78%;background:var(--teal);opacity:0.75"></div><div class="bar-lbl">S</div></div>
+            <div class="bar-wrap"><div class="bar" style="height:86%;background:var(--teal)"></div><div class="bar-lbl">S</div></div>
+          </div>
+          <div class="legend">
+            <div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Good (≥70%)</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--warn)"></div>Fair (60–69%)</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--danger)"></div>Poor (&lt;60%)</div>
+          </div>
+          <div style="margin-top:0.625rem;padding:0.5rem;background:var(--brand-lt);border-radius:var(--r4)">
+            <div style="font-size:10.5px;font-weight:700;color:var(--brand)">Use when: Comparing discrete periods or categories</div>
+            <div style="font-size:10px;color:var(--n500);margin-top:2px">Daily scores, behavior factor comparison, trip-by-trip performance. Max 7–10 bars. Colors encode tier meaning.</div>
+          </div>
+        </div>
+
+        <!-- Radial/Gauge -->
+        <div class="chart-card">
+          <div class="cc-header">
+            <div><div class="cc-title">Overall Driving Score</div><div class="cc-sub">Radial gauge · Single metric</div></div>
+            <span class="tag t-t">Gauge Chart</span>
+          </div>
+          <div class="gauge-wrap">
+            <div class="gauge-ring" style="position:relative;width:110px;height:110px">
+              <svg width="110" height="110" viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="44" fill="none" stroke="#E5E7EB" stroke-width="10"/>
+                <circle cx="55" cy="55" r="44" fill="none" stroke="#0D766B" stroke-width="10" stroke-linecap="round" stroke-dasharray="277" stroke-dashoffset="49" transform="rotate(-90 55 55)"/>
+              </svg>
+              <div class="gauge-center"><div class="gauge-val">84.1%</div><div class="gauge-lbl">Score</div></div>
+            </div>
+            <div style="display:flex;gap:1rem;margin-top:0.625rem">
+              <div style="text-align:center"><div style="font-family:var(--mono);font-size:8px;color:var(--n400)">Streak</div><div style="font-size:12px;font-weight:700;color:var(--n800)">14d</div></div>
+              <div style="text-align:center"><div style="font-family:var(--mono);font-size:8px;color:var(--n400)">Change</div><div style="font-size:12px;font-weight:700;color:var(--teal)">↑4.3</div></div>
+            </div>
+          </div>
+          <div style="margin-top:0.625rem;padding:0.5rem;background:var(--teal-lt);border-radius:var(--r4)">
+            <div style="font-size:10.5px;font-weight:700;color:var(--teal)">Use when: Showing a single bounded metric</div>
+            <div style="font-size:10px;color:var(--n500);margin-top:2px">Overall score only. Always show the number at center — ring alone is insufficient. Never use for comparing two drivers.</div>
+          </div>
+        </div>
+
+        <!-- Stacked bar (admin use) -->
+        <div class="chart-card">
+          <div class="cc-header">
+            <div><div class="cc-title">Portfolio Risk Distribution</div><div class="cc-sub">Stacked bar · Composition comparison</div></div>
+            <span class="tag t-p">Stacked Bar</span>
+          </div>
+          <div class="stacked-bar-wrap">
+            <div class="sb-wrap"><div class="sb-stack" style="height:60%"><div class="sb-seg" style="flex:15;background:var(--danger-md)"></div><div class="sb-seg" style="flex:20;background:var(--warn-md)"></div><div class="sb-seg" style="flex:30;background:var(--success-md)"></div><div class="sb-seg" style="flex:35;background:var(--teal-md)"></div></div><div class="bar-lbl">Jan</div></div>
+            <div class="sb-wrap"><div class="sb-stack" style="height:68%"><div class="sb-seg" style="flex:13;background:var(--danger-md)"></div><div class="sb-seg" style="flex:18;background:var(--warn-md)"></div><div class="sb-seg" style="flex:32;background:var(--success-md)"></div><div class="sb-seg" style="flex:37;background:var(--teal-md)"></div></div><div class="bar-lbl">Feb</div></div>
+            <div class="sb-wrap"><div class="sb-stack" style="height:75%"><div class="sb-seg" style="flex:10;background:var(--danger-md)"></div><div class="sb-seg" style="flex:16;background:var(--warn-md)"></div><div class="sb-seg" style="flex:35;background:var(--success-md)"></div><div class="sb-seg" style="flex:39;background:var(--teal-md)"></div></div><div class="bar-lbl">Mar</div></div>
+            <div class="sb-wrap"><div class="sb-stack" style="height:82%"><div class="sb-seg" style="flex:9;background:var(--danger-md)"></div><div class="sb-seg" style="flex:14;background:var(--warn-md)"></div><div class="sb-seg" style="flex:37;background:var(--success-md)"></div><div class="sb-seg" style="flex:40;background:var(--teal-md)"></div></div><div class="bar-lbl">Apr</div></div>
+            <div class="sb-wrap"><div class="sb-stack" style="height:88%"><div class="sb-seg" style="flex:8;background:var(--danger-md)"></div><div class="sb-seg" style="flex:12;background:var(--warn-md)"></div><div class="sb-seg" style="flex:38;background:var(--success-md)"></div><div class="sb-seg" style="flex:42;background:var(--teal-md)"></div></div><div class="bar-lbl">May</div></div>
+            <div class="sb-wrap"><div class="sb-stack" style="height:91%"><div class="sb-seg" style="flex:7;background:var(--danger-md)"></div><div class="sb-seg" style="flex:11;background:var(--warn-md)"></div><div class="sb-seg" style="flex:39;background:var(--success-md)"></div><div class="sb-seg" style="flex:43;background:var(--teal-md)"></div></div><div class="bar-lbl">Jun</div></div>
+          </div>
+          <div class="legend">
+            <div class="leg-item"><div class="leg-dot" style="background:var(--teal-md)"></div>Excellent</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--success-md)"></div>Good</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--warn-md)"></div>Moderate</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--danger-md)"></div>High Risk</div>
+          </div>
+          <div style="margin-top:0.625rem;padding:0.5rem;background:var(--purple-lt);border-radius:var(--r4)">
+            <div style="font-size:10.5px;font-weight:700;color:var(--purple)">Use when: Showing part-to-whole composition over time</div>
+            <div style="font-size:10px;color:var(--n500);margin-top:2px">Admin only — portfolio risk distribution, regional score breakdown. Never use for individual driver comparison.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Heatmap -->
+      <div class="chart-card" style="margin-bottom:1.25rem">
+        <div class="cc-header">
+          <div><div class="cc-title">30-Day Score Calendar Heatmap</div><div class="cc-sub">Heatmap · Pattern identification across time + value</div></div>
+          <span class="tag t-b">Heatmap</span>
+        </div>
+        <div style="display:flex;gap:1.5rem;align-items:flex-start">
+          <div>
+            <div style="display:flex;gap:1rem;margin-bottom:0.5rem">
+              <div style="font-family:var(--mono);font-size:8px;color:var(--n400)">Mo</div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--n400)">Tu</div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--n400)">We</div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--n400)">Th</div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--n400)">Fr</div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--n400)">Sa</div>
+              <div style="font-family:var(--mono);font-size:8px;color:var(--n400)">Su</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="display:flex;gap:3px">
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80;opacity:0.8"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#FCD34D"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#E5E7EB"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#E5E7EB"></div>
+              </div>
+              <div style="display:flex;gap:3px">
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#FCA5A5"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80;opacity:0.9"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#E5E7EB"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#E5E7EB"></div>
+              </div>
+              <div style="display:flex;gap:3px">
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80;opacity:0.6"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#FCD34D;opacity:0.8"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#E5E7EB"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#E5E7EB"></div>
+              </div>
+              <div style="display:flex;gap:3px">
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80;opacity:0.85"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#4ADE80"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#E5E7EB"></div>
+                <div style="width:18px;height:18px;border-radius:3px;background:#E5E7EB"></div>
+              </div>
+            </div>
+            <div class="hm-scale" style="margin-top:0.5rem"><span>Low</span><div class="hm-scale-bar"><div class="hm-scale-cell" style="background:#FCA5A5"></div><div class="hm-scale-cell" style="background:#FCD34D"></div><div class="hm-scale-cell" style="background:#4ADE80;opacity:0.5"></div><div class="hm-scale-cell" style="background:#4ADE80"></div></div><span>High</span></div>
+          </div>
+          <div style="flex:1">
+            <div style="background:var(--brand-lt);border-radius:var(--r8);padding:0.75rem;border-left:2.5px solid var(--brand)">
+              <div style="font-size:11px;font-weight:700;color:var(--brand);margin-bottom:0.3rem">When to use Heatmaps</div>
+              <ul style="font-size:11px;color:var(--n600);padding-left:1rem;line-height:1.65">
+                <li>Identifying patterns across time: "bad score days" cluster on certain days of the week</li>
+                <li>Score calendar — 30/90-day view of driving consistency</li>
+                <li>Admin: regional risk maps, time-of-day accident heatmaps</li>
+                <li>Never use heatmaps for precise value comparison — they encode magnitude, not exact figures</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="do-dont">
+        <div class="do-box"><div class="do-lbl">✓ Chart Selection Do's</div><div class="dd-text"><ul><li>Use line charts when time is the X-axis and change is continuous</li><li>Use bar charts for discrete buckets — days, trips, behavior factors</li><li>Use radial/gauge exclusively for single bounded metrics (score ring)</li><li>Use tables when exact values and comparison of many attributes matter</li><li>Always include a plain-language summary below or above every chart</li></ul></div></div>
+        <div class="dont-box"><div class="dont-lbl">✕ Chart Selection Don'ts</div><div class="dd-text"><ul><li>Never use pie charts for behavioral data — part-to-whole is misleading here</li><li>Never truncate Y-axis — especially when showing score trends (builds mistrust)</li><li>Never put more than 2 lines on one line chart — causes confusion</li><li>Never use 3D charts — they distort perception in insurance/financial contexts</li><li>Never use a chart when a single number (e.g., "84.1%") communicates it better</li></ul></div></div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S4: HIERARCHY & COLOR ══ -->
+    <div class="sec" id="s4">
+      <div class="sec-eye"><span class="sec-n">04 /</span> Strategy</div>
+      <h2 class="sec-h2">Visual Hierarchy & <em>Semantic Color</em></h2>
+
+      <div class="g2" style="margin-bottom:1.25rem">
+        <div class="card card-b">
+          <h3>Data Priority Hierarchy</h3>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem">
+            <div style="display:flex;align-items:center;gap:0.75rem;background:var(--brand-lt);border-radius:var(--r8);padding:0.5rem 0.75rem;border-left:3px solid var(--brand)">
+              <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--brand);min-width:20px">P1</span>
+              <div><div style="font-size:11px;font-weight:700;color:var(--n800)">Primary — Composite Score / Premium</div><div style="font-size:10px;color:var(--n500)">Large serif font, 48–72px, most prominent element on page, always above fold</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75rem;background:var(--n100);border-radius:var(--r8);padding:0.5rem 0.75rem;border-left:3px solid var(--n400)">
+              <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--n500);min-width:20px">P2</span>
+              <div><div style="font-size:11px;font-weight:700;color:var(--n800)">Secondary — KPIs and Factor Scores</div><div style="font-size:10px;color:var(--n500)">Medium size, visible in KPI row, score breakdown bars, premium components</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75rem;background:var(--n50);border-radius:var(--r8);padding:0.5rem 0.75rem">
+              <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--n400);min-width:20px">P3</span>
+              <div><div style="font-size:11px;font-weight:700;color:var(--n800)">Tertiary — Trend Charts and History</div><div style="font-size:10px;color:var(--n500)">Supporting context below fold or on secondary screens</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem 0.75rem">
+              <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--n300);min-width:20px">P4</span>
+              <div><div style="font-size:11px;font-weight:700;color:var(--n600)">Raw Data — Tables and Full Records</div><div style="font-size:10px;color:var(--n400)">Accessible via drill-down only — never on the primary screen</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card card-b" style="margin-bottom:1rem">
+            <h3>Semantic Color Rules — Non-Negotiable</h3>
+            <div style="display:flex;flex-direction:column;gap:0.35rem;margin-top:0.5rem">
+              <div style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem;background:var(--teal-lt);border-radius:var(--r4);border:1px solid var(--teal-md)">
+                <div style="width:12px;height:12px;border-radius:3px;background:var(--teal);flex-shrink:0"></div>
+                <div style="font-size:11px;font-weight:700;color:var(--teal)">Teal → Excellent (≥80%)</div>
+                <div style="font-size:10px;color:var(--n500);margin-left:auto">Best performance, maximum discount</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem;background:var(--success-lt);border-radius:var(--r4);border:1px solid var(--success-md)">
+                <div style="width:12px;height:12px;border-radius:3px;background:var(--success);flex-shrink:0"></div>
+                <div style="font-size:11px;font-weight:700;color:var(--success)">Green → Good (70–79%)</div>
+                <div style="font-size:10px;color:var(--n500);margin-left:auto">Safe driving, discount applied</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem;background:var(--warn-lt);border-radius:var(--r4);border:1px solid var(--warn-md)">
+                <div style="width:12px;height:12px;border-radius:3px;background:var(--warn);flex-shrink:0"></div>
+                <div style="font-size:11px;font-weight:700;color:var(--warn)">Amber → Moderate Risk (60–69%)</div>
+                <div style="font-size:10px;color:var(--n500);margin-left:auto">Full price or minor surcharge</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.75rem;padding:0.5rem;background:var(--danger-lt);border-radius:var(--r4);border:1px solid var(--danger-md)">
+                <div style="width:12px;height:12px;border-radius:3px;background:var(--danger);flex-shrink:0"></div>
+                <div style="font-size:11px;font-weight:700;color:var(--danger)">Red → High Risk (&lt;60%)</div>
+                <div style="font-size:10px;color:var(--n500);margin-left:auto">Premium surcharge, fraud review</div>
+              </div>
+            </div>
+          </div>
+          <div class="banner banner-w">
+            <span class="bn-icon">⚠️</span>
+            <div><div class="bn-label">Critical Color Rule</div><div class="bn-text"><strong>Red (danger) must never appear on a dashboard for a reason other than high risk or error.</strong> Using it for section headers, hover states, or decorative purposes destroys its communicative value the moment a real high-risk alert fires. Blue (brand) and gray are the only safe decorative colors.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tooltip specimen -->
+      <div class="sub-h" style="margin-bottom:1rem">Hover Tooltip Design — Context on Demand</div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-start;margin-bottom:1rem">
+        <div class="tooltip-demo">
+          <div class="tt-label">Score — Thu 5 Jun</div>
+          <div class="tt-val">84.1%</div>
+          <div class="tt-rows">
+            <div class="tt-row"><span class="tt-key">Speed</span><span class="tt-v" style="color:var(--teal)">88/100</span></div>
+            <div class="tt-row"><span class="tt-key">Braking</span><span class="tt-v" style="color:var(--warn)">71/100 ⚠</span></div>
+            <div class="tt-row"><span class="tt-key">Acceleration</span><span class="tt-v" style="color:var(--teal)">82/100</span></div>
+            <div class="tt-row"><span class="tt-key">Engine Load</span><span class="tt-v" style="color:#E45C24">58/100</span></div>
+            <div class="tt-row" style="border-top:1px solid var(--n100);padding-top:4px;margin-top:4px"><span class="tt-key">Premium impact</span><span class="tt-v" style="color:var(--teal)">−25%</span></div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div class="card">
+            <h3>Tooltip Design Rules</h3>
+            <ul>
+              <li>Trigger on hover (desktop) or tap (touch) — never on click for primary charts</li>
+              <li>Show the date/context first, then the value, then the breakdown</li>
+              <li>Max 5 rows in a tooltip — anything more should be a drill-down page</li>
+              <li>Tooltip must not obscure the chart area — position dynamically</li>
+              <li>Always include the financial impact (premium) when showing a score tooltip</li>
+              <li>Close on mouse-out after 200ms delay — prevents flickering</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S5: SIMPLIFICATION ══ -->
+    <div class="sec" id="s5">
+      <div class="sec-eye"><span class="sec-n">05 /</span> Strategy</div>
+      <h2 class="sec-h2">Data Simplification <em>Techniques</em></h2>
+      <p class="sec-desc">Raw data from OBD systems is incomprehensible to most users. The transformation pipeline from raw sensor data to actionable insight is a core design responsibility — not a backend concern.</p>
+
+      <div class="g3" style="margin-bottom:1.25rem">
+        <div class="card card-b">
+          <h3>Raw → Insight Translation</h3>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem">
+            <div style="background:var(--danger-lt);border-radius:var(--r4);padding:0.4rem 0.625rem">
+              <div style="font-size:9px;font-weight:700;color:var(--danger);margin-bottom:1px">✕ Raw (never show)</div>
+              <div style="font-size:10px;color:var(--n700)">G-force X-axis: −0.41m/s², Y-axis: 0.07, braking event duration: 2.3s</div>
+            </div>
+            <div style="display:flex;justify-content:center;color:var(--n400);font-size:14px">↓</div>
+            <div style="background:var(--teal-lt);border-radius:var(--r4);padding:0.4rem 0.625rem">
+              <div style="font-size:9px;font-weight:700;color:var(--teal);margin-bottom:1px">✓ Insight (always show)</div>
+              <div style="font-size:10px;color:var(--n700)">You braked suddenly 3 times today — this reduced your braking score by 4.2 points</div>
+            </div>
+          </div>
+        </div>
+        <div class="card card-b">
+          <h3>Comparative Framing</h3>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem">
+            <div style="background:var(--danger-lt);border-radius:var(--r4);padding:0.4rem 0.625rem">
+              <div style="font-size:9px;font-weight:700;color:var(--danger);margin-bottom:1px">✕ Absolute (less meaningful)</div>
+              <div style="font-size:10px;color:var(--n700)">Score: 84.1 out of 100</div>
+            </div>
+            <div style="display:flex;justify-content:center;color:var(--n400);font-size:14px">↓</div>
+            <div style="background:var(--teal-lt);border-radius:var(--r4);padding:0.4rem 0.625rem">
+              <div style="font-size:9px;font-weight:700;color:var(--teal);margin-bottom:1px">✓ Contextual (motivating)</div>
+              <div style="font-size:10px;color:var(--n700)">84.1% — your best score in 6 weeks. ↑ 4.3 points vs last week. 1 point from your all-time best.</div>
+            </div>
+          </div>
+        </div>
+        <div class="card card-b">
+          <h3>Financial Translation</h3>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem">
+            <div style="background:var(--danger-lt);border-radius:var(--r4);padding:0.4rem 0.625rem">
+              <div style="font-size:9px;font-weight:700;color:var(--danger);margin-bottom:1px">✕ Technical (not actionable)</div>
+              <div style="font-size:10px;color:var(--n700)">Driving score: 84.1% → tier: Excellent → multiplier: 0.75</div>
+            </div>
+            <div style="display:flex;justify-content:center;color:var(--n400);font-size:14px">↓</div>
+            <div style="background:var(--teal-lt);border-radius:var(--r4);padding:0.4rem 0.625rem">
+              <div style="font-size:9px;font-weight:700;color:var(--teal);margin-bottom:1px">✓ Financial impact (actionable)</div>
+              <div style="font-size:10px;color:var(--n700)">Your score saves you ₹1,689/month. Improving braking alone could save you an additional ₹280.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <h3 style="margin-bottom:0.875rem">Progressive Disclosure — How Much to Show and When</h3>
+        <div style="display:flex;gap:1px;background:var(--n200);border-radius:var(--r8);overflow:hidden">
+          <div style="flex:1;background:var(--n0);padding:0.875rem 1rem">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--brand);margin-bottom:0.4rem">Level 1 — Glance (0–3 sec)</div>
+            <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.25rem">Score + Status + Delta</div>
+            <div style="font-size:10.5px;color:var(--n500)">84.1% · Excellent · ↑4.3 this week. User gets the full picture in under 3 seconds without reading anything.</div>
+          </div>
+          <div style="flex:1;background:var(--n0);padding:0.875rem 1rem;border-left:1px solid var(--n100)">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--brand);margin-bottom:0.4rem">Level 2 — Scan (5–15 sec)</div>
+            <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.25rem">Factor Bars + One Insight</div>
+            <div style="font-size:10.5px;color:var(--n500)">Speed 88, Braking 71 ⚠, Acceleration 82. One call-to-action insight: "Improve braking to unlock higher discount."</div>
+          </div>
+          <div style="flex:1;background:var(--n0);padding:0.875rem 1rem;border-left:1px solid var(--n100)">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--brand);margin-bottom:0.4rem">Level 3 — Read (30 sec+)</div>
+            <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.25rem">History + Trip Data</div>
+            <div style="font-size:10.5px;color:var(--n500)">30-day chart, individual trip breakdown. Accessed via "View Details" — never shown by default on dashboard.</div>
+          </div>
+          <div style="flex:1;background:var(--n0);padding:0.875rem 1rem;border-left:1px solid var(--n100)">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--brand);margin-bottom:0.4rem">Level 4 — Investigate</div>
+            <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.25rem">Raw Blockchain Record</div>
+            <div style="font-size:10.5px;color:var(--n500)">Block timestamp, verification hash. Accessible via "Verified Record →" link. Never shown unsolicited.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S6: REAL-TIME vs HISTORICAL ══ -->
+    <div class="sec" id="s6">
+      <div class="sec-eye"><span class="sec-n">06 /</span> Strategy</div>
+      <h2 class="sec-h2">Real-Time vs <em>Historical Data</em></h2>
+
+      <div class="g2" style="margin-bottom:1.25rem">
+        <div class="card card-g">
+          <h3>Real-Time Data — Visual Treatment</h3>
+          <ul style="margin-bottom:0.75rem">
+            <li><strong>Definition:</strong> Score updates after a trip (within 2–4h), OBD connection status, claim status changes, active alerts</li>
+            <li><strong>Visual signals:</strong> Animated dot indicator (pulsing green), "Live" or "Updated X mins ago" timestamp, subtle teal left-border on cards</li>
+            <li><strong>Interaction:</strong> Auto-refreshes silently — user never manually refreshes. Score change notification triggers in-app banner</li>
+            <li><strong>Never:</strong> Show a loading spinner when real-time data is updating — use a progress indicator that doesn't interrupt the existing content</li>
+          </ul>
+          <div style="background:var(--teal-lt);border-radius:var(--r8);padding:0.625rem 0.875rem;border-left:3px solid var(--teal);display:flex;align-items:center;gap:0.5rem">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;animation:pulse2 2s infinite"></div>
+            <div><div style="font-size:10px;font-weight:700;color:var(--teal)">Live · Score updated 12 minutes ago</div><div style="font-size:9.5px;color:var(--n500)">Based on this morning's 22km trip to MG Road</div></div>
+          </div>
+        </div>
+        <div class="card card-b">
+          <h3>Historical Data — Visual Treatment</h3>
+          <ul style="margin-bottom:0.75rem">
+            <li><strong>Definition:</strong> Score trends, premium history, trip records, past claims, blockchain archive</li>
+            <li><strong>Visual signals:</strong> Date range selectors, "As of [date]" labels, muted opacity for past periods, calendar heatmaps</li>
+            <li><strong>Interaction:</strong> User-controlled date range filters, drill-down from trend to specific day to specific trip</li>
+            <li><strong>Never:</strong> Mix historical and real-time data in the same chart without a clear visual separator or legend entry distinguishing them</li>
+          </ul>
+          <div style="background:var(--brand-lt);border-radius:var(--r8);padding:0.625rem 0.875rem;border-left:3px solid var(--brand-md)">
+            <div style="font-size:10px;font-weight:700;color:var(--brand)">Historical Archive · May 2025</div>
+            <div style="font-size:9.5px;color:var(--n500)">Showing 30-day rolling average. Verified blockchain record. Filter: last 90 days available.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S7: INTERACTIONS & EDGE CASES ══ -->
+    <div class="sec" id="s7">
+      <div class="sec-eye"><span class="sec-n">07 /</span> Strategy</div>
+      <h2 class="sec-h2">Interaction Design & <em>Edge Cases</em></h2>
+
+      <div class="spec-grid" style="margin-bottom:1.25rem">
+        <div class="spec-card"><h4>Filter & Drill-Down Interactions</h4><ul><li><strong>Date range picker:</strong> Presets (7d, 30d, 90d, Custom) + date range selector. Applies to all charts on the screen simultaneously</li><li><strong>Trip type filter:</strong> All / Only flagged / Excellent only — chip selector above charts</li><li><strong>Drill-down:</strong> Click any bar → opens trip detail drawer from right. Click any table row → same. Never a full page reload.</li><li><strong>Admin segment filter:</strong> Risk tier (All/High/Moderate/Low), region, date, premium bracket</li><li><strong>Sort:</strong> Click column header to sort. Active sort column highlighted with arrow indicator</li></ul></div>
+        <div class="spec-card"><h4>Empty, Incomplete & Error States</h4><ul><li><strong>No trips (new user):</strong> Illustrated empty state with "Drive today to see your first score" — never a blank chart area</li><li><strong>Incomplete data (OBD disconnected mid-trip):</strong> Bar shown with hatched pattern and "Incomplete trip" tooltip. Score not calculated from partial data.</li><li><strong>Score sync pending (blockchain not yet committed):</strong> Score shown with "Pending verification" dotted border — not hidden, clearly labeled</li><li><strong>Data error (corrupted OBD file):</strong> Row flagged with orange icon + "Data quality issue — excluded from score" tooltip. Never silently dropped.</li><li><strong>Admin — no claims:</strong> "All clear" empty state with green background. Different tone from a user empty state.</li></ul></div>
+      </div>
+
+      <div class="banner banner-b">
+        <span class="bn-icon">🎯</span>
+        <div><div class="bn-label">Interaction Design North Star</div><div class="bn-text"><strong>Every interaction with data should make the user feel more informed, not more confused.</strong> If a filter, drill-down, or tooltip requires the user to re-orient themselves before understanding what they're looking at, the interaction has failed. Context must survive all navigation transitions.</div></div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S8: INSURANCE ADMIN ══ -->
+    <div class="sec" id="s8">
+      <div class="sec-eye"><span class="sec-n">08 /</span> Admin Panel</div>
+      <h2 class="sec-h2">Insurance Admin <em>Risk Dashboard</em></h2>
+      <p class="sec-desc">The insurance company admin panel is a data-dense, decision-making interface. Risk officers need to identify high-risk drivers, process claims, and adjust premiums — all with minimal friction. The panel surfaces anomalies first, routine data second.</p>
+
+      <div class="admin-shell">
+        <div class="as-topbar"><div class="as-dots"><div class="as-dot"></div><div class="as-dot"></div><div class="as-dot"></div></div><div class="as-url">admin.drivesure.in/insurer/risk-dashboard — Bajaj Allianz</div></div>
+        <div class="as-body">
+          <!-- Admin Sidebar -->
+          <div class="admin-sb">
+            <div class="asb-logo-row"><div class="asb-mark" style="background:#0C6E3D">🏢</div><div class="asb-brand-text">Insurer Admin</div></div>
+            <div class="asb-nav">
+              <div class="asb-itm active"><span class="asb-itm-i">📊</span><span class="asb-itm-l">Risk Dashboard</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">👥</span><span class="asb-itm-l">Customers</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">📋</span><span class="asb-itm-l">Claims Queue</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">💰</span><span class="asb-itm-l">Premium Rules</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">📈</span><span class="asb-itm-l">Analytics</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">🚩</span><span class="asb-itm-l">Fraud Flags</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">📄</span><span class="asb-itm-l">Reports</span></div>
+            </div>
+            <div class="asb-footer"><div class="asb-av" style="background:#0C6E3D">BA</div><div><div class="asb-user-nm">Bajaj Allianz</div><div class="asb-user-rl">Risk Officer</div></div></div>
+          </div>
+          <!-- Content -->
+          <div class="admin-content">
+            <div class="admin-header">
+              <div><div class="ah-title">Portfolio Risk Dashboard</div><div class="ah-bc">ADMIN › RISK OVERVIEW · Jun 2025</div></div>
+              <div class="ah-acts">
+                <div class="ah-btn ah-btn-g">📅 Jun 2025</div>
+                <div class="ah-btn ah-btn-s">Compare Months</div>
+                <div class="ah-btn ah-btn-p">⬇ Export</div>
+              </div>
+            </div>
+            <div class="admin-main">
+              <!-- Fraud alert banner -->
+              <div class="alert-row" style="border-left:3px solid var(--danger);background:var(--danger-lt);border-color:var(--danger-md);margin-bottom:0.75rem">
+                <div class="ar-pri ar-h"></div>
+                <span class="ar-icon">🚩</span>
+                <div style="flex:1">
+                  <div class="ar-title" style="color:var(--danger)">3 fraud flags require immediate review</div>
+                  <div class="ar-desc">Priya Sharma (KL29A4420), Ravi Kumar (TN09C2210), one more — claims filed for dates with no blockchain trip record</div>
+                </div>
+                <div class="ah-btn ah-btn-p" style="font-size:8.5px;white-space:nowrap">Review Now →</div>
+              </div>
+              <!-- KPIs -->
+              <div class="kpi-row" style="margin-bottom:0.75rem">
+                <div class="kpi"><div class="kpi-lbl">Active Policies</div><div class="kpi-val">1,284</div><div class="kpi-delta du">↑ 47 this month</div></div>
+                <div class="kpi"><div class="kpi-lbl">Portfolio Avg Score</div><div class="kpi-val">76.3%</div><div class="kpi-delta du">↑ 2.1 pts vs May</div></div>
+                <div class="kpi"><div class="kpi-lbl">Pending Claims</div><div class="kpi-val" style="color:var(--warn)">23</div><div class="kpi-delta dd">2 overdue >72h</div></div>
+                <div class="kpi"><div class="kpi-lbl">Monthly Revenue</div><div class="kpi-val">₹68.4L</div><div class="kpi-delta du">↑ 3.2% vs May</div></div>
+              </div>
+              <!-- Charts row -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.625rem;margin-bottom:0.75rem">
+                <!-- Stacked bar - risk dist -->
+                <div class="mc">
+                  <div class="st" style="margin-bottom:0.5rem">Risk Distribution — 6 Months<span class="st-link">Full Report →</span></div>
+                  <div class="stacked-bar-wrap" style="height:70px">
+                    <div class="sb-wrap"><div class="sb-stack" style="height:60%"><div class="sb-seg" style="flex:15;background:var(--danger-md)"></div><div class="sb-seg" style="flex:22;background:var(--warn-md)"></div><div class="sb-seg" style="flex:30;background:var(--success-md)"></div><div class="sb-seg" style="flex:33;background:var(--teal-md)"></div></div><div class="bar-lbl">J</div></div>
+                    <div class="sb-wrap"><div class="sb-stack" style="height:68%"><div class="sb-seg" style="flex:13;background:var(--danger-md)"></div><div class="sb-seg" style="flex:20;background:var(--warn-md)"></div><div class="sb-seg" style="flex:32;background:var(--success-md)"></div><div class="sb-seg" style="flex:35;background:var(--teal-md)"></div></div><div class="bar-lbl">F</div></div>
+                    <div class="sb-wrap"><div class="sb-stack" style="height:75%"><div class="sb-seg" style="flex:11;background:var(--danger-md)"></div><div class="sb-seg" style="flex:18;background:var(--warn-md)"></div><div class="sb-seg" style="flex:35;background:var(--success-md)"></div><div class="sb-seg" style="flex:36;background:var(--teal-md)"></div></div><div class="bar-lbl">M</div></div>
+                    <div class="sb-wrap"><div class="sb-stack" style="height:82%"><div class="sb-seg" style="flex:10;background:var(--danger-md)"></div><div class="sb-seg" style="flex:16;background:var(--warn-md)"></div><div class="sb-seg" style="flex:36;background:var(--success-md)"></div><div class="sb-seg" style="flex:38;background:var(--teal-md)"></div></div><div class="bar-lbl">A</div></div>
+                    <div class="sb-wrap"><div class="sb-stack" style="height:88%"><div class="sb-seg" style="flex:9;background:var(--danger-md)"></div><div class="sb-seg" style="flex:14;background:var(--warn-md)"></div><div class="sb-seg" style="flex:38;background:var(--success-md)"></div><div class="sb-seg" style="flex:39;background:var(--teal-md)"></div></div><div class="bar-lbl">M</div></div>
+                    <div class="sb-wrap"><div class="sb-stack" style="height:91%"><div class="sb-seg" style="flex:8;background:var(--danger-md)"></div><div class="sb-seg" style="flex:12;background:var(--warn-md)"></div><div class="sb-seg" style="flex:39;background:var(--success-md)"></div><div class="sb-seg" style="flex:41;background:var(--teal-md)"></div></div><div class="bar-lbl">J</div></div>
+                  </div>
+                  <div class="legend">
+                    <div class="leg-item"><div class="leg-dot" style="background:var(--teal-md)"></div>Excellent</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:var(--success-md)"></div>Good</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:var(--warn-md)"></div>Moderate</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:var(--danger-md)"></div>High Risk</div>
+                  </div>
+                </div>
+                <!-- Portfolio score line -->
+                <div class="mc">
+                  <div class="st" style="margin-bottom:0.5rem">Avg Portfolio Score Trend<span class="st-link">Details →</span></div>
+                  <svg viewBox="0 0 200 70" width="100%" height="70px">
+                    <path d="M0,50 L33,44 L66,38 L99,32 L132,26 L165,20 L200,14" fill="none" stroke="#1042C8" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M0,50 L33,44 L66,38 L99,32 L132,26 L165,20 L200,14 L200,70 L0,70Z" fill="rgba(16,66,200,0.06)"/>
+                    <text x="2" y="68" font-size="7" fill="#9CA3AF" font-family="monospace">Jan</text>
+                    <text x="168" y="68" font-size="7" fill="#9CA3AF" font-family="monospace">Jun</text>
+                    <circle cx="200" cy="14" r="3" fill="#1042C8" stroke="white" stroke-width="1"/>
+                    <text x="180" y="12" font-size="7" fill="#1042C8" font-family="monospace" font-weight="700">76.3%</text>
+                  </svg>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem;margin-top:0.25rem">
+                    <div style="background:var(--n50);border-radius:var(--r4);padding:0.3rem 0.4rem"><div style="font-size:8px;color:var(--n400)">High-risk count</div><div style="font-size:11px;font-weight:700;color:var(--danger)">98 drivers</div></div>
+                    <div style="background:var(--n50);border-radius:var(--r4);padding:0.3rem 0.4rem"><div style="font-size:8px;color:var(--n400)">Fraud flags</div><div style="font-size:11px;font-weight:700;color:var(--danger)">3 open 🚩</div></div>
+                  </div>
+                </div>
+              </div>
+              <!-- Driver table -->
+              <div class="mc" style="padding:0">
+                <div style="padding:0.5rem 0.75rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--n100)">
+                  <div style="font-size:11px;font-weight:700;color:var(--n800)">Driver Risk Profiles</div>
+                  <div class="filter-bar" style="margin-bottom:0">
+                    <div class="fc active">All</div>
+                    <div class="fc">High Risk</div>
+                    <div class="fc">Flagged</div>
+                    <input class="fi-input" placeholder="🔍 Search..."/>
+                  </div>
+                </div>
+                <table class="dt">
+                  <thead><tr><th>Driver</th><th>Score</th><th>Risk Tier</th><th>Premium</th><th>Claims</th><th>Flags</th><th>Actions</th></tr></thead>
+                  <tbody>
+                    <tr><td>Arjun Nair · KL39B7021</td><td>84.1%</td><td><span class="rp-e">Excellent</span></td><td>₹5,311</td><td>1 settled</td><td style="color:var(--n400)">—</td><td style="font-size:9px;color:var(--brand);cursor:pointer">View →</td></tr>
+                    <tr><td>Meera Pillai · KL14C8834</td><td>78.2%</td><td><span class="rp-g">Good</span></td><td>₹5,840</td><td>0</td><td style="color:var(--n400)">—</td><td style="font-size:9px;color:var(--brand);cursor:pointer">View →</td></tr>
+                    <tr><td>Suresh Kumar · KL07D2210</td><td>62.5%</td><td><span class="rp-m">Moderate</span></td><td>₹6,000</td><td>2 pending</td><td style="color:var(--n400)">—</td><td style="font-size:9px;color:var(--brand);cursor:pointer">View →</td></tr>
+                    <tr style="background:var(--danger-lt)!important"><td style="color:var(--danger)!important">Priya Sharma · KL29A4420 🚩</td><td style="color:var(--danger)">41.0%</td><td><span class="rp-h">High Risk</span></td><td>₹6,900</td><td>1 disputed</td><td><span style="color:var(--danger);font-size:9px;font-weight:700">FRAUD</span></td><td style="font-size:9px;color:var(--danger);cursor:pointer;font-weight:700">Review →</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S9: CLAIMS MANAGEMENT ══ -->
+    <div class="sec" id="s9">
+      <div class="sec-eye"><span class="sec-n">09 /</span> Admin Panel</div>
+      <h2 class="sec-h2">Claims Management & <em>Validation</em></h2>
+      <p class="sec-desc">The claims management screen is the most operationally critical admin screen. Adjudicators need to validate blockchain-verified scores, review evidence, and approve or reject with clear audit trails. Every decision is logged.</p>
+
+      <div class="admin-shell">
+        <div class="as-topbar"><div class="as-dots"><div class="as-dot"></div><div class="as-dot"></div><div class="as-dot"></div></div><div class="as-url">admin.drivesure.in/insurer/claims — Claims Queue</div></div>
+        <div class="as-body">
+          <div class="admin-sb">
+            <div class="asb-logo-row"><div class="asb-mark" style="background:#0C6E3D">🏢</div><div class="asb-brand-text">Insurer Admin</div></div>
+            <div class="asb-nav">
+              <div class="asb-itm"><span class="asb-itm-i">📊</span><span class="asb-itm-l">Risk Dashboard</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">👥</span><span class="asb-itm-l">Customers</span></div>
+              <div class="asb-itm active"><span class="asb-itm-i">📋</span><span class="asb-itm-l">Claims Queue</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">💰</span><span class="asb-itm-l">Premium Rules</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">📈</span><span class="asb-itm-l">Analytics</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">🚩</span><span class="asb-itm-l">Fraud Flags</span></div>
+            </div>
+            <div class="asb-footer"><div class="asb-av" style="background:#0C6E3D">BA</div><div><div class="asb-user-nm">Bajaj Allianz</div><div class="asb-user-rl">Claims Adjudicator</div></div></div>
+          </div>
+          <div class="admin-content">
+            <div class="admin-header">
+              <div><div class="ah-title">Claims Queue — 23 Pending</div><div class="ah-bc">ADMIN › CLAIMS MANAGEMENT</div></div>
+              <div class="ah-acts">
+                <div class="ah-btn ah-btn-g">Filter</div>
+                <div class="ah-btn ah-btn-g">Sort: Oldest First</div>
+                <div class="ah-btn ah-btn-p">Bulk Approve Selected</div>
+              </div>
+            </div>
+            <div class="admin-main">
+              <!-- Claims summary strip -->
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:0.75rem">
+                <div class="mc"><div class="mc-lbl">Pending Review</div><div class="mc-val">23</div><div class="mc-sub">2 overdue</div></div>
+                <div class="mc"><div class="mc-lbl">Approved Today</div><div class="mc-val" style="color:var(--teal)">8</div><div class="mc-sub">₹52,400 total</div></div>
+                <div class="mc"><div class="mc-lbl">Rejected Today</div><div class="mc-val" style="color:var(--danger)">2</div><div class="mc-sub">Evidence issues</div></div>
+                <div class="mc"><div class="mc-lbl">Fraud Flagged</div><div class="mc-val" style="color:var(--danger)">3</div><div class="mc-sub">Blockchain mismatch</div></div>
+              </div>
+              <!-- Claims table + claim detail split -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.625rem">
+                <!-- Queue table -->
+                <div class="mc" style="padding:0">
+                  <div class="filter-bar" style="padding:0.5rem 0.75rem;margin-bottom:0;border-bottom:1px solid var(--n100)">
+                    <div class="fc active">All</div>
+                    <div class="fc">Pending</div>
+                    <div class="fc">Flagged 🚩</div>
+                    <div class="fc">Overdue</div>
+                  </div>
+                  <table class="dt">
+                    <thead><tr><th>Claim ID</th><th>Driver</th><th>Amount</th><th>Score</th><th>Status</th></tr></thead>
+                    <tbody>
+                      <tr style="background:var(--brand-lt)"><td>#CLM-2302</td><td>Suresh K.</td><td>₹12,000</td><td>72.4%</td><td><span class="tag t-b">Active →</span></td></tr>
+                      <tr><td>#CLM-2301</td><td>Meera P.</td><td>₹8,400</td><td>78.2%</td><td><span class="tag t-n">Pending</span></td></tr>
+                      <tr style="background:var(--danger-lt)"><td>#CLM-2290 🚩</td><td>Priya S.</td><td>₹18,000</td><td>N/A</td><td><span class="tag t-d">Fraud Flag</span></td></tr>
+                      <tr><td>#CLM-2289</td><td>Anand R.</td><td>₹5,200</td><td>84.1%</td><td><span class="tag t-n">Pending</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- Claim detail panel -->
+                <div class="mc">
+                  <div style="font-size:11px;font-weight:700;color:var(--n800);margin-bottom:0.75rem;display:flex;align-items:center;justify-content:space-between">
+                    Claim #CLM-2302 — Detail
+                    <span class="tag t-b">Under Review</span>
+                  </div>
+                  <!-- Blockchain score verification -->
+                  <div style="background:var(--teal-lt);border:1px solid var(--teal-md);border-radius:var(--r8);padding:0.625rem;margin-bottom:0.625rem">
+                    <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:3px">🔒 Blockchain Verified Score</div>
+                    <div style="font-family:var(--serif);font-size:1.375rem;color:var(--n900);line-height:1">72.4%</div>
+                    <div style="font-size:9px;color:var(--n500);margin-top:2px">Block #14,892 · 21 May 2023 · Immutable record</div>
+                  </div>
+                  <!-- Settlement calc -->
+                  <div style="background:var(--n50);border-radius:var(--r8);padding:0.5rem 0.625rem;margin-bottom:0.625rem;font-size:10px">
+                    <div style="font-weight:700;color:var(--n800);margin-bottom:0.25rem">Settlement Calculation</div>
+                    <div style="display:flex;justify-content:space-between"><span style="color:var(--n500)">Claim amount</span><span style="font-weight:600">₹12,000</span></div>
+                    <div style="display:flex;justify-content:space-between"><span style="color:var(--n500)">Score (72.4%) adjustment</span><span style="color:var(--n500)">None (50–70% band)</span></div>
+                    <div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid var(--n200);padding-top:4px;margin-top:4px"><span>Final payout</span><span>₹12,000</span></div>
+                  </div>
+                  <!-- Claim timeline -->
+                  <div>
+                    <div class="ct-step"><div class="ct-left"><div class="ct-dot ct-done">✓</div><div class="ct-ln"></div></div><div><div class="ct-title">Claim submitted</div><div class="ct-meta">21 May 2023 · 11:30 AM</div></div></div>
+                    <div class="ct-step"><div class="ct-left"><div class="ct-dot ct-done">✓</div><div class="ct-ln"></div></div><div><div class="ct-title">Score verified on blockchain</div><div class="ct-meta">21 May 2023 · 11:32 AM</div></div></div>
+                    <div class="ct-step"><div class="ct-left"><div class="ct-dot ct-act">●</div><div class="ct-ln"></div></div><div><div class="ct-title">Adjudicator review</div><div class="ct-meta">In progress · You are here</div></div></div>
+                    <div class="ct-step" style="padding-bottom:0"><div class="ct-left"><div class="ct-dot ct-pend"></div></div><div><div class="ct-title">Decision</div><div class="ct-meta">Pending approval action</div></div></div>
+                  </div>
+                  <!-- Action buttons -->
+                  <div style="display:flex;gap:0.4rem;margin-top:0.75rem">
+                    <button class="ah-btn ah-btn-p" style="flex:1;background:var(--teal);font-size:10px;padding:7px">✓ Approve ₹12,000</button>
+                    <button class="ah-btn ah-btn-g" style="flex:1;font-size:10px;padding:7px;background:var(--warn-lt);color:var(--warn);border:1px solid var(--warn-md)">⚠ Query</button>
+                    <button class="ah-btn ah-btn-g" style="flex:1;font-size:10px;padding:7px;background:var(--danger-lt);color:var(--danger);border:1px solid var(--danger-md)">✕ Reject</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S10: MVD PORTAL ══ -->
+    <div class="sec" id="s10">
+      <div class="sec-eye"><span class="sec-n">10 /</span> Admin Panel</div>
+      <h2 class="sec-h2">MVD Government <em>Portal</em></h2>
+      <p class="sec-desc">The MVD portal is read-only with a focus on aggregate road safety data. Individual driver lookups are available for enforcement purposes. All data access is logged for regulatory compliance.</p>
+
+      <div class="admin-shell">
+        <div class="as-topbar"><div class="as-dots"><div class="as-dot"></div><div class="as-dot"></div><div class="as-dot"></div></div><div class="as-url">mvd.drivesure.in — Kerala Motor Vehicle Department · Road Safety Dashboard</div></div>
+        <div class="as-body">
+          <div class="admin-sb" style="background:#0D1A2A">
+            <div class="asb-logo-row"><div class="asb-mark" style="background:#1B3A6B">🏛</div><div class="asb-brand-text">MVD Portal</div></div>
+            <div class="asb-nav">
+              <div class="asb-itm active"><span class="asb-itm-i">🛡</span><span class="asb-itm-l">Road Safety</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">🔍</span><span class="asb-itm-l">Driver Lookup</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">⚡</span><span class="asb-itm-l">Violations</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">📄</span><span class="asb-itm-l">Compliance</span></div>
+              <div class="asb-itm"><span class="asb-itm-i">📈</span><span class="asb-itm-l">Analytics</span></div>
+            </div>
+            <div class="asb-footer"><div class="asb-av" style="background:#1B3A6B">MV</div><div><div class="asb-user-nm">MVD Officer</div><div class="asb-user-rl">Read-Only · Kerala</div></div></div>
+          </div>
+          <div class="admin-content">
+            <div class="admin-header">
+              <div><div class="ah-title">Road Safety Overview — Kerala</div><div class="ah-bc">MVD PORTAL › SAFETY DASHBOARD · Q2 2025</div></div>
+              <div class="ah-acts"><div class="ah-btn ah-btn-g">Q2 2025</div><div class="ah-btn ah-btn-s">Download Report</div></div>
+            </div>
+            <div class="admin-main">
+              <!-- KPIs -->
+              <div class="kpi-row" style="margin-bottom:0.75rem">
+                <div class="kpi"><div class="kpi-lbl">Registered Drivers</div><div class="kpi-val">12,840</div><div class="kpi-delta du">↑ 340 this quarter</div></div>
+                <div class="kpi"><div class="kpi-lbl">State Avg Score</div><div class="kpi-val">74.8%</div><div class="kpi-delta du">↑ 3.2 vs Q1</div></div>
+                <div class="kpi"><div class="kpi-lbl">High-Risk Drivers</div><div class="kpi-val" style="color:var(--danger)">284</div><div class="kpi-delta dd">Score &lt;50%</div></div>
+                <div class="kpi"><div class="kpi-lbl">Rash Driving Alerts</div><div class="kpi-val" style="color:var(--warn)">47</div><div class="kpi-delta dd">↑ 8 this week</div></div>
+              </div>
+              <!-- Score dist + trend row -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.625rem;margin-bottom:0.75rem">
+                <div class="mc">
+                  <div class="st" style="margin-bottom:0.5rem">Score Distribution — Jun 2025</div>
+                  <div class="bar-group" style="height:70px">
+                    <div class="bar-wrap"><div class="bar" style="height:22%;background:var(--danger-md)"></div><div class="bar-lbl">&lt;50</div></div>
+                    <div class="bar-wrap"><div class="bar" style="height:35%;background:var(--warn-md)"></div><div class="bar-lbl">50-60</div></div>
+                    <div class="bar-wrap"><div class="bar" style="height:48%;background:var(--warn-md);opacity:0.8"></div><div class="bar-lbl">60-70</div></div>
+                    <div class="bar-wrap"><div class="bar" style="height:72%;background:var(--success-md)"></div><div class="bar-lbl">70-80</div></div>
+                    <div class="bar-wrap"><div class="bar" style="height:88%;background:var(--teal-md)"></div><div class="bar-lbl">80+</div></div>
+                  </div>
+                  <div style="font-size:9.5px;color:var(--n500);margin-top:0.25rem">67% of registered drivers score above 70%. 2.2% flagged as high-risk.</div>
+                </div>
+                <div class="mc">
+                  <div class="st" style="margin-bottom:0.5rem">State Score Trend — 6 Months</div>
+                  <svg viewBox="0 0 200 65" width="100%" height="65px">
+                    <path d="M0,52 L40,46 L80,38 L120,30 L160,22 L200,14" fill="none" stroke="#1042C8" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M0,52 L40,46 L80,38 L120,30 L160,22 L200,14 L200,70 L0,70Z" fill="rgba(16,66,200,0.06)"/>
+                    <circle cx="200" cy="14" r="3" fill="#1042C8" stroke="white" stroke-width="1"/>
+                    <text x="178" y="12" font-size="8" fill="#1042C8" font-family="monospace" font-weight="700">74.8%</text>
+                    <text x="2" y="64" font-size="7" fill="#9CA3AF" font-family="monospace">Jan</text>
+                    <text x="178" y="64" font-size="7" fill="#9CA3AF" font-family="monospace">Jun</text>
+                  </svg>
+                  <div style="background:var(--teal-lt);border-radius:var(--r4);padding:0.35rem 0.5rem;margin-top:0.25rem"><div style="font-size:9.5px;color:var(--teal);font-weight:600">Road safety improving: avg score up 4.8% since Q3 2024</div></div>
+                </div>
+              </div>
+              <!-- High-risk driver table -->
+              <div class="mc" style="padding:0">
+                <div style="padding:0.5rem 0.75rem;border-bottom:1px solid var(--n100);font-size:11px;font-weight:700;color:var(--n800)">High-Risk Drivers — Priority Enforcement List</div>
+                <table class="dt">
+                  <thead><tr><th>Vehicle Reg.</th><th>District</th><th>Score</th><th>Risk Level</th><th>Violations</th><th>Last Trip</th></tr></thead>
+                  <tbody>
+                    <tr style="background:var(--danger-lt)"><td style="color:var(--danger)">KL29A4420</td><td>Ernakulam</td><td style="color:var(--danger)">31%</td><td><span class="rp-h">High Risk</span></td><td><span style="color:var(--danger);font-weight:700">12 events</span></td><td>6 Jun 2025</td></tr>
+                    <tr><td>TN09C2210</td><td>Thrissur</td><td style="color:var(--danger)">38%</td><td><span class="rp-h">High Risk</span></td><td>7 events</td><td>5 Jun 2025</td></tr>
+                    <tr><td>KL07D8821</td><td>Kozhikode</td><td style="color:var(--warn)">55%</td><td><span class="rp-m">Moderate</span></td><td>3 events</td><td>4 Jun 2025</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sdiv"></div>
+
+    <!-- ══ S11: WORKFLOWS & GOVERNANCE ══ -->
+    <div class="sec" id="s11">
+      <div class="sec-eye"><span class="sec-n">11 /</span> System</div>
+      <h2 class="sec-h2">Workflows, Governance & <em>Security</em></h2>
+
+      <div class="sub-h">Core Admin Workflows</div>
+      <div style="margin-bottom:1.25rem">
+        <div style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--n400);margin-bottom:0.5rem">Claim Review → Validation → Decision Workflow</div>
+        <div class="workflow">
+          <div class="wf-step"><div class="wf-num">01</div><div class="wf-title">Claim Received</div><div class="wf-desc">Driver submits via portal. Incident date + type recorded. Evidence uploaded.</div></div>
+          <div class="wf-arr">›</div>
+          <div class="wf-step"><div class="wf-num">02</div><div class="wf-title">Auto-Validation</div><div class="wf-desc">System retrieves blockchain score for incident date. Policy active check. Evidence format validation.</div></div>
+          <div class="wf-arr">›</div>
+          <div class="wf-step"><div class="wf-num">03</div><div class="wf-title">Fraud Check</div><div class="wf-desc">ML anomaly detection: score-to-claim mismatch, no-trip-data days, duplicate patterns.</div></div>
+          <div class="wf-arr">›</div>
+          <div class="wf-step"><div class="wf-num">04</div><div class="wf-title">Adjudicator Review</div><div class="wf-desc">Human review with full blockchain data visible. Approve / Reject / Query with mandatory comment.</div></div>
+          <div class="wf-arr">›</div>
+          <div class="wf-step"><div class="wf-num">05</div><div class="wf-title">Decision Logged</div><div class="wf-desc">All actions written to immutable audit log. Driver notified. Payment triggered or dispute path opened.</div></div>
+        </div>
+      </div>
+
+      <!-- Audit log specimen -->
+      <div class="sub-h">Audit Log — Every Admin Action is Recorded</div>
+      <div class="mc" style="margin-bottom:1.25rem">
+        <div class="audit-row"><span class="audit-time">21 May 2025 · 14:22:07</span><span class="audit-user">Adj. Sharma</span><span class="audit-action">Approved Claim #CLM-2301 · ₹8,400 · Settlement auto-calculated from score 78.2%</span><span class="audit-badge"><span class="tag t-g">Approved</span></span></div>
+        <div class="audit-row"><span class="audit-time">21 May 2025 · 14:18:33</span><span class="audit-user">Adj. Sharma</span><span class="audit-action">Opened Claim #CLM-2301 for review · Driver: Meera Pillai · Score: 78.2% verified</span><span class="audit-badge"><span class="tag t-n">Opened</span></span></div>
+        <div class="audit-row"><span class="audit-time">21 May 2025 · 13:45:11</span><span class="audit-user">System</span><span class="audit-action">Fraud flag auto-generated for Claim #CLM-2290 · No blockchain trip record found for 11 Feb 2023</span><span class="audit-badge"><span class="tag t-d">Fraud Flag</span></span></div>
+        <div class="audit-row" style="border-bottom:none"><span class="audit-time">21 May 2025 · 11:32:44</span><span class="audit-user">System</span><span class="audit-action">Blockchain score verified for Claim #CLM-2302 · Block #14,892 · Score: 72.4%</span><span class="audit-badge"><span class="tag t-b">Verified</span></span></div>
+      </div>
+
+      <div class="spec-grid">
+        <div class="spec-card">
+          <h4>Role-Based Access Control</h4>
+          <ul>
+            <li><strong>Driver:</strong> Read/write own data only. No access to other drivers, insurer admin, or MVD</li>
+            <li><strong>Insurer admin:</strong> Read all drivers in portfolio. Write claims decisions, premium adjustments. No access to MVD data</li>
+            <li><strong>MVD officer:</strong> Read-only. Aggregate data by default; individual lookup requires justification logged to audit trail</li>
+            <li><strong>Super admin (DriveSure):</strong> Full access with elevated audit logging. All actions require 2FA confirmation</li>
+            <li>Role assignments managed by org-level admin only — never self-assigned</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Performance & Scalability</h4>
+          <ul>
+            <li><strong>Pagination:</strong> All tables paginate at 50 rows. Infinite scroll not used (breaks bulk selection)</li>
+            <li><strong>Virtual scrolling:</strong> Long trip lists (1000+ rows) use windowed rendering</li>
+            <li><strong>Lazy loading:</strong> Charts load after critical KPI metrics — users see numbers first</li>
+            <li><strong>Real-time updates:</strong> WebSocket for score changes and claim status updates. No manual refresh required</li>
+            <li><strong>Large exports:</strong> CSV/PDF exports run as background jobs — user notified via notification bell when ready</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Admin UX — Dense but Not Cluttered</h4>
+          <ul>
+            <li>Tables use compact row height (40px) with expandable rows for detail — not separate pages</li>
+            <li>Bulk actions (approve all selected, export filtered) are always visible when rows are selected</li>
+            <li>Critical actions (Approve, Reject) require one confirmation click — not a separate dialog for routine actions</li>
+            <li>Fraud-flagged rows visually break the rhythm with a red left-border — forces attention even when scanning quickly</li>
+            <li>All dashboard KPIs link directly to their underlying table — click a number, see the data behind it</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h4>Data Security in UI</h4>
+          <ul>
+            <li>PII (full name, phone) is partially masked in table views (e.g., "Ar*** N***") — expanded only on row-level access</li>
+            <li>Blockchain record hashes shown only in dedicated blockchain detail view — never in main tables</li>
+            <li>Session timeout after 30 minutes of inactivity — form data preserved with autosave before redirect</li>
+            <li>All destructive actions (delete, reject, fraud flag) require the admin to type a short justification reason — prevents accidental bulk actions</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Closing note -->
+      <div style="background:var(--n900);border-radius:var(--r16);padding:2rem 2.5rem;max-width:800px;margin-top:1.5rem">
+        <div style="font-family:var(--mono);font-size:8.5px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:0.625rem">System Philosophy</div>
+        <div style="font-family:var(--serif);font-size:1.15rem;font-style:italic;color:#E5E7EB;line-height:1.55;margin-bottom:1rem">"The best data visualization is the one that makes the right decision obvious, not the one that impresses with complexity. Every chart should make someone say 'I understand' — not 'I need to study this.'"</div>
+        <div style="display:flex;gap:2rem;flex-wrap:wrap">
+          <div><div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:2px">Viz Principles</div><div style="font-family:var(--mono);font-size:11px;color:var(--brand-md)">6 Defined · All Applied</div></div>
+          <div><div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:2px">Admin Roles</div><div style="font-family:var(--mono);font-size:11px;color:var(--brand-md)">Driver · Insurer · MVD · Super Admin</div></div>
+          <div><div style="font-family:var(--mono);font-size:8px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:2px">Audit</div><div style="font-family:var(--mono);font-size:11px;color:var(--brand-md)">Every Action Logged · Immutable</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div style="border-top:1.5px solid var(--n200);padding:1.25rem 2.5rem;display:flex;justify-content:space-between;align-items:center;background:var(--n100)">
+    <span style="font-family:var(--mono);font-size:10px;color:var(--n400);letter-spacing:0.04em">DriveSure · Data Visualization Strategy & Admin Panel · v1.0 · 2025</span>
+    <span style="font-size:11.5px;color:var(--n400)">6 Viz Principles · 5 Chart Types · 2 Admin Portals · Full Audit Log</span>
+  </div>
+</main>
+
+<script>
+const pbar=document.getElementById('pbar');
+const navItems=document.querySelectorAll('.dsn');
+const sections=document.querySelectorAll('.sec');
+window.addEventListener('scroll',()=>{
+  const st=document.documentElement.scrollTop;
+  const th=document.documentElement.scrollHeight-window.innerHeight;
+  pbar.style.width=(st/th*100)+'%';
+  let cur='s1';
+  sections.forEach(s=>{if(s.getBoundingClientRect().top<90)cur=s.id});
+  navItems.forEach(n=>n.classList.toggle('active',n.getAttribute('href')==='#'+cur));
+});
+</script>
+</body>
+</html>
